@@ -64,6 +64,7 @@ code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(
 .chk{background:var(--chk-bg);color:var(--chk-fg)}
 .mk{background:var(--mk-bg);color:var(--mk-fg)}
 .hold{background:var(--hold-bg);color:var(--hold-fg)}
+.spare{background:#f3f0ff;color:#5f3dc4}
 .tag.sub{background:var(--code);color:var(--ink);border:1px solid var(--thin);font-size:11px;margin-left:5px;font-weight:700}
 
 /* 표 */
@@ -111,7 +112,7 @@ td.price.muted{color:var(--muted);font-weight:400}
 <div class="doc">
 
 <h1>미션맵 · 로봇 제작 재료 목록</h1>
-<p class="sub">포텐 (10팀) · <span class="nw">11/16(월)</span> 재료 주문 신청을 위한 품목 정리</p>
+<p class="sub">포텐 (10팀) · <span class="nw">11/16(월)</span> 재료 주문 신청 확정 목록</p>
 
 <div class="rules" aria-label="주문 신청 기본 조건">
   <div><strong>예산 한도</strong><span>택배비 포함 <span class="nw">30만 원</span> 이내</span></div>
@@ -121,122 +122,118 @@ td.price.muted{color:var(--muted);font-weight:400}
 </div>
 
 <div class="kpis" aria-label="전체 현황 요약">
-  <div class="kpi"><div class="kl">신청 예산 한도</div><div class="kv">300,000원</div><div class="kd">택배비·출력비 포함 총액 기준</div></div>
-  <div class="kpi"><div class="kl">구매 예상 합계</div><div class="kv">약 22.3~34.1만 원</div><div class="kd">구매 필요 <span class="nw">9건</span> · 확인 필요 <span class="nw">7건</span> 별도</div></div>
-  <div class="kpi"><div class="kl">직접 제작</div><div class="kv">1세트</div><div class="kd">남은 폼보드·가져온 박스 활용</div></div>
-  <div class="kpi"><div class="kl">선택 검토</div><div class="kv">2건</div><div class="kd">예산이 남을 때 추가</div></div>
+  <div class="kpi"><div class="kl">신청 예산 한도</div><div class="kv">300,000원</div><div class="kd">택배비 포함 총액 기준</div></div>
+  <div class="kpi"><div class="kl">신청 합계</div><div class="kv">286,240원</div><div class="kd">배송비 <span class="nw">17,150원</span> 포함</div></div>
+  <div class="kpi"><div class="kl">남은 예산</div><div class="kv">13,760원</div><div class="kd">쿨러 보유분만큼 더 늘어남</div></div>
+  <div class="kpi"><div class="kl">신청 품목</div><div class="kv">16건</div><div class="kd">확인 필요 <span class="nw">1건</span> · 예비용 <span class="nw">1건</span> 포함</div></div>
 </div>
 
 <div class="summary todo">
-  <strong><span class="nw">11/16(월)</span> 주문 신청 전 팀원 확인 사항 (우선순위 순)</strong>
+  <strong>주문 · 수령 때 확인할 것</strong>
   <ol>
-    <li><strong>팀 내 보유 부품 먼저 파악하기:</strong> <code>보조배터리</code>와 <code>USB-C to C 케이블</code>은 팀원 여분을 확인하고, <code>액티브 쿨러</code>와 <code>microSD</code>는 건주 님 보유 여부를 확인해 부족한 수량만 신청합니다.</li>
-    <li><strong><span class="nw">3D 프린팅</span> 출력 견적 확인하기:</strong> <code>머리 브래킷</code>, <code>Pi 5 일체형 캐리어</code>, <code>보조배터리 거치대</code> 4대분을 업체에서 출력할 때 드는 비용을 먼저 알아봅니다.</li>
-    <li><strong><span class="nw">30만 원</span> 예산에 맞추고 링크 모으기:</strong> 구매 필요 9건만 합산해도 약 22.3~34.1만 원입니다. 폼보드 규격·배송비·출력비를 맞춰 총액을 30만 원 이내로 조정한 뒤, 국내 비회원 구매 URL·옵션·정가·재고를 신청서에 적습니다.</li>
+    <li><strong>쿨러 수량 줄이기:</strong> 건주 님이 가진 <code>액티브 쿨러</code> 수만큼 신청 수량을 줄입니다.</li>
+    <li><strong>보조배터리 실측:</strong> LED 데크 아래층에 들어가야 하므로 폭 68mm 이하인지 재고, 길이 · 폭 · 두께로 데크 크기를 확정합니다.</li>
+    <li><strong>케이블 끼움 확인:</strong> <code>NW3</code> 케이블(A2501 호환)이 MechDog 포트(XH2.54)에 꽉 끼는지 받자마자 확인합니다. 안 맞으면 UART는 예비 케이블로 바꿉니다. 비전 모듈 경로가 약 19cm라 20cm 케이블은 배 아래에 바짝 붙여 묶습니다.</li>
+    <li><strong>온도 센서 핀헤더:</strong> 받은 센서에 핀헤더가 일자로 납땜돼 있으면 ㄱ자 핀헤더로 바꿔야 안테나 선반에 닿지 않습니다. 보드 크기가 17 × 11mm와 다르면 머리 브래킷 홀더를 고칩니다.</li>
+    <li><strong>3D 출력 견적:</strong> 머리 브래킷, Pi 5 캐리어, LED · 배터리 데크 4대분 출력 비용을 확인합니다.</li>
+    <li><strong>폼보드 장수:</strong> 맵 크기(<span class="nw">4.1m × 4.35m</span> 또는 <span class="nw">4.1m × 2.85m</span>)를 정한 뒤 30장에서 조정하고, 대형 판재 화물 배송비를 판매처에 문의합니다.</li>
   </ol>
 </div>
 
 <div class="legend">
   <span><strong>구분 안내</strong></span>
-  <span><span class="badge buy">구매 필요</span> 주문 신청서에 바로 넣을 품목</span>
-  <span><span class="badge chk">확인 필요</span> 팀원 보유분이나 출력 견적을 확인한 뒤 반영할 품목</span>
-  <span><span class="badge mk">직접 제작</span> 구매한 폼보드 자투리와 박스로 팀에서 직접 만드는 품목</span>
-  <span><span class="badge hold">선택 검토</span> 예산에 여유가 있을 때만 추가</span>
+  <span><span class="badge buy">구매 필요</span> 주문 신청서에 넣는 품목</span>
+  <span><span class="badge chk">확인 필요</span> 팀원 보유분을 확인해 수량을 정할 품목</span>
+  <span><span class="badge spare">예비용</span> 케이블이 맞지 않을 때를 대비한 예비 품목</span>
+  <span><span class="badge hold">보유분 사용</span> 팀원 보유분을 쓰는 품목</span>
+  <span><span class="badge mk">직접 제작</span> 3D 출력이나 팀 자체 제작</span>
 </div>
 
-<h2>1. 구매 · 출력 의뢰 품목 <span class="h2-meta">미션맵 · 로봇 개조 · <span class="nw">3D 프린팅</span> · 시험 소품 (총 16건)</span></h2>
+<h2>1. 주문 신청 품목 <span class="h2-meta">시트 기준 확정 단가 · 배송비 포함 (총 16건)</span></h2>
 
-<h3>1-1. 미션맵 바닥과 주행선 테이프 <span class="meta">전체 맵 크기 <span class="nw">4.1m × 4.35m</span> (조립식)</span></h3>
+<h3>1-1. 미션맵 바닥 · 구조물 <span class="meta">전체 맵 크기 <span class="nw">4.1m × 4.35m</span> 기준 (조립식)</span></h3>
 <div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 규격</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">폼보드</td><td data-l="용도 · 규격">맵 전체 바닥판 — 양면 종이 합지 비접착 제품<span class="subnote">두께 5mm · 60×90cm 기준 36장 (90×120cm 대형은 20장)</span></td><td class="qty" data-l="수량">36장</td><td class="price" data-l="참고 단가">약 2,700~3,500원</td><td class="price" data-l="예상 합계">약 10~12만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">주행선 테이프</td><td data-l="용도 · 규격">검정 바닥 테이프 — 로봇이 따라가는 순찰 경로 표시<span class="subnote">전체 순찰 경로 약 27.5m (여분 포함 30m 이상 필요)</span></td><td class="qty" data-l="수량">2롤</td><td class="price" data-l="참고 단가">약 8,000~15,000원</td><td class="price" data-l="예상 합계">약 1.6~3만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">마커 테이프</td><td data-l="용도 · 규격">색상별 바닥 표시 테이프 — 노랑·초록(구역), 빨강(갈림길·충전 위치)</td><td class="qty" data-l="수량">3롤<span class="subnote">색별 1롤</span></td><td class="price" data-l="참고 단가">약 2,000~10,000원</td><td class="price" data-l="예상 합계">약 0.6~3만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">마스킹 테이프</td><td data-l="용도 · 규격">폼보드 연결 고정용 — 시연 후 떼어 내고 재조립할 때 사용</td><td class="qty" data-l="수량">1묶음</td><td class="price" data-l="참고 단가">약 3,000~6,000원</td><td class="price" data-l="예상 합계">약 3,000~6,000원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
+  <tr><th class="col-item">품목</th><th>상품 · 판매처</th><th class="col-qty">수량</th><th class="col-price">단가</th><th class="col-sum">금액 (배송비 포함)</th><th class="col-st">구분</th></tr>
+  <tr><td class="k">폼보드 (바닥판)</td><td><a href="https://djsquaremall.co.kr/product/%ED%95%98%EC%96%80%EC%83%89-%EC%9A%B0%EB%93%9C%EB%9D%BD-10t-610x910-15%EC%9E%A5/16/category/45/display/1/">하얀색 우드락 10T 610×910 (15장)</a><span class="subnote">디제이폼보드 · 맵 크기 확정 후 장수 조정, 대형 판재 화물 배송비는 판매처 문의</span></td><td class="qty">2묶음 (30장)</td><td class="price">50,000원</td><td class="price">100,000원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">주행선 테이프</td><td><a href="https://intelrior.com/product/detail.html?product_no=23923">바닥 라인 테이프 50mm 33m 흑색</a><span class="subnote">intelrior · 순찰 경로 약 27.5m</span></td><td class="qty">2롤</td><td class="price">4,320원</td><td class="price">8,640원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">마커 테이프 빨강</td><td><a href="https://intelrior.com/product/detail.html?product_no=23918">바닥 라인 테이프 빨강</a><span class="subnote">intelrior · 갈림길 · 충전 위치</span></td><td class="qty">1롤</td><td class="price">4,320원</td><td class="price">4,320원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">마커 테이프 초록</td><td><a href="https://intelrior.com/product/detail.html?product_no=23916">바닥 라인 테이프 초록</a><span class="subnote">intelrior · 구역 표시 · intelrior 묶음 배송비 3,000원 포함</span></td><td class="qty">1롤</td><td class="price">4,320원</td><td class="price">7,320원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">마커 테이프 노랑</td><td><a href="https://intelrior.com/product/detail.html?product_no=23920">바닥 라인 테이프 황색</a><span class="subnote">intelrior · 구역 표시</span></td><td class="qty">1롤</td><td class="price">4,320원</td><td class="price">4,320원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">마스킹 테이프</td><td><a href="https://intelrior.com/product/detail.html?product_no=23439">3M 마스킹테이프 25mm 40m 미색</a><span class="subnote">intelrior · 바닥판 연결 고정, 시연 후 떼어 재조립</span></td><td class="qty">1개</td><td class="price">1,620원</td><td class="price">1,620원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">하드보드지 (구조물)</td><td><a href="https://themallkorea.co.kr/product/detail.html?product_no=265&amp;cate_no=26">하드보드지 2T 4절 12매</a><span class="subnote">더몰코리아 · 맵 안 가벽 · 이름표, 배송비 3,000원 포함</span></td><td class="qty">1세트</td><td class="price">12,620원</td><td class="price">15,620원</td><td><span class="badge buy">구매 필요</span></td></tr>
 </table></div>
 
+<h3>1-2. 로봇 센서 · 배선 · 쿨러 <span class="meta">MechDog 4대 기준 · 납땜 없이 점퍼와 USB로 연결</span></h3>
 <div class="summary">
-  <strong>폼보드를 이렇게 고르는 이유:</strong>
+  <strong>이 부품들이 연결되는 방식 (<a href="2026-11-13_02_기능정의서.html#v3d">로봇 장착 구성 3D 모델</a> 기준):</strong>
   <ul>
-    <li><strong>양면 종이 폼보드 선택:</strong> 우드락은 테이프를 떼면 표면이 뜯겨 나가 재사용하기 어렵고, 접착식 폼보드는 바닥에 테이프를 붙였다 떼기 불편합니다.</li>
-    <li><strong>두께와 크기 기준:</strong> 두꺼운 대형 제품(<code>10T</code>, <code>90×120cm</code> 20장 박스)은 정가만 28~30만 원대로 예산을 넘기기 쉽습니다. 두께 5mm(<code>5T</code>)나 <code>60×90cm</code> 묶음 상품으로 화물 배송비까지 맞춰 고릅니다.</li>
-  </ul>
-</div>
-
-<h3>1-2. 로봇에 추가할 센서와 연결선 <span class="meta">MechDog 4대 기준</span></h3>
-<div class="summary">
-  <strong>이 부품들이 필요한 이유 (<a href="2026-11-13_02_기능정의서.html#v3d">로봇 장착 구성 3D 모델링</a> 기준):</strong>
-  <ul>
-    <li><strong>머리 위·아래 카메라 분리:</strong> 기존 카메라를 <strong>머리 아래</strong>로 내려 바닥 선을 보게 하고, 비어 있는 <strong>머리 위</strong>에는 정면 카메라(XIAO)와 온도 센서(<code>GY-906</code>)를 올려 화재를 찾습니다. 이때 필요한 전선과 신호선이 아래 3개 품목입니다.</li>
-    <li><strong>등딱지 LED 연결:</strong> 상태 표시용 LED 모듈을 등 덮개 위에 올리려면 기본 케이블보다 긴 연장선(<code>I2C 연장선</code>)이 필요합니다.</li>
+    <li><strong>라즈베리파이 5가 중심:</strong> 머리 카메라(XIAO)는 USB, 온도 센서는 듀폰 점퍼(I2C), MechDog 본체는 포트 2에서 UART 케이블과 듀폰 점퍼로 Pi 5에 잇습니다. Pi와 MechDog 본체에는 납땜하지 않습니다.</li>
+    <li><strong>본체 포트 케이블:</strong> 머리 아래 비전 모듈과 LED는 포트 1 · 3에, UART는 포트 2에 같은 양쪽 커넥터 케이블을 씁니다.</li>
   </ul>
 </div>
 <div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 규격</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">온도 센서</td><td data-l="용도 · 규격">화재 열원을 감지하는 비접촉 적외선 센서 (정면 카메라에 직결)<span class="subnote">모델명 GY-906 (MLX90614ESF-BCC, 시야각 35° 버전 국내 재고 확인)</span></td><td class="qty" data-l="수량">4개</td><td class="price" data-l="참고 단가">약 18,000~26,400원</td><td class="price" data-l="예상 합계">약 7.2~10.6만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">I2C 연장 케이블</td><td data-l="용도 · 규격">머리 아래 카메라와 등딱지 LED를 본체 보드에 연결하는 4가닥 연장선<span class="subnote">로봇 1대당 2개 사용 (실제 길이 확인 후 주문)</span></td><td class="qty" data-l="수량">8개<span class="subnote">대당 2개</span></td><td class="price" data-l="참고 단가">약 1,000~2,000원</td><td class="price" data-l="예상 합계">약 0.8~1.6만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">센서 · 전원 배선</td><td data-l="용도 · 규격">온도 센서 납땜용 4가닥 선과 정면 카메라 전원용 4핀 커넥터·선<span class="subnote">로봇 4대 배선 분량</span></td><td class="qty" data-l="수량">4대분</td><td class="price muted" data-l="참고 단가">묶음 판매 기준</td><td class="price" data-l="예상 합계">약 0.5~1만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
+  <tr><th class="col-item">품목</th><th>상품 · 판매처</th><th class="col-qty">수량</th><th class="col-price">단가</th><th class="col-sum">금액 (배송비 포함)</th><th class="col-st">구분</th></tr>
+  <tr><td class="k">온도 센서</td><td><a href="https://vctec.co.kr/product/mlx90614esf-bcc-%EB%B9%84%EC%A0%91%EC%B4%89-%EC%A0%81%EC%99%B8%EC%84%A0-%EC%98%A8%EB%8F%84-%EC%84%BC%EC%84%9C-i2cmlx90614esf-bcc-non-contact-ir-temper/25690/">MLX90614ESF-BCC 비접촉 적외선 온도 센서 (시야 35°)</a><span class="subnote">VCTEC · 배송비 3,500원 포함 · Pi 5 GPIO에 듀폰 점퍼로 연결, 핀은 ㄱ자 핀헤더로 위로 세움</span></td><td class="qty">4개</td><td class="price">19,800원</td><td class="price">82,700원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">I2C 케이블 (양쪽 커넥터)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10919600">[NW3] 하네스 케이블 4핀-4핀 NW3-XH2.5-4Y (200mm)</a><span class="subnote">디바이스마트 · 비전 모듈 → 포트 1, LED → 포트 3 (대당 2개 + 여분 2) · 디바이스마트 묶음 배송비 2,700원 포함</span></td><td class="qty">10개</td><td class="price">660원</td><td class="price">9,300원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">UART 케이블 (양쪽 커넥터)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10919600">[NW3] 하네스 케이블 4핀-4핀 NW3-XH2.5-4Y (200mm)</a><span class="subnote">MechDog 포트 2 → 반대쪽 하우징에 듀폰 수 핀을 꽂아 Pi 6 · 8 · 10번, 5V 선은 연결 안 함</span></td><td class="qty">4개</td><td class="price">660원</td><td class="price">2,640원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">듀폰 점퍼 수-암</td><td><a href="https://www.devicemart.co.kr/goods/view?no=1321195">[KEYES] 소켓 점퍼 케이블 40P (M/F) 20cm</a><span class="subnote">UART 케이블 끝 → Pi GPIO</span></td><td class="qty">1묶음</td><td class="price">935원</td><td class="price">935원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">듀폰 점퍼 암-암</td><td><a href="https://www.devicemart.co.kr/goods/view?no=1321192">[KEYES] 소켓 점퍼 케이블 40P (F/F) 20cm</a><span class="subnote">온도 센서 → Pi GPIO 1 · 3 · 5 · 9번 (경로 약 14cm)</span></td><td class="qty">1묶음</td><td class="price">935원</td><td class="price">935원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">XH2.54 한쪽 하우징 케이블</td><td><a href="https://www.devicemart.co.kr/goods/view?no=15884112">[럭킷] XH2.54 FEMALE 4P 하네스와이어 20cm</a><span class="subnote">NW3 커넥터가 포트에 안 맞을 때 UART용. 이때만 맨 선 끝을 점퍼와 납땜하고 수축튜브로 감음</span></td><td class="qty">4개</td><td class="price">660원</td><td class="price">2,640원</td><td><span class="badge spare">예비용</span></td></tr>
+  <tr><td class="k">액티브 쿨러</td><td><a href="https://www.devicemart.co.kr/goods/view?no=15276241">[정품] 라즈베리파이5 액티브 쿨러 (SC1148)</a><span class="subnote">케이스 없이 Pi 5에 푸시핀으로 직접 장착 · 건주 님 보유분만큼 수량을 줄임</span></td><td class="qty">4개</td><td class="price">7,700원</td><td class="price">30,800원</td><td><span class="badge chk">확인 필요</span></td></tr>
 </table></div>
 
-<h3>1-3. 라즈베리파이 5 탑재 부속 <span class="meta">로봇 4대에 올릴 보조 컴퓨터용 · 팀원 보유분 먼저 확인</span></h3>
+<h3>1-3. 시험 · 시연 소품</h3>
+<div class="tw"><table class="cards">
+  <tr><th class="col-item">품목</th><th>상품 · 판매처</th><th class="col-qty">수량</th><th class="col-price">단가</th><th class="col-sum">금액 (배송비 포함)</th><th class="col-st">구분</th></tr>
+  <tr><td class="k">부탄가스</td><td><a href="https://highclassfood.cafe24.com/product/%EB%B6%80%ED%83%84%EA%B0%80%EC%8A%A4-4%EA%B0%9C%EC%9E%85/258/">부탄가스 4개입</a><span class="subnote">YINGCHA MARKET · 실외 화재 시험 (팀 보유 가스버너)</span></td><td class="qty">1세트</td><td class="price">4,000원</td><td class="price">4,000원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">안전모</td><td><a href="https://cableprice.net/product/sseda-%ED%8C%A8%EC%85%98ii%ED%98%95-%EC%95%88%EC%A0%84%EB%AA%A8-%EC%9E%90%EB%8F%99/94/category/104/display/1/">안전모 (화이트)</a><span class="subnote">코리아테크 안전용품 · 사람 인식 시연용, 배송비 4,950원 포함</span></td><td class="qty">1개</td><td class="price">5,500원</td><td class="price">10,450원</td><td><span class="badge buy">구매 필요</span></td></tr>
+</table></div>
+
+<h3>1-4. 신청 합계 <span class="meta">예산 한도 <span class="nw">30만 원</span> 대비</span></h3>
+<div class="tw"><table class="cards">
+  <tr><th class="col-item">분류</th><th>포함 품목</th><th class="col-qty">건수</th><th class="col-price">배송비</th><th class="col-sum">금액</th><th class="col-st">비고</th></tr>
+  <tr><td class="k">1-1. 미션맵 바닥 · 구조물</td><td>폼보드, 테이프 5종, 하드보드지</td><td class="qty">7건</td><td class="price">6,000원</td><td class="price">141,840원</td><td>intelrior · 더몰코리아</td></tr>
+  <tr><td class="k">1-2. 로봇 센서 · 배선 · 쿨러</td><td>온도 센서, 케이블 3종, 점퍼 2종, 쿨러</td><td class="qty">7건</td><td class="price">6,200원</td><td class="price">129,950원</td><td>디바이스마트 묶음 · 쿨러는 확인 필요</td></tr>
+  <tr><td class="k">1-3. 시험 · 시연 소품</td><td>부탄가스, 안전모</td><td class="qty">2건</td><td class="price">4,950원</td><td class="price">14,450원</td><td>—</td></tr>
+  <tr class="total"><td class="k">전체 합계</td><td>구매 필요 14건 · 확인 필요 1건 · 예비용 1건</td><td class="qty">16건</td><td class="price">17,150원</td><td class="price">286,240원</td><td>남은 예산 13,760원</td></tr>
+</table></div>
+
+<h2>2. 보유분 · 신청하지 않는 품목</h2>
+<div class="tw"><table class="cards">
+  <tr><th class="col-item">품목</th><th>용도</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">금액</th><th class="col-st">구분</th></tr>
+  <tr><td class="k">보조배터리</td><td>Pi 5 전원 (5V 3~5A, USB-C 출력) · LED 데크 아래층에 가로로 눕혀 고무줄로 고정<span class="subnote">사진 기준 약 140 × 68 × 16mm, 폭 68mm 이하인지 실측</span></td><td class="qty">4개</td><td class="price">—</td><td class="price">—</td><td><span class="badge hold">보유분 사용</span></td></tr>
+  <tr><td class="k">USB-C to C 케이블</td><td>보조배터리 → Pi 5 전원 (경로 약 8cm)</td><td class="qty">4개</td><td class="price">—</td><td class="price">—</td><td><span class="badge hold">보유분 사용</span></td></tr>
+  <tr><td class="k">USB-C to A 케이블</td><td>XIAO → Pi 5 전원 · 영상 (경로 약 28cm, 30cm 이상)</td><td class="qty">4개</td><td class="price">—</td><td class="price">—</td><td><span class="badge hold">보유분 사용</span></td></tr>
+  <tr><td class="k">microSD 32GB 이상</td><td>Pi 5 운영체제 · AI 실행 환경 (건주 님 보유)</td><td class="qty">4개</td><td class="price">—</td><td class="price">—</td><td><span class="badge hold">보유분 사용</span></td></tr>
+  <tr><td class="k">Hailo-8L</td><td>Pi 5 AI 가속 보드 · CPU 단독 추론 시험 뒤 결정</td><td class="qty">1개</td><td class="price">약 106,000원</td><td class="price">—</td><td><span class="badge hold">선택 검토</span></td></tr>
+  <tr><td class="k">소화기</td><td>실외 불꽃 시험 안전 대비 · 이번 신청에서 제외</td><td class="qty">1개</td><td class="price">—</td><td class="price">—</td><td><span class="badge hold">신청 안 함</span></td></tr>
+</table></div>
+
+<h2>3. 3D 출력 · 직접 제작 <span class="h2-meta">출력 업체 견적 확인 · 맵 구조물은 하드보드지와 남는 폼보드 활용</span></h2>
+<div class="tw"><table class="cards">
+  <tr><th class="col-item">품목</th><th>내용</th><th class="col-qty">수량</th><th class="col-price">재료</th><th class="col-sum">비용</th><th class="col-st">구분</th></tr>
+  <tr><td class="k">머리 브래킷</td><td>머리 위에 정면 카메라(XIAO) · 온도 센서 · 안테나를 얹는 거치대</td><td class="qty">4개</td><td class="price">3D 출력</td><td class="price">견적 확인</td><td><span class="badge mk">직접 제작</span></td></tr>
+  <tr><td class="k">Pi 5 일체형 캐리어</td><td>뒤 윗판에 Pi 5를 세로로 고정 (M3 볼트 6개)</td><td class="qty">4개</td><td class="price">3D 출력</td><td class="price">견적 확인</td><td><span class="badge mk">직접 제작</span></td></tr>
+  <tr><td class="k">LED · 배터리 데크</td><td>LED 자리(등뼈 덮개)에 M3 볼트 4개로 고정 · 아래층 보조배터리, 위층 LED · 바닥판 홈으로 UART 선 통과</td><td class="qty">4개</td><td class="price">3D 출력</td><td class="price">배터리 실측 뒤 확정</td><td><span class="badge mk">직접 제작</span></td></tr>
+  <tr><td class="k">맵 구조물 · 표지</td><td>보관 랙 3곳(<code>80×60cm</code>), 작업 공간 4곳(<code>140×60cm</code>), 통로 막힘 박스, 바닥 공구, 비상구 표지</td><td class="qty">1세트</td><td class="price">하드보드지 · 폼보드 자투리 · 박스</td><td class="price">—</td><td><span class="badge mk">직접 제작</span></td></tr>
+</table></div>
+
 <div class="summary">
-  <strong>확인 방법:</strong> 아래 4개 품목은 팀원이나 건주 님이 이미 갖고 있을 가능성이 높아 가격을 비워 두었습니다. 보유 수량을 먼저 파악한 뒤 모자란 개수만 구매 목록에 넣습니다.
+  <strong>로봇 위 배치 (<a href="2026-11-13_02_기능정의서.html#v3d">3D 모델</a>):</strong>
+  <ul>
+    <li><strong>LED · 배터리 데크:</strong> 보조배터리가 몸 가운데에 가로로 놓여 앞뒤 무게가 고르고, 좌우로 약 7cm 나오지만 그 자리에는 다리 어깨 브래킷이 없어 걸을 때 부딪치지 않습니다.</li>
+    <li><strong>Pi 5 캐리어:</strong> 데크 뒤쪽 뒤 윗판에 세로로 두고, 쿨러는 케이스 없이 Pi에 바로 끼웁니다.</li>
+  </ul>
 </div>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 규격</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">보조배터리</td><td data-l="용도 · 규격">라즈베리파이 5 전원용 소형 배터리 (<code>5V 3~5A</code> · USB-C 출력)<span class="subnote">로봇 배 아래 거치대에 들어가야 하므로 약 62×42×18mm 크기 필요 · 팀원 보유분 확인</span></td><td class="qty" data-l="수량">최대 4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-  <tr><td class="k">USB-C to C 케이블</td><td data-l="용도 · 규격">보조배터리와 라즈베리파이 5를 바로 잇는 짧은 전원 케이블<span class="subnote">팀원 보유분 확인 후 부족한 수량만 신청</span></td><td class="qty" data-l="수량">최대 4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-  <tr><td class="k">액티브 쿨러</td><td data-l="용도 · 규격">라즈베리파이 5 발열을 식히는 전용 쿨링 팬<span class="subnote">건주 님 보유분 확인 후 부족한 수량만 신청</span></td><td class="qty" data-l="수량">최대 4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-  <tr><td class="k">microSD</td><td data-l="용도 · 규격">운영체제(OS)와 AI 실행 환경을 담는 메모리카드 (<code>32GB</code> 이상)<span class="subnote">건주 님 보유분 확인 후 부족한 수량만 신청</span></td><td class="qty" data-l="수량">최대 4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-</table></div>
-
-<h3>1-4. 화재 시연 시험 소품 <span class="meta">실외에서 실제 불꽃으로 센서 테스트할 때 사용</span></h3>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 규격</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">부탄가스</td><td data-l="용도 · 규격">실외 화재 시험용 연료 (팀 보유 휴대용 가스버너에 장착)</td><td class="qty" data-l="수량">2캔</td><td class="price" data-l="참고 단가">약 1,500원</td><td class="price" data-l="예상 합계">약 3,000원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">소화기</td><td data-l="용도 · 규격">실외 불꽃 테스트 중 안전 대비용 소형 소화기<span class="subnote">주문 신청 가능 품목인지 확인 필요</span></td><td class="qty" data-l="수량">1개</td><td class="price" data-l="참고 단가">약 1~2만 원</td><td class="price" data-l="예상 합계">약 1~2만 원</td><td data-l="구분"><span class="badge buy">구매 필요</span></td></tr>
-</table></div>
-
-<h3>1-5. 3D 프린팅 출력 의뢰 <span class="meta">로봇 장착 부속 · 업체 출력 비용 확인 필요</span></h3>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 규격</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">머리 브래킷<span class="tag sub">3D 프린팅</span></td><td data-l="용도 · 규격">로봇 머리 위에 정면 카메라·온도 센서·무선 안테나를 한 번에 얹는 거치대<span class="subnote">출력 업체 견적 확인 중</span></td><td class="qty" data-l="수량">4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-  <tr><td class="k">Pi 5 일체형 캐리어<span class="tag sub">3D 프린팅</span></td><td data-l="용도 · 규격">로봇 뒤 윗판에 라즈베리파이 5를 고정하는 탑재판<span class="subnote">출력 업체 견적 확인 중</span></td><td class="qty" data-l="수량">4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-  <tr><td class="k">보조배터리 거치대<span class="tag sub">3D 프린팅</span></td><td data-l="용도 · 규격">로봇 배 아래에 배터리를 밀어 넣어 끼우는 슬라이드형 거치대 (벽 두께 <code>3.0mm</code>)<span class="subnote">배터리 실물 크기 측정 후 출력 의뢰</span></td><td class="qty" data-l="수량">4개</td><td class="price muted" data-l="참고 단가">—</td><td class="price muted" data-l="예상 합계">—</td><td data-l="구분"><span class="badge chk">확인 필요</span></td></tr>
-</table></div>
-
-<h3>1-6. 구매 예상 합계 <span class="meta">택배비 별도 · <span class="nw">3D 프린팅</span> 견적 확인 중 · 예산 한도 <span class="nw">30만 원</span> 대비</span></h3>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">분류</th><th>포함 품목</th><th class="col-qty">건수</th><th class="col-price">구매 소계</th><th class="col-sum">확인 품목</th><th class="col-st">비고</th></tr>
-  <tr><td class="k">1-1. 바닥 · 테이프</td><td data-l="포함 품목">폼보드, 주행선·마커·마스킹 테이프</td><td class="qty" data-l="건수">4건</td><td class="price" data-l="구매 소계">약 12.5~18.6만 원</td><td class="price muted" data-l="확인 품목">—</td><td data-l="비고">규격·화물 배송비 확인</td></tr>
-  <tr><td class="k">1-2. 센서 · 배선</td><td data-l="포함 품목">온도 센서, I2C 연장선, 센서·전원 배선</td><td class="qty" data-l="건수">3건</td><td class="price" data-l="구매 소계">약 8.5~13.2만 원</td><td class="price muted" data-l="확인 품목">—</td><td data-l="비고">케이블 길이 확인</td></tr>
-  <tr><td class="k">1-3. Pi 5 탑재 부속</td><td data-l="포함 품목">보조배터리, USB-C 케이블, 쿨러, microSD</td><td class="qty" data-l="건수">4건</td><td class="price muted" data-l="구매 소계">—</td><td class="price muted" data-l="확인 품목">보유분 제외 후 산출</td><td data-l="비고">팀원·건주 님 보유분 확인</td></tr>
-  <tr><td class="k">1-4. 화재 시험 소품</td><td data-l="포함 품목">부탄가스, 소화기</td><td class="qty" data-l="건수">2건</td><td class="price" data-l="구매 소계">약 1.3~2.3만 원</td><td class="price muted" data-l="확인 품목">—</td><td data-l="비고">소화기 신청 가능 여부 확인</td></tr>
-  <tr><td class="k">1-5. 3D 프린팅 출력</td><td data-l="포함 품목">머리 브래킷, Pi 5 캐리어, 보조배터리 거치대</td><td class="qty" data-l="건수">3건</td><td class="price muted" data-l="구매 소계">—</td><td class="price muted" data-l="확인 품목">업체 견적 후 산출</td><td data-l="비고">출력 업체 견적 확인 중</td></tr>
-  <tr class="total"><td class="k">1절 전체 합계</td><td data-l="포함 품목">구매 필요 9건 + 확인 필요 7건</td><td class="qty" data-l="건수">16건</td><td class="price" data-l="구매 소계">약 22.3~34.1만 원</td><td class="price muted" data-l="확인 품목">Pi 5 부속·출력비 별도</td><td data-l="비고">택배비 포함 30만 원 이내로 조정</td></tr>
-</table></div>
-
-<h2>2. 팀에서 직접 만드는 구조물 <span class="h2-meta"><span class="nw">1-1</span>에서 구매한 폼보드 자투리 · 가져온 박스 활용</span></h2>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>제작 내용</th><th class="col-qty">수량</th><th class="col-price">재료 조달</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">맵 구조물 · 표지</td><td data-l="제작 내용">보관 랙 3곳(<code>80×60cm</code>), 작업 공간 4곳(<code>140×60cm</code>), 통로 막힘 박스, 바닥 공구, 비상구 표지</td><td class="qty" data-l="수량">1세트</td><td class="price" data-l="재료 조달">구매 폼보드 활용 · 박스 지참</td><td data-l="구분"><span class="badge mk">직접 제작</span></td></tr>
-</table></div>
 
 <div class="summary">
   <strong>미션맵 구조물은 이렇게 만듭니다:</strong>
   <ul>
-    <li><strong>구역 경계는 바닥에 표시:</strong> 랙 3곳(<code>A1~A3</code>)과 작업 공간 4곳(<code>B1~B2</code>, <code>C1~C2</code>)은 테이프와 색지로 바닥 테두리를 먼저 표시해, 보관 부피를 줄이고 카메라 사각지대를 없앱니다.</li>
-    <li><strong>입체 구조물은 가볍고 낮게 제작:</strong> 구획 안쪽 모서리에만 접이식 골판지 박스와 남는 폼보드로 낮은 가벽(높이 15~25cm)과 이름표를 세워, 시연 후 쉽게 해체해 보관합니다.</li>
-    <li><strong>센서 오인식 방지:</strong> 주행선과 구역 경계 사이 간격이 <code>20cm</code>이므로, 입체 박스나 가벽은 경계선 안쪽으로 들여서 놓고 로봇 초음파 센서가 잘못 반응하지 않는지 테스트합니다.</li>
+    <li><strong>구역 경계는 바닥에 표시:</strong> 랙 3곳(<code>A1~A3</code>)과 작업 공간 4곳(<code>B1~B2</code>, <code>C1~C2</code>)은 테이프로 바닥 테두리를 먼저 표시해, 보관 부피를 줄이고 카메라 사각지대를 없앱니다.</li>
+    <li><strong>입체 구조물은 가볍고 낮게 제작:</strong> 구획 안쪽 모서리에만 하드보드지와 남는 폼보드로 낮은 가벽(높이 15~25cm)과 이름표를 세워, 시연 후 쉽게 해체해 보관합니다.</li>
+    <li><strong>센서 오인식 방지:</strong> 주행선과 구역 경계 사이 간격이 <code>20cm</code>이므로, 가벽은 경계선 안쪽으로 들여서 놓고 로봇 초음파 센서가 잘못 반응하지 않는지 테스트합니다.</li>
   </ul>
 </div>
-
-<h2>3. 예산이 남을 때 검토할 품목 <span class="h2-meta">1절 총액을 <span class="nw">30만 원</span> 이내로 맞춘 뒤 여유가 있을 때만 추가</span></h2>
-<div class="tw"><table class="cards">
-  <tr><th class="col-item">품목</th><th>용도 · 기준</th><th class="col-qty">수량</th><th class="col-price">참고 단가</th><th class="col-sum">예상 합계</th><th class="col-st">구분</th></tr>
-  <tr><td class="k">Hailo-8L</td><td data-l="용도 · 기준">라즈베리파이 5용 AI 연산 가속 보드 — 영상 인식 속도를 높여야 하고 예산이 남을 때 추가</td><td class="qty" data-l="수량">1개</td><td class="price" data-l="참고 단가">약 106,000원</td><td class="price" data-l="예상 합계">약 10.6만 원</td><td data-l="구분"><span class="badge hold">선택 검토</span></td></tr>
-  <tr><td class="k">안전모 · 형광 조끼</td><td data-l="용도 · 기준">사람 인식 시연용 소품 — 실제 사람이 등장하는 시연 구성일 때 추가</td><td class="qty" data-l="수량">1세트</td><td class="price muted" data-l="참고 단가">약 1~2만 원</td><td class="price muted" data-l="예상 합계">약 1~2만 원</td><td data-l="구분"><span class="badge hold">선택 검토</span></td></tr>
-</table></div>
 
 </div>
 <script>

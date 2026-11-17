@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>그림 도형 어휘 견본 — AI 협동로봇 안전관리</title>
+<link rel="stylesheet" href="doc.css">
+<link rel="stylesheet" href="diagram.css">
+</head>
+<body>
+<div class="doc">
+
+<h1>그림 도형 어휘 견본</h1>
+<p class="sub"><code>diagram.css</code> · <code>diagram.js</code> · <code>diagram.json</code> 기반 형태별(<code>data-kind</code>) 9종 견본</p>
+<div class="def">모든 그림은 <code>figure.fig[data-kind]</code> + <code>figcaption</code>으로 감싸고, SVG는 <code>role="img"</code>와 <code>aria-label</code>을 갖춘다.</div>
+
+<h2>1. blocks — 장치·층·연결 구성도</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 장치·계층·모듈 사이 유선(<code>.ln.wire</code>)과 무선(<code>.ln.air</code>, 점선은 <code>.dashed</code>) 연결 관계를 보여 줄 때. 선·테두리·글자 색은 <code>.c-blue</code> 같은 색 지정 클래스로 바꾼다.</p>
+<figure class="fig" data-kind="blocks">
+  <svg viewBox="0 0 940 290" role="img" aria-label="MechDog 제어 보드와 라즈베리 파이 5가 UART로 이어지고, Pi 5가 Wi-Fi MQTT로 노트북 서버에 보고하며 서버가 WebSocket으로 관제 대시보드에 보내는 장치 구성도">
+    <rect class="dash" x="14" y="16" width="444" height="258" rx="4"/>
+    <text class="b" x="28" y="42">로봇 1대 = MechDog + Pi 5 (× 4대)</text>
+
+    <rect class="box" x="28" y="58" width="180" height="112"/>
+    <rect class="band" x="28" y="58" width="180" height="28"/>
+    <text class="hd" x="118" y="77" text-anchor="middle">MechDog 제어 보드</text>
+    <text class="s" x="40" y="103">ESP32 · MicroPython</text>
+    <text class="t" x="40" y="124">보행 · 선 따라가기</text>
+    <text class="t" x="40" y="143">초음파 정지 · LED</text>
+    <text class="t" x="40" y="162">배터리 전압 보고</text>
+
+    <rect class="box" x="262" y="58" width="180" height="112"/>
+    <rect class="band" x="262" y="58" width="180" height="28"/>
+    <text class="hd" x="352" y="77" text-anchor="middle">라즈베리 파이 5</text>
+    <text class="s" x="274" y="103">Python · 엣지 AI</text>
+    <text class="t" x="274" y="124">안전모 · 불꽃 추론</text>
+    <text class="t" x="274" y="143">과열 판정 (45℃)</text>
+    <text class="t" x="274" y="162">사진 촬영 · 명령</text>
+
+    <rect class="zone" x="262" y="206" width="180" height="52"/>
+    <text class="t b" x="352" y="228" text-anchor="middle">머리 카메라 · 온도</text>
+    <text class="s" x="352" y="246" text-anchor="middle">XIAO(USB) · GY-906(I2C)</text>
+
+    <line class="ln wire flow bi c-blue" x1="210" y1="114" x2="260" y2="114"/>
+    <text class="s b c-blue" x="235" y="106" text-anchor="middle">UART</text>
+    <line class="ln wire flow c-blue" x1="352" y1="206" x2="352" y2="173"/>
+    <text class="s b c-blue" x="362" y="193">USB · I2C</text>
+
+    <rect class="box" x="556" y="58" width="168" height="112"/>
+    <rect class="band" x="556" y="58" width="168" height="28"/>
+    <text class="hd" x="640" y="77" text-anchor="middle">관제 서버 (노트북)</text>
+    <text class="t" x="568" y="104">MQTT 브로커</text>
+    <text class="t" x="568" y="124">구역 위치 계산</text>
+    <text class="t" x="568" y="144">교차 확인 · 지휘</text>
+    <text class="t" x="568" y="164">FastAPI · SQLite</text>
+
+    <rect class="box" x="774" y="58" width="150" height="112"/>
+    <rect class="band" x="774" y="58" width="150" height="28"/>
+    <text class="hd" x="849" y="77" text-anchor="middle">관제 대시보드</text>
+    <text class="t" x="786" y="108">구역 지도 표시</text>
+    <text class="t" x="786" y="130">사진 팝업 · 경보음</text>
+    <text class="t" x="786" y="152">체크로 해제</text>
+
+    <line class="ln air flow bi c-blue" x1="444" y1="114" x2="554" y2="114"/>
+    <text class="s b halo c-blue" x="506" y="104" text-anchor="middle">Wi-Fi · MQTT</text>
+    <line class="ln air dashed flow bi" x1="726" y1="114" x2="772" y2="114"/>
+    <text class="s b halo" x="749" y="104" text-anchor="middle">WS</text>
+  </svg>
+  <div class="legend">
+    <span><svg width="28" height="12" role="img" aria-label="파란 실선 화살표 범례"><line class="ln wire flow c-blue" x1="2" y1="6" x2="26" y2="6"/></svg> 파란 실선 연결 (<code>.c-blue</code>)</span>
+    <span><svg width="28" height="12" role="img" aria-label="점선 화살표 범례"><line class="ln air dashed flow" x1="2" y1="6" x2="26" y2="6"/></svg> 점선 구분 (<code>.air.dashed</code>)</span>
+  </div>
+  <figcaption>그림 1. 장치 구성 약도 (<code>blocks</code>)</figcaption>
+</figure>
+
+<h2>색 지정 클래스 (<code>.c-*</code>) 견본</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 상태(<code>.ok</code>·<code>.warn</code>·<code>.err</code>·<code>.mute</code>)와 무관하게 원래 그림의 선·면 테두리·글자·화살촉 색을 그대로 옮길 때.</p>
+<figure class="fig" data-kind="custom">
+  <svg viewBox="0 0 900 110" role="img" aria-label="색 지정 클래스 c-ink, c-blue, c-red, c-green, c-orange, c-gray, c-yellow, c-lime, c-amber의 면 테두리·선 화살촉·글자 적용 견본">
+    <rect class="box c-ink" x="14" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-ink" x="56" y="34" text-anchor="middle">.c-ink</text>
+    <line class="ln flow c-ink" x1="22" y1="66" x2="90" y2="66"/>
+
+    <rect class="box c-blue" x="112" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-blue" x="154" y="34" text-anchor="middle">.c-blue</text>
+    <line class="ln flow c-blue" x1="120" y1="66" x2="188" y2="66"/>
+
+    <rect class="box c-red" x="210" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-red" x="252" y="34" text-anchor="middle">.c-red</text>
+    <line class="ln flow c-red" x1="218" y1="66" x2="286" y2="66"/>
+
+    <rect class="box c-green" x="308" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-green" x="350" y="34" text-anchor="middle">.c-green</text>
+    <line class="ln flow c-green" x1="316" y1="66" x2="384" y2="66"/>
+
+    <rect class="box c-orange" x="406" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-orange" x="448" y="34" text-anchor="middle">.c-orange</text>
+    <line class="ln flow c-orange" x1="414" y1="66" x2="482" y2="66"/>
+
+    <rect class="box c-gray" x="504" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-gray" x="546" y="34" text-anchor="middle">.c-gray</text>
+    <line class="ln flow c-gray" x1="512" y1="66" x2="580" y2="66"/>
+
+    <rect class="box c-yellow" x="602" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-ink" x="644" y="34" text-anchor="middle">.c-yellow</text>
+    <line class="ln flow c-yellow" x1="610" y1="66" x2="678" y2="66"/>
+
+    <rect class="box c-lime" x="700" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-lime" x="742" y="34" text-anchor="middle">.c-lime</text>
+    <line class="ln flow c-lime" x1="708" y1="66" x2="776" y2="66"/>
+
+    <rect class="box c-amber" x="798" y="14" width="84" height="32" rx="3"/>
+    <text class="s b c-amber" x="840" y="34" text-anchor="middle">.c-amber</text>
+    <line class="ln flow c-amber" x1="806" y1="66" x2="874" y2="66"/>
+
+    <text class="s" x="14" y="96">선·면 테두리는 stroke, 글자는 fill로 적용되며 화살촉도 context-stroke로 선 색을 따른다.</text>
+  </svg>
+  <figcaption>그림 1-2. 색 지정 클래스 9종 견본 (<code>custom</code>)</figcaption>
+</figure>
+
+<h2>2. sequence — 시간순 주고받기</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 장치·서버·사람 사이 메시지 순서와 왕복 흐름을 보여 줄 때.</p>
+<figure class="fig" data-kind="sequence">
+  <pre class="mermaid">sequenceDiagram
+    participant B as 보드
+    participant P as Pi 5
+    participant S as 서버
+    participant D as 대시보드
+    participant M as 관리자
+    B->>P: 초음파 정지 (CMD|E|stop)
+    P->>S: 사진 전송 + obstacle 이벤트
+    S->>D: 지도 차단 표시 + 사진 팝업
+    M->>D: 현장 제거 후 체크 해제
+    D->>S: 확인 완료 전달
+    S->>P: cmd resume
+    P->>B: 주행 재개 명령</pre>
+  <figcaption>그림 2. 통로 막힘 처리 순서 (<code>sequence</code>)</figcaption>
+</figure>
+
+<h2>3. state — 상태와 전이 조건</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 로봇이나 시스템이 갖는 상태들과 상태가 바뀌는 조건을 정리할 때.</p>
+<figure class="fig" data-kind="state">
+  <pre class="mermaid">stateDiagram-v2
+    [*] --> 대기: 도크 충전
+    대기 --> 순찰: patrol 명령
+    대기 --> 출동: 교대·교차 확인
+    순찰 --> 막힘정지: 초음파 정지(장애물)
+    막힘정지 --> 순찰: 해제 후 통로 비움
+    순찰 --> 과열확인: 45℃ 초과
+    과열확인 --> 순찰: 온도 정상
+    과열확인 --> 대피안내: 화재 확정
+    출동 --> 순찰: 교대 인계
+    출동 --> 대피안내: 화재 확정
+    순찰 --> 복귀: 배터리 20% 미만
+    대피안내 --> 복귀: 관리자 해제
+    복귀 --> 대기: 도크 도착</pre>
+  <figcaption>그림 3. 서버가 관리하는 로봇 상태 전이 (<code>state</code>)</figcaption>
+</figure>
+
+<h2>4. flow — 분기·판단 흐름</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 조건에 따라 갈라지는 판단 절차나 단계별 처리 흐름을 보여 줄 때.</p>
+<figure class="fig" data-kind="flow">
+  <pre class="mermaid">flowchart LR
+    A[표면 온도 45℃ 초과] --> B[정지 후 2초마다 측정]
+    B --> C{머리 카메라 불꽃 감지?}
+    C -- 아니오 --> D[정상 복귀 시 순찰 재개]
+    C -- 예 --> E[대기 로봇 다른 통로 출동]
+    E --> F{두 대 모두 50℃ 이상 + 불꽃?}
+    F -- 예 --> G[화재 확정 · 대피 안내 모드]
+    F -- 아니오 --> D</pre>
+  <figcaption>그림 4. 과열 감지 및 교차 확인 흐름 (<code>flow</code>)</figcaption>
+</figure>
+
+<h2>5. timeline — 시간·장면 순 진행</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 시연 장면 순서나 주차별 진행 일정을 시간 축으로 나란히 놓을 때.</p>
+<figure class="fig" data-kind="timeline">
+  <pre class="mermaid">timeline
+    title 시연 6장면 진행 순서
+    장면 1 : 평상시 순찰 : A 외곽 · B 간선 주행
+    장면 2 : 바닥 물건 : 바닥 카메라 공구 감지
+    장면 3 : 막힘 발견 : 초음파 정지 · 사진 보고
+    장면 4 : 충전 교대 : A 배터리 부족 → 3호 인계
+    장면 5 : 과열 교차 확인 : 4호 출동 → 화재 확정
+    장면 6 : 화재 대피 안내 : 4대 갈림길 LED 화살표</pre>
+  <figcaption>그림 5. 미션맵 시연 6장면 진행 순서 (<code>timeline</code>)</figcaption>
+</figure>
+
+<h2>6. map — 공간·동선 약도</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 실제 공간 배치, 한 방향 동선, 갈림길 위치를 평면 위에 그릴 때.</p>
+<figure class="fig" data-kind="map">
+  <svg viewBox="-34 0 528 320" role="img" aria-label="랙 A1~A3, 작업 공간 B1·B2·C1·C2, 도크, 비상구 1·2와 로봇 A 외곽 및 로봇 B 간선·사이 통로 한 방향 순찰 경로 약도">
+    <rect class="box" x="40" y="16" width="380" height="288"/>
+    <rect class="zone mute" x="76" y="46" width="68" height="44"/>
+    <text class="s" x="110" y="72" text-anchor="middle">A1</text>
+    <rect class="zone mute" x="196" y="46" width="68" height="44"/>
+    <text class="s" x="230" y="72" text-anchor="middle">A2</text>
+    <rect class="zone mute" x="316" y="46" width="68" height="44"/>
+    <text class="s" x="350" y="72" text-anchor="middle">A3</text>
+
+    <rect class="zone mute" x="76" y="130" width="118" height="42"/>
+    <text class="s" x="135" y="155" text-anchor="middle">B1</text>
+    <rect class="zone mute" x="266" y="130" width="118" height="42"/>
+    <text class="s" x="325" y="155" text-anchor="middle">B2</text>
+
+    <rect class="zone mute" x="76" y="210" width="118" height="42"/>
+    <text class="s" x="135" y="235" text-anchor="middle">C1</text>
+    <rect class="zone mute" x="266" y="210" width="118" height="42"/>
+    <text class="s" x="325" y="235" text-anchor="middle">C2</text>
+
+    <rect class="dash" x="92" y="268" width="76" height="28"/>
+    <text class="s" x="130" y="286" text-anchor="middle">도크</text>
+
+    <path class="ln flow" d="M58 268 V30 H402 V268 H168"/>
+    <path class="ln flow" d="M58 110 H396"/>
+    <path class="ln flow" d="M402 190 H64"/>
+    <path class="ln flow" d="M170 110 V34"/>
+    <path class="ln flow" d="M290 34 V106"/>
+    <path class="ln flow" d="M230 190 V114"/>
+    <path class="ln flow" d="M230 190 V264"/>
+
+    <circle class="pt ok" cx="230" cy="30" r="4"/>
+    <text class="s b halo" x="230" y="24" text-anchor="middle">④</text>
+    <circle class="pt ok" cx="80" cy="110" r="4"/>
+    <text class="s b halo" x="80" y="103" text-anchor="middle">①</text>
+    <circle class="pt ok" cx="380" cy="110" r="4"/>
+    <text class="s b halo" x="380" y="103" text-anchor="middle">②</text>
+    <circle class="pt ok" cx="230" cy="190" r="4"/>
+    <text class="s b halo" x="242" y="186">③</text>
+
+    <text class="s b err" x="34" y="114" text-anchor="end">비상구 1</text>
+    <text class="s b ok" x="426" y="114">비상구 2</text>
+  </svg>
+  <figcaption>그림 6. 미션맵 한 방향 순찰 경로 및 대피 갈림길 ①~④ 약도 (<code>map</code>)</figcaption>
+</figure>
+
+<h2>7. tree — 폴더·계층 구조</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 저장소 폴더 구조나 메뉴·구성 요소의 상하 계층을 텍스트 그대로 보여 줄 때.</p>
+<figure class="fig" data-kind="tree">
+  <pre class="tree">potent-safety/
+├── firmware/dog/        MechDog MicroPython (시험 도구 명령 + UART 수신)
+├── edge/                Pi 5 프로그램 (Python)
+│   ├── uart_link.py     보드와 CMD 주고받기
+│   ├── camera.py        XIAO 영상 받기
+│   ├── thermo.py        GY-906 읽기
+│   ├── detect.py        YOLO 추론
+│   └── agent.py         판단 · MQTT 보고 · 명령 처리
+├── server/              관제 서버 (FastAPI · Mosquitto · SQLite)
+├── dashboard/           관제 대시보드 (SVG 지도 · 팝업 · 경보음)
+└── tools/mechdog-test/  동작 시험 도구</pre>
+  <figcaption>그림 7. <code>potent-safety/</code> 소프트웨어 폴더 구성 (<code>tree</code>)</figcaption>
+</figure>
+
+<h2>8. chart — 수치·막대·추이 그래프</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 로봇별 배터리 잔량, 전압, 추론 지연 같은 수치 비교를 막대나 점으로 그릴 때.</p>
+<figure class="fig" data-kind="chart">
+  <svg viewBox="0 0 600 230" role="img" aria-label="로봇 A 18% 교대 필요, 로봇 B 68% 순찰 중, 3호 95% 대기, 4호 84% 대기 상태를 나타낸 배터리 잔량 막대 차트">
+    <line class="grid" x1="80" y1="30" x2="486" y2="30"/>
+    <line class="grid" x1="80" y1="68" x2="486" y2="68"/>
+    <line class="grid" x1="80" y1="105" x2="486" y2="105"/>
+    <line class="grid" x1="80" y1="142" x2="486" y2="142"/>
+    <line class="dash err" x1="80" y1="150" x2="492" y2="150"/>
+    <text class="s b err" x="498" y="154">교대 기준 20%</text>
+
+    <line class="axis" x1="80" y1="24" x2="80" y2="180"/>
+    <line class="axis" x1="80" y1="180" x2="492" y2="180"/>
+
+    <text class="s" x="72" y="34" text-anchor="end">100%</text>
+    <text class="s" x="72" y="72" text-anchor="end">75%</text>
+    <text class="s" x="72" y="109" text-anchor="end">50%</text>
+    <text class="s" x="72" y="146" text-anchor="end">25%</text>
+    <text class="s" x="72" y="184" text-anchor="end">0%</text>
+
+    <rect class="bar err" x="112" y="153" width="54" height="27"/>
+    <text class="s b err" x="139" y="147" text-anchor="middle">18%</text>
+    <text class="t" x="139" y="200" text-anchor="middle">A (교대)</text>
+
+    <rect class="bar ok" x="204" y="78" width="54" height="102"/>
+    <text class="s b ok" x="231" y="72" text-anchor="middle">68%</text>
+    <text class="t" x="231" y="200" text-anchor="middle">B (순찰)</text>
+
+    <rect class="bar mute" x="296" y="38" width="54" height="142"/>
+    <text class="s b mute" x="323" y="32" text-anchor="middle">95%</text>
+    <text class="t" x="323" y="200" text-anchor="middle">3호 (대기)</text>
+
+    <rect class="bar mute" x="388" y="54" width="54" height="126"/>
+    <text class="s b mute" x="415" y="48" text-anchor="middle">84%</text>
+    <text class="t" x="415" y="200" text-anchor="middle">4호 (대기)</text>
+  </svg>
+  <figcaption>그림 8. 로봇 4대 배터리 잔량 및 교대 임계값 20% 비교 (<code>chart</code>)</figcaption>
+</figure>
+
+<h2>9. custom — 규격 틀에 안 맞는 자유 그림</h2>
+<p class="note"><b>이럴 때 쓴다:</b> 센서 시야각이나 로봇 단면처럼 앞의 정형 형태에 맞추기 어려운 그림을 자유 SVG로 그릴 때.</p>
+<figure class="fig" data-kind="custom">
+  <svg viewBox="0 0 600 220" role="img" aria-label="MechDog 옆모습 기준 초음파 전방 14cm 정지 범위, 바닥 카메라 35도 꺾임 시야 14~30cm, 머리 카메라와 온도 센서 GY-906 전방 시야 단면도">
+    <line class="axis" x1="20" y1="186" x2="580" y2="186"/>
+    <text class="s" x="576" y="204" text-anchor="end">바닥 (단위 cm)</text>
+
+    <rect class="box" x="60" y="106" width="150" height="44" rx="4"/>
+    <text class="t b" x="135" y="132" text-anchor="middle">MechDog 본체</text>
+    <line class="ln" x1="82" y1="150" x2="82" y2="186"/>
+    <line class="ln" x1="188" y1="150" x2="188" y2="186"/>
+
+    <rect class="box" x="180" y="82" width="44" height="24"/>
+    <text class="s" x="202" y="98" text-anchor="middle">머리</text>
+    <circle class="pt ok" cx="202" cy="76" r="4"/>
+    <text class="s b" x="184" y="64" text-anchor="end">XIAO · GY-906</text>
+
+    <polygon class="zone ok" points="206,76 530,36 530,112"/>
+    <text class="s b ok" x="390" y="72">머리 카메라 · 온도(35°)</text>
+
+    <polygon class="zone err" points="224,96 364,86 364,116"/>
+    <text class="s b err" x="372" y="105">초음파 14cm 정지</text>
+
+    <polygon class="zone warn" points="196,112 300,186 430,186"/>
+    <text class="s b warn" x="352" y="176" text-anchor="middle">바닥 카메라 35° (14~30cm)</text>
+  </svg>
+  <figcaption>그림 9. 로봇 장착 센서별 감지 시야 단면 (<code>custom</code>)</figcaption>
+</figure>
+
+</div>
+<script src="diagram.js" defer></script>
+</body>
+</html>

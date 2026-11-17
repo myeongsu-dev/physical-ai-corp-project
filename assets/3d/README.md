@@ -1,6 +1,6 @@
 # 3D 모델 (GLB)
 
-기능 정의서(`2026-11-13/2026-11-13_02_기능정의서.html`)의 장착 구성 3D가 불러오는 부품 모델입니다. 제조사 공식 STEP을 GLB로 바꾸고 메시를 줄여 압축했습니다. 단위는 m이고, 뷰어가 mm로 키워 자리를 잡습니다.
+기능 정의서(`week01/02_기능정의서.html`)의 장착 구성 3D가 불러오는 부품 모델입니다. 제조사 공식 STEP을 GLB로 바꾸고 메시를 줄여 압축했습니다. 단위는 m이고, 뷰어가 mm로 키워 자리를 잡습니다.
 
 | 파일 | 부품 | 원본 | 라이선스 |
 |---|---|---|---|
@@ -13,3 +13,8 @@
 1. STEP → GLB: Python `cascadio` (OpenCascade)로 `cascadio.step_to_glb(입력, 출력, tol_linear=0.05, tol_angular=0.5)`. Pi 5는 `tol_linear=0.1`.
 2. 압축: `gltfpack -cc -si 0.5` (서보 · XIAO), `gltfpack -cc -si 0.1 -sp` (Pi 5). 뷰어는 three.js `MeshoptDecoder`로 풉니다.
 3. 뷰어의 배치 값(파일 좌표 → 로봇 좌표)은 HTML의 `models` 블록 주석에 있습니다. 원본 STEP의 원점이 바뀌면 그 값도 고칩니다.
+
+## 위젯
+
+- `viewer.js`: 3D 장착 구성 위젯(`[data-widget="v3d"]`)의 마크업·부품 표·three.js 뷰어를 그리는 ES 모듈.
+- `viewer.css`: 3D 뷰어 위젯(`.v3d*`) 스타일.

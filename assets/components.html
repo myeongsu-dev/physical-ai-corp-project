@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문서 컴포넌트 견본</title>
+<link rel="stylesheet" href="../assets/doc.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동">
+  <a href="../index.html">← 목차</a>
+  <span>
+    <a href="components.html" aria-current="page">00<span class="lbl"> 컴포넌트 견본</span></a>
+    <a href="template.html">01<span class="lbl"> 새 문서 뼈대</span></a>
+  </span>
+</nav>
+<div class="doc">
+
+<h1>문서 공통 컴포넌트 견본</h1>
+<p class="sub"><code>doc.css</code> · <code>doc.js</code> · <code>components.json</code>에 정의된 모든 요소 보기</p>
+
+<h2>1. 요점 · 보조 상자 <span class="meta">h2 .meta 예시</span></h2>
+<div class="def">한 줄 요점 상자(<code>.def</code>): 문서의 핵심 결론을 <br class="w">넓은 화면에서 두 줄로 끊어 보여 준다.</div>
+
+<h3>1-1. 안내 · 줄 · 조건 상자 <span class="meta">h3 .meta 예시</span></h3>
+<div class="callout">
+  <strong>일반 안내 상자 (<code>div.callout</code>):</strong>
+  <ul>
+    <li>목록 첫 번째 줄 <span class="subnote">항목 아래 작은 설명(<code>span.subnote</code>)이 들어갑니다.</span></li>
+    <li>목록 두 번째 줄 — <span class="nw">줄바꿈 금지(.nw)</span>, <span class="muted">흐린 글자(.muted)</span></li>
+  </ul>
+</div>
+<div class="callout warn">
+  <strong>주의 · 확인 상자 (<code>div.callout.warn</code>):</strong>
+  <ol>
+    <li>주문 전 커넥터 규격을 확인합니다.</li>
+  </ol>
+</div>
+<div class="rows">
+  <div><b>평상시</b><span>2대 순찰 <i>→</i> 이상 감지 <i>→</i> 관리자 조치 (<code>div.rows</code>)</span></div>
+  <div><b>비상시</b><span>4대 모두 출동</span></div>
+</div>
+<div class="specs" aria-label="조건 상자 예시">
+  <div><strong>예산 한도</strong><span>택배비 포함 <span class="nw">30만 원</span> 이내 (<code>div.specs</code>)</span></div>
+  <div><strong>배송 방식</strong><span>대표자 1인 일괄 배송</span></div>
+</div>
+
+<h2>2. 배치 · 수치 카드</h2>
+<div class="cols-2">
+  <div><b>2열 카드 A (<code>.cols-2</code>)</b>왼쪽 칸 내용입니다. 모바일(640px 이하)에서는 세로로 쌓입니다.</div>
+  <div><b>2열 카드 B</b>오른쪽 칸 내용입니다.</div>
+</div>
+<div class="cols-3">
+  <div><b>로봇층 (<code>.cols-3</code>)</b>제어 보드</div>
+  <div><b>엣지층</b>라즈베리 파이 5</div>
+  <div><b>관제층</b>노트북 서버</div>
+</div>
+<div class="kpis" aria-label="수치 요약 예시">
+  <div class="kpi"><div class="kl">예산 한도 (<code>.kl</code>)</div><div class="kv">300,000원</div><div class="kd">기준 설명 (<code>.kd</code>)</div></div>
+  <div class="kpi"><div class="kl">신청 합계</div><div class="kv">277,924원</div><div class="kd">배송비 포함</div></div>
+  <div class="kpi"><div class="kl">남은 예산</div><div class="kv">22,076원</div><div class="kd">한도 안</div></div>
+  <div class="kpi"><div class="kl">신청 품목</div><div class="kv">16건</div><div class="kd">예비 1건 포함</div></div>
+</div>
+
+<h2>3. 표 · 모바일 카드 표</h2>
+<div class="tw"><table>
+  <tr><th>항목</th><th>설명</th><th class="num">수량</th><th class="num">금액</th><th>상태</th></tr>
+  <tr class="grp"><td colspan="5">묶음 줄 (<code>tr.grp</code>)</td></tr>
+  <tr><td class="k"><i class="dot blue"></i>항목 A</td><td>설명 텍스트<span class="subnote">보조 설명 (<code>span.subnote</code>)</span></td><td class="num">2개</td><td class="num">10,000원</td><td><span class="tag ok">보유</span></td></tr>
+  <tr><td class="k"><i class="dot green"></i>항목 B</td><td>설명 텍스트</td><td class="num">4개</td><td class="num muted">미정</td><td><span class="tag buy">구매 필요</span></td></tr>
+  <tr class="total"><td class="k">합계 (<code>tr.total</code>)</td><td>총 2건</td><td class="num">6개</td><td class="num">10,000원</td><td>—</td></tr>
+</table></div>
+<p class="note">위 5칸 표는 <code>doc.js</code>가 자동으로 <code>table.cards</code>를 붙여 640px 이하에서 카드 형태로 바꿉니다.</p>
+
+<div class="tw cols-2"><table>
+  <tr><th>2열 표 (<code>.tw.cols-2</code>)</th><th>내용</th></tr>
+  <tr><td class="k">첫 칸 고정 폭</td><td>첫 번째 열이 13em(모바일 8.5em)으로 고정됩니다.</td></tr>
+</table></div>
+
+<h2>4. 상태 배지 · 범례 · 출처</h2>
+<div class="legend">
+  <span><strong>구분 안내 (<code>.legend</code>)</strong></span>
+  <span class="item"><span class="tag ok">보유</span> 완료 · 직접 제작</span>
+  <span class="item"><span class="tag chk">확인 중</span> 정할 것</span>
+  <span class="item"><span class="tag no">없음</span> 비활성 · 제외</span>
+  <span class="item"><span class="tag buy">구매</span> 구매 필요</span>
+  <span class="item"><span class="tag hold">보류</span> 보유분 · 보류</span>
+  <span class="item"><span class="tag spare">여분</span> 예비용</span>
+</div>
+<p class="note">
+  <span class="item"><span class="tag must">Must</span> 필수</span>
+  <span class="item"><span class="tag should">Should</span> 권장</span>
+  <span class="item"><span class="tag could">Could</span> 선택</span>
+  <span class="item"><span class="tag wont">Won't</span> 이번 제외</span>
+  <span class="item"><i class="dot blue"></i>파랑</span>
+  <span class="item"><i class="dot green"></i>초록</span>
+  <span class="item"><i class="dot gray"></i>회색</span>
+  <span class="item"><i class="dot red"></i>빨강</span>
+</p>
+
+<details>
+  <summary>접이식 상세 보기 (<code>details</code> / <code>summary</code>)</summary>
+  <p class="muted">접었다 펼 수 있는 보조 표나 설명을 넣습니다.</p>
+</details>
+
+<pre><code>// 코드 블록 (pre > code) 예시
+{ "status": "ok", "count": 4 }</code></pre>
+
+<ol class="src">
+  <li>출처 목록(<code>ol.src</code>) 예시 — <a href="../index.html">프로젝트 목차</a></li>
+</ol>
+
+<h2>5. 그림 틀 · 위젯 자리</h2>
+<figure class="fig" data-kind="blocks">
+  <svg viewBox="0 0 480 90" width="480" height="90" role="img" aria-label="입력에서 처리, 출력으로 이어지는 단순 블록 그림 견본">
+    <rect x="20" y="20" width="110" height="50" fill="#fff" stroke="#111" stroke-width="2"/>
+    <text x="75" y="50" text-anchor="middle" font-size="14" fill="#111">입력</text>
+    <line x1="130" y1="45" x2="185" y2="45" stroke="#111" stroke-width="2"/>
+    <rect x="185" y="20" width="110" height="50" fill="#fff" stroke="#111" stroke-width="2"/>
+    <text x="240" y="50" text-anchor="middle" font-size="14" fill="#111">처리</text>
+    <line x1="295" y1="45" x2="350" y2="45" stroke="#111" stroke-width="2"/>
+    <rect x="350" y="20" width="110" height="50" fill="#fff" stroke="#111" stroke-width="2"/>
+    <text x="405" y="50" text-anchor="middle" font-size="14" fill="#111">출력</text>
+  </svg>
+  <figcaption>그림 틀(<code>figure.fig[data-kind]</code> + <code>figcaption</code>) 견본. 안쪽 SVG 도형 스타일은 <code>diagram.css</code>에서 정합니다.</figcaption>
+</figure>
+
+<div data-widget="v3d">
+  <p class="note">위젯 자리(<code>div[data-widget="v3d"]</code>): 실제 페이지에서는 3D 뷰어 또는 시뮬레이션 위젯이 이 안에 마운트됩니다.</p>
+</div>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+</body>
+</html>

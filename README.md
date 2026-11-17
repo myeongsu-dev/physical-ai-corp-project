@@ -1,9 +1,9 @@
-# physicalAI_team10_log
+# physical-ai-corp-project
 
 > **AI 협동로봇 기반 공장&창고 안전관리 시스템**  
 > 청년 피지컬AI 2기 · 10팀 포텐 기업 과제 주차별 기록 저장소
 
-[웹에서 보기 (목차)](https://myeongsu-dev.github.io/physicalAI_team10_log/)
+[웹에서 보기 (목차)](https://myeongsu-dev.github.io/physical-ai-corp-project/)
 
 MechDog 4대가 대피 통로를 순찰하며 막힘·바닥 물건을 찾아 사람이 치우게 하고, 화재 때는 막힌 길을 피해 비상구로 안내하는 프로젝트를 정리해 둡니다.
 
@@ -30,7 +30,7 @@ MechDog 4대가 대피 통로를 순찰하며 막힘·바닥 물건을 찾아 �
 ## 폴더 구성
 
 ```text
-physicalAI_team10_log/
+physical-ai-corp-project/
 ├── index.html                  # 주차 선택 페이지 (웹 포털)
 ├── assets/3d/                  # 3D 장착 모델이 불러오는 부품 GLB (서보 · XIAO · Pi 5, 출처는 README)
 └── 2026-11-13/                 # 1주차 멘토링 정리 문서

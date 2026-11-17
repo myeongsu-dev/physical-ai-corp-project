@@ -1,0 +1,414 @@
+/* diagram.css — 문서 그림 도형 어휘 + Mermaid·트리·범례 최소 스타일
+ *
+ * ============================================================================
+ * 옛 SVG 클래스 → 새 어휘 대응표 (W7·W9·W11 문서 마이그레이션용)
+ *   원칙: 원래 생김새(색·실선/점선·화살표·채움)를 그대로 지킨다.
+ * ============================================================================
+ *
+ * 1) GP/week02/01_시스템_아키텍처.html (.fig 구성도 SVG)
+ *   - .fig (div)                 → figure.fig[data-kind="blocks"] + figcaption (테두리 2px #111, 바탕 #fff)
+ *   - .box                       → .box (유지: #fff 채움, #111 2px 실선)
+ *   - .dash                      → .dash (유지: 채움 없음, #111 1.5px 점선 6 4)
+ *   - .band                      → .band (유지: #111 채움 상단 띠)
+ *   - .hd                        → .hd (유지: #fff 15px 굵은 글자)
+ *   - .b                         → .b (유지: #111 14px 굵은 글자)
+ *   - .t                         → .t (유지: #111 13px 본문 글자)
+ *   - .s                         → .s (유지: #555 12px 보조 글자)
+ *   - .ln (유선 단방향: USB·I2C)  → .ln.wire.flow.c-blue (#1971c2 파란 실선, 단방향 화살표; 굵기 2.5→2px)
+ *   - .ln (유선 양방향: UART)     → .ln.wire.flow.bi.c-blue (#1971c2 파란 실선, 양방향 화살표; 굵기 2.5→2px)
+ *   - .ln (무선: Wi-Fi·MQTT, WS) → .ln.air.flow.bi.c-blue (#1971c2 파란 실선, 양방향 화살표; 점선 아님)
+ *   - .lb (연결 라벨)             → .s.b.c-blue (#1971c2 12px 굵은 글자)
+ *   - <defs><marker id="ar">     → 삭제 (diagram.js가 context-stroke 화살촉 #arrow 자동 삽입 → 선 색 #1971c2 따름)
+ *   - marker-start / end 속성    → .flow / .flow.bi 클래스로 대체
+ *
+ * 2) GP/week01/02_기능정의서.html (.graph · .legend · 구성도 SVG .w / .m)
+ *   - .graph (div)               → figure.fig[data-kind="blocks"] + figcaption (참고: 틀 바탕 #f3f4f5→#fff, 테두리 1→2px)
+ *   - svg.w / svg.m              → svg.w / svg.m (유지: 640px 이하에서 .m 전환)
+ *   - .box                       → .box (유지: #fff 채움, #111 2px 실선)
+ *   - .net                       → .zone (유지: #e8f0f8 채움, #b8bec4 1.5px 실선)
+ *   - .n                         → .t.b (#111 13px 굵은 글자)
+ *   - .t                         → .s (#555 12px 보조 글자)
+ *   - .halo                      → .halo (유지: 4px 흰 외곽선, .fig 바탕 #fff에 맞춤)
+ *   - .ln (유선 단방향: USB)      → .ln.wire.flow (#111 검정 실선 2px, 단방향 화살표)
+ *   - .ln.bi (유선 양방향: ⑤)     → .ln.wire.flow.bi (#111 검정 실선 2px, 양방향 화살표)
+ *   - .ln (무선·웹 단방향: ②~④)  → .ln.air.flow (#111 검정 실선 2px, 단방향 화살표; 실선 유지)
+ *   - .ln.bi (무선 양방향: ①)     → .ln.air.flow.bi (#111 검정 실선 2px, 양방향 화살표; 실선 유지)
+ *   - <defs><marker id="arr">/#arr2 → 삭제 (diagram.js가 #arrow 자동 삽입 → 선 색 #111 따름)
+ *   - .legend                    → .legend (유지: figure.fig 안 또는 바로 아래; 범례 선은 .ln, 묶음 네모는 .zone)
+ *
+ * 3) GP/week01/03_미션맵_시연구성안.html (.graph · #sim 정적 약도 요소 · 표 안 인라인 SVG 기준)
+ *   - 참고: #sim은 [data-widget="missionmap"] 위젯 내부이므로 그대로 두고, 위젯 밖 약도나
+ *     정적 요소를 도형 어휘로 옮길 때 아래 대응을 따른다.
+ *   - .graph (div)               → figure.fig[data-kind="map"] + figcaption (SVG 안 <style>.t 삭제)
+ *   - 외곽 벽                     → .box (#fff 채움, #111 2px 실선)
+ *   - 랙·작업공간(A1~C2)          → .zone.mute.c-ink (#e9ecef 채움, #111 테두리)
+ *   - 도크 점선 틀                → .dash (채움 없음, #111 점선)
+ *   - 바닥 주행선                 → .ln (#111 검정 실선 2px; 방향 표시는 .ln.flow)
+ *   - 바닥 마커(빨강/노랑/초록)    → .ln.c-red(#e03131) / .ln.c-yellow(#f2c94c) / .ln.c-lime(#40c057)
+ *   - 로봇 역할·경로 색           → .c-blue(#1971c2, A 외곽) / .c-green(#2f9e44, B 간선) / .c-gray(#868e96, 3·4 대기)
+ *   - 갈림길 ①~④ · 추정 위치 원   → .dash.c-green(#2f9e44 점선) / .dash.c-gray(#868e96 점선)
+ *   - 바닥 카메라 시야 테두리      → .box.c-amber / .c-amber(#e67700)
+ *   - 라벨(A1~C2·도크·CP5~8·비상구) → .s(#555) / .s.halo / .s.b (강조: .c-red/.err, .c-green/.ok, .c-orange/.warn)
+ * ============================================================================
+ */
+
+/* 그림 틀 (doc.css가 없을 때도 읽을 수 있도록 최소 틀 스타일 제공) */
+.fig {
+  overflow-x: auto;
+  border: 2px solid var(--ink, #111);
+  background: var(--paper, #fff);
+  margin: 8px 0;
+}
+.fig > figcaption {
+  position: sticky;
+  left: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--thin, #b8bec4);
+  background: var(--code, #f3f4f5);
+  color: var(--muted, #555);
+  font-size: 13px;
+}
+
+/* 그림 안 SVG 기본 배치 및 반응형 크기 */
+.fig > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.fig[data-kind="blocks"] > svg { min-width: 760px; }
+.fig[data-kind="map"] > svg,
+.fig[data-kind="chart"] > svg,
+.fig[data-kind="custom"] > svg { min-width: 480px; }
+.fig > svg.w { min-width: 600px; }
+.fig > svg.m { display: none; min-width: 0; }
+@media (max-width: 640px) {
+  .fig > svg.w { display: none; }
+  .fig > svg.m { display: block; min-width: 0; max-width: 380px; margin: 0 auto; }
+  .fig[data-kind="map"] > svg { min-width: 0; }
+}
+
+/* diagram.js가 넣는 공용 화살촉 마커 숨김 컨테이너 (display:none 금지: 마커 참조 유지) */
+.diagram-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Mermaid / 폴더 트리 / 범례 */
+.fig pre.mermaid {
+  margin: 0;
+  padding: 12px;
+  background: var(--paper, #fff);
+  border: 0;
+  overflow-x: auto;
+  text-align: center;
+  font: 13px/1.5 ui-monospace, Consolas, "Malgun Gothic", monospace;
+}
+.fig pre.mermaid svg {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.fig pre.tree {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--paper, #fff);
+  border: 0;
+  overflow-x: auto;
+  font: 13px/1.55 ui-monospace, Consolas, "Malgun Gothic", monospace;
+  color: var(--ink, #111);
+}
+.fig .legend,
+.legend {
+  display: flex;
+  gap: 8px 18px;
+  flex-wrap: wrap;
+  color: var(--muted, #555);
+  font-size: 13px;
+  margin: 6px 0 0;
+  padding: 6px 10px;
+}
+.fig .legend {
+  border-top: 1px dashed var(--thin, #b8bec4);
+  margin-top: 0;
+}
+.legend svg {
+  display: inline-block;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  vertical-align: -3px;
+}
+
+/* ============================================================================
+ * 도형 어휘 (선택자는 .fig svg / .legend svg 안으로 한정, 위치·크기 제외 생김새만 정의)
+ * ============================================================================ */
+
+/* 기본 글꼴 */
+:is(.fig, .legend) svg text {
+  font-family: system-ui, "Malgun Gothic", sans-serif;
+  fill: var(--ink, #111);
+}
+
+/* 면: .box .band .zone .dash */
+:is(.fig, .legend) svg .box {
+  fill: var(--paper, #fff);
+  stroke: var(--ink, #111);
+  stroke-width: 2;
+}
+:is(.fig, .legend) svg .band {
+  fill: var(--ink, #111);
+}
+:is(.fig, .legend) svg .zone {
+  fill: var(--net, #e8f0f8);
+  stroke: var(--thin, #b8bec4);
+  stroke-width: 1.5;
+}
+:is(.fig, .legend) svg .dash {
+  fill: none;
+  stroke: var(--ink, #111);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+
+/* 선: .ln .ln.wire .ln.air .ln.dashed .ln.flow (.bi 양방향) */
+:is(.fig, .legend) svg .ln {
+  fill: none;
+  stroke: var(--ink, #111);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+:is(.fig, .legend) svg .ln.wire,
+:is(.fig, .legend) svg .ln.air {
+  stroke-dasharray: none;
+}
+:is(.fig, .legend) svg .ln.dashed {
+  stroke-dasharray: 5 4;
+}
+:is(.fig, .legend) svg .ln.flow {
+  marker-end: url(#arrow);
+}
+:is(.fig, .legend) svg .ln.flow.bi,
+:is(.fig, .legend) svg .ln.bi {
+  marker-start: url(#arrow);
+  marker-end: url(#arrow);
+}
+
+/* 글자: .hd .t .s .b */
+:is(.fig, .legend) svg .hd {
+  fill: var(--paper, #fff);
+  font-size: 15px;
+  font-weight: 700;
+}
+:is(.fig, .legend) svg .t {
+  fill: var(--ink, #111);
+  font-size: 13px;
+}
+:is(.fig, .legend) svg .s {
+  fill: var(--muted, #555);
+  font-size: 12px;
+}
+:is(.fig, .legend) svg .b {
+  fill: var(--ink, #111);
+  font-size: 14px;
+  font-weight: 700;
+}
+:is(.fig, .legend) svg .t.b {
+  font-size: 13px;
+  font-weight: 700;
+}
+:is(.fig, .legend) svg .s.b {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* 차트용: .axis .grid .bar .pt .halo */
+:is(.fig, .legend) svg .axis {
+  fill: none;
+  stroke: var(--ink, #111);
+  stroke-width: 1.5;
+}
+:is(.fig, .legend) svg .grid {
+  fill: none;
+  stroke: var(--thin, #b8bec4);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+:is(.fig, .legend) svg .bar {
+  fill: var(--ink, #111);
+  stroke: none;
+}
+:is(.fig, .legend) svg .pt {
+  fill: var(--ink, #111);
+  stroke: var(--paper, #fff);
+  stroke-width: 1.5;
+}
+:is(.fig, .legend) svg .halo {
+  stroke: var(--paper, #fff);
+  stroke-width: 4;
+  paint-order: stroke;
+  stroke-linejoin: round;
+}
+
+/* 상태 색: .ok .warn .err .mute (글자·선·면·차트 공통 적용) */
+:is(.fig, .legend) svg text.ok,
+:is(.fig, .legend) svg .ok text { fill: var(--green, #2f9e44); }
+:is(.fig, .legend) svg .ln.ok,
+:is(.fig, .legend) svg .dash.ok,
+:is(.fig, .legend) svg .box.ok { stroke: var(--green, #2f9e44); }
+:is(.fig, .legend) svg .band.ok,
+:is(.fig, .legend) svg .bar.ok,
+:is(.fig, .legend) svg .pt.ok { fill: var(--green, #2f9e44); }
+:is(.fig, .legend) svg .zone.ok { fill: #ebfbee; stroke: var(--green, #2f9e44); }
+
+:is(.fig, .legend) svg text.warn,
+:is(.fig, .legend) svg .warn text { fill: var(--todo, #b26a00); }
+:is(.fig, .legend) svg .ln.warn,
+:is(.fig, .legend) svg .dash.warn,
+:is(.fig, .legend) svg .box.warn { stroke: var(--todo, #b26a00); }
+:is(.fig, .legend) svg .band.warn,
+:is(.fig, .legend) svg .bar.warn,
+:is(.fig, .legend) svg .pt.warn { fill: var(--todo, #b26a00); }
+:is(.fig, .legend) svg .zone.warn { fill: #fff9db; stroke: var(--todo, #b26a00); }
+
+:is(.fig, .legend) svg text.err,
+:is(.fig, .legend) svg .err text { fill: var(--red, #e03131); }
+:is(.fig, .legend) svg .ln.err,
+:is(.fig, .legend) svg .dash.err,
+:is(.fig, .legend) svg .box.err { stroke: var(--red, #e03131); }
+:is(.fig, .legend) svg .band.err,
+:is(.fig, .legend) svg .bar.err,
+:is(.fig, .legend) svg .pt.err { fill: var(--red, #e03131); }
+:is(.fig, .legend) svg .zone.err { fill: #fff5f5; stroke: var(--red, #e03131); }
+
+:is(.fig, .legend) svg text.mute,
+:is(.fig, .legend) svg .mute text { fill: var(--muted, #555); }
+:is(.fig, .legend) svg .ln.mute,
+:is(.fig, .legend) svg .dash.mute,
+:is(.fig, .legend) svg .box.mute { stroke: var(--gray, #868e96); }
+:is(.fig, .legend) svg .band.mute,
+:is(.fig, .legend) svg .bar.mute,
+:is(.fig, .legend) svg .pt.mute { fill: var(--gray, #868e96); }
+:is(.fig, .legend) svg .zone.mute { fill: #e9ecef; stroke: var(--gray, #868e96); }
+
+/* 지정 색: 선·면 테두리는 stroke, 글자·채움 도형은 fill (화살촉은 context-stroke로 선 색 추적) */
+:is(.fig, .legend) svg text.c-ink,
+:is(.fig, .legend) svg tspan.c-ink,
+:is(.fig, .legend) svg .c-ink text,
+:is(.fig, .legend) svg .band.c-ink,
+:is(.fig, .legend) svg .bar.c-ink,
+:is(.fig, .legend) svg .pt.c-ink { fill: var(--ink, #111); }
+:is(.fig, .legend) svg .ln.c-ink,
+:is(.fig, .legend) svg .dash.c-ink,
+:is(.fig, .legend) svg .box.c-ink,
+:is(.fig, .legend) svg .zone.c-ink,
+:is(.fig, .legend) svg .axis.c-ink,
+:is(.fig, .legend) svg .grid.c-ink { stroke: var(--ink, #111); }
+
+:is(.fig, .legend) svg text.c-blue,
+:is(.fig, .legend) svg tspan.c-blue,
+:is(.fig, .legend) svg .c-blue text,
+:is(.fig, .legend) svg .band.c-blue,
+:is(.fig, .legend) svg .bar.c-blue,
+:is(.fig, .legend) svg .pt.c-blue { fill: var(--blue, #1971c2); }
+:is(.fig, .legend) svg .ln.c-blue,
+:is(.fig, .legend) svg .dash.c-blue,
+:is(.fig, .legend) svg .box.c-blue,
+:is(.fig, .legend) svg .zone.c-blue,
+:is(.fig, .legend) svg .axis.c-blue,
+:is(.fig, .legend) svg .grid.c-blue { stroke: var(--blue, #1971c2); }
+
+:is(.fig, .legend) svg text.c-red,
+:is(.fig, .legend) svg tspan.c-red,
+:is(.fig, .legend) svg .c-red text,
+:is(.fig, .legend) svg .band.c-red,
+:is(.fig, .legend) svg .bar.c-red,
+:is(.fig, .legend) svg .pt.c-red { fill: var(--red, #e03131); }
+:is(.fig, .legend) svg .ln.c-red,
+:is(.fig, .legend) svg .dash.c-red,
+:is(.fig, .legend) svg .box.c-red,
+:is(.fig, .legend) svg .zone.c-red,
+:is(.fig, .legend) svg .axis.c-red,
+:is(.fig, .legend) svg .grid.c-red { stroke: var(--red, #e03131); }
+
+:is(.fig, .legend) svg text.c-green,
+:is(.fig, .legend) svg tspan.c-green,
+:is(.fig, .legend) svg .c-green text,
+:is(.fig, .legend) svg .band.c-green,
+:is(.fig, .legend) svg .bar.c-green,
+:is(.fig, .legend) svg .pt.c-green { fill: var(--green, #2f9e44); }
+:is(.fig, .legend) svg .ln.c-green,
+:is(.fig, .legend) svg .dash.c-green,
+:is(.fig, .legend) svg .box.c-green,
+:is(.fig, .legend) svg .zone.c-green,
+:is(.fig, .legend) svg .axis.c-green,
+:is(.fig, .legend) svg .grid.c-green { stroke: var(--green, #2f9e44); }
+
+:is(.fig, .legend) svg text.c-orange,
+:is(.fig, .legend) svg tspan.c-orange,
+:is(.fig, .legend) svg .c-orange text,
+:is(.fig, .legend) svg .band.c-orange,
+:is(.fig, .legend) svg .bar.c-orange,
+:is(.fig, .legend) svg .pt.c-orange { fill: var(--todo, #b26a00); }
+:is(.fig, .legend) svg .ln.c-orange,
+:is(.fig, .legend) svg .dash.c-orange,
+:is(.fig, .legend) svg .box.c-orange,
+:is(.fig, .legend) svg .zone.c-orange,
+:is(.fig, .legend) svg .axis.c-orange,
+:is(.fig, .legend) svg .grid.c-orange { stroke: var(--todo, #b26a00); }
+
+:is(.fig, .legend) svg text.c-gray,
+:is(.fig, .legend) svg tspan.c-gray,
+:is(.fig, .legend) svg .c-gray text,
+:is(.fig, .legend) svg .band.c-gray,
+:is(.fig, .legend) svg .bar.c-gray,
+:is(.fig, .legend) svg .pt.c-gray { fill: var(--gray, #868e96); }
+:is(.fig, .legend) svg .ln.c-gray,
+:is(.fig, .legend) svg .dash.c-gray,
+:is(.fig, .legend) svg .box.c-gray,
+:is(.fig, .legend) svg .zone.c-gray,
+:is(.fig, .legend) svg .axis.c-gray,
+:is(.fig, .legend) svg .grid.c-gray { stroke: var(--gray, #868e96); }
+
+:is(.fig, .legend) svg text.c-yellow,
+:is(.fig, .legend) svg tspan.c-yellow,
+:is(.fig, .legend) svg .c-yellow text,
+:is(.fig, .legend) svg .band.c-yellow,
+:is(.fig, .legend) svg .bar.c-yellow,
+:is(.fig, .legend) svg .pt.c-yellow { fill: #f2c94c; }
+:is(.fig, .legend) svg .ln.c-yellow,
+:is(.fig, .legend) svg .dash.c-yellow,
+:is(.fig, .legend) svg .box.c-yellow,
+:is(.fig, .legend) svg .zone.c-yellow,
+:is(.fig, .legend) svg .axis.c-yellow,
+:is(.fig, .legend) svg .grid.c-yellow { stroke: #f2c94c; }
+
+:is(.fig, .legend) svg text.c-lime,
+:is(.fig, .legend) svg tspan.c-lime,
+:is(.fig, .legend) svg .c-lime text,
+:is(.fig, .legend) svg .band.c-lime,
+:is(.fig, .legend) svg .bar.c-lime,
+:is(.fig, .legend) svg .pt.c-lime { fill: #40c057; }
+:is(.fig, .legend) svg .ln.c-lime,
+:is(.fig, .legend) svg .dash.c-lime,
+:is(.fig, .legend) svg .box.c-lime,
+:is(.fig, .legend) svg .zone.c-lime,
+:is(.fig, .legend) svg .axis.c-lime,
+:is(.fig, .legend) svg .grid.c-lime { stroke: #40c057; }
+
+:is(.fig, .legend) svg text.c-amber,
+:is(.fig, .legend) svg tspan.c-amber,
+:is(.fig, .legend) svg .c-amber text,
+:is(.fig, .legend) svg .band.c-amber,
+:is(.fig, .legend) svg .bar.c-amber,
+:is(.fig, .legend) svg .pt.c-amber { fill: #e67700; }
+:is(.fig, .legend) svg .ln.c-amber,
+:is(.fig, .legend) svg .dash.c-amber,
+:is(.fig, .legend) svg .box.c-amber,
+:is(.fig, .legend) svg .zone.c-amber,
+:is(.fig, .legend) svg .axis.c-amber,
+:is(.fig, .legend) svg .grid.c-amber { stroke: #e67700; }

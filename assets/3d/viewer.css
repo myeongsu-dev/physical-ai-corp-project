@@ -1,0 +1,31 @@
+/* 로봇 장착 구성 3D 뷰어 (11/12 기획안에서 가져옴) */
+.v3d{--panel:#fff;--line:#b8bec4;--bg:#f7f6f3;--accent:#c2410c;--info:#1d4ed8;--bad:#b91c1c;--ok:#15803d;--gray:#6b7280;--cp-y:#eab308;--cp-b:#2563eb;display:grid;gap:8px;margin:8px 0}
+.v3d{--v3d-floor:#ebe7dd;--v3d-body:#f2b705;--v3d-dark:#2a2d33;--v3d-rubber:#3a3d42;--v3d-metal:#c9cdd2;--v3d-pcb:#3f4a5c;--v3d-white:#f1efe9;--v3d-led:#3b82f6;--v3d-print:#0d9488;--v3d-line:#16a34a;
+  border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px;display:grid;gap:8px;margin-top:8px}
+.v3d > *{min-width:0}
+.v3d-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.v3d-seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.v3d-seg button{border:0;background:var(--panel);color:var(--muted);padding:6px 10px;cursor:pointer;font:inherit;font-size:.8rem;font-weight:700}
+.v3d-seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.v3d-angle{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:700}
+.v3d-angle input{width:110px;accent-color:var(--accent)}
+.v3d-stage{position:relative;height:480px;border-radius:8px;overflow:hidden;background:var(--bg)}
+@media (max-width:520px){.v3d-stage{height:400px}}
+.v3d-stage canvas{display:block}
+.v3d-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin:0;padding:16px;text-align:center;color:var(--muted);font-size:.9rem}
+.v3d-labels{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.v3d-labels span{position:absolute;left:0;top:0;white-space:nowrap;font-size:.72rem;font-weight:700;line-height:1.5;padding:0 7px;border-radius:99px;background:var(--panel);border:1px solid var(--line)}
+.v3d-labels span.p{border-color:var(--v3d-print);color:var(--v3d-print)}
+.v3d-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.78rem;color:var(--muted)}
+.v3d-legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.v3d-read{margin:0;font-size:.84rem;color:var(--muted)} .v3d-read b{color:var(--ink)}
+.v3d-parts{font-size:.8rem}
+.v3d-legend i.v3d-c-fovf{background:var(--accent)}
+.v3d-legend i.v3d-c-fovc{background:var(--info)}
+.v3d-legend i.v3d-c-beam{background:var(--bad)}
+.v3d-legend i.v3d-c-ir{background:var(--ok)}
+.v3d-legend i.v3d-c-print{background:var(--v3d-print)}
+.v3d-legend i.v3d-c-ghost{background:var(--muted);opacity:.5}
+[data-widget="v3d"] details{margin:8px 0}
+[data-widget="v3d"] details summary{cursor:pointer;font-weight:700}
+[data-widget="v3d"] details[open] summary{margin-bottom:6px}

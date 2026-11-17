@@ -123,8 +123,8 @@ td.price.muted{color:var(--muted);font-weight:400}
 
 <div class="kpis" aria-label="전체 현황 요약">
   <div class="kpi"><div class="kl">신청 예산 한도</div><div class="kv">300,000원</div><div class="kd">택배비 포함 총액 기준</div></div>
-  <div class="kpi"><div class="kl">신청 합계</div><div class="kv">278,540원</div><div class="kd">배송비 <span class="nw">17,150원</span> 포함</div></div>
-  <div class="kpi"><div class="kl">남은 예산</div><div class="kv">21,460원</div><div class="kd">30만 원 한도 안</div></div>
+  <div class="kpi"><div class="kl">신청 합계</div><div class="kv">277,924원</div><div class="kd">배송비 <span class="nw">17,150원</span> 포함</div></div>
+  <div class="kpi"><div class="kl">남은 예산</div><div class="kv">22,076원</div><div class="kd">30만 원 한도 안</div></div>
   <div class="kpi"><div class="kl">신청 품목</div><div class="kv">16건</div><div class="kd">예비용 <span class="nw">1건</span> 포함</div></div>
 </div>
 
@@ -132,7 +132,7 @@ td.price.muted{color:var(--muted);font-weight:400}
   <strong>주문 · 수령 때 확인할 것</strong>
   <ol>
     <li><strong>보조배터리 실측:</strong> LED 데크 아래층에 들어가야 하므로 폭 68mm 이하인지 재고, 길이 · 폭 · 두께로 데크 크기를 확정합니다.</li>
-    <li><strong>케이블 끼움 확인:</strong> <code>NW3</code> 케이블(A2501 호환)이 MechDog 포트(XH2.54)에 꽉 끼는지 받자마자 확인합니다. 안 맞으면 UART는 예비 케이블로 바꿉니다. 비전 모듈 경로가 약 19cm라 20cm 케이블은 배 아래에 바짝 붙여 묶습니다.</li>
+    <li><strong>포트 커넥터 확인:</strong> MechDog 포트는 Hiwonder 센서 포트 규격(<code>5264-4AW</code>)과 실측 피치 2.5mm에 따라 Molex 5264 계열로 보고 <code>NW3-5264-04</code>를 신청합니다. 주문 전에 원래 케이블 하우징에 딸깍 걸리는 걸쇠가 있는지 보고(있으면 5264), 걸쇠 없이 끼워 맞추는 형태면 XH 계열이니 예비 XH 케이블로 바꿉니다. 비전 모듈 경로가 약 19cm라 20cm 케이블은 배 아래에 바짝 붙여 묶습니다.</li>
     <li><strong>온도 센서 핀헤더:</strong> 받은 센서에 핀헤더가 일자로 납땜돼 있으면 ㄱ자 핀헤더로 바꿔야 안테나 선반에 닿지 않습니다. 보드 크기가 17 × 11mm와 다르면 머리 브래킷 홀더를 고칩니다.</li>
     <li><strong>3D 출력 견적:</strong> 머리 브래킷, Pi 5 캐리어, LED · 배터리 데크 4대분 출력 비용을 확인합니다.</li>
     <li><strong>폼보드 장수:</strong> 맵 크기(<span class="nw">4.1m × 4.35m</span> 또는 <span class="nw">4.1m × 2.85m</span>)를 정한 뒤 30장에서 조정하고, 대형 판재 화물 배송비를 판매처에 문의합니다.</li>
@@ -142,7 +142,7 @@ td.price.muted{color:var(--muted);font-weight:400}
 <div class="legend">
   <span><strong>구분 안내</strong></span>
   <span><span class="badge buy">구매 필요</span> 주문 신청서에 넣는 품목</span>
-  <span><span class="badge spare">예비용</span> 케이블이 맞지 않을 때를 대비한 예비 품목</span>
+  <span><span class="badge spare">예비용</span> 포트가 다른 규격일 때를 대비한 예비 품목</span>
   <span><span class="badge hold">보유분 사용</span> 팀원 보유분을 쓰는 품목</span>
   <span><span class="badge mk">직접 제작</span> 3D 출력이나 팀 자체 제작</span>
 </div>
@@ -166,17 +166,17 @@ td.price.muted{color:var(--muted);font-weight:400}
   <strong>이 부품들이 연결되는 방식 (<a href="2026-11-13_02_기능정의서.html#v3d">로봇 장착 구성 3D 모델</a> 기준):</strong>
   <ul>
     <li><strong>라즈베리파이 5가 중심:</strong> 머리 카메라(XIAO)는 USB, 온도 센서는 듀폰 점퍼(I2C), MechDog 본체는 포트 2에서 UART 케이블과 듀폰 점퍼로 Pi 5에 잇습니다. Pi와 MechDog 본체에는 납땜하지 않습니다.</li>
-    <li><strong>본체 포트 케이블:</strong> 머리 아래 비전 모듈과 LED는 포트 1 · 3에, UART는 포트 2에 같은 양쪽 커넥터 케이블을 씁니다.</li>
+    <li><strong>본체 포트 케이블:</strong> 머리 아래 비전 모듈과 LED는 포트 1 · 3에, UART는 포트 2에 같은 5264 양쪽 커넥터 케이블을 씁니다. 5264 하우징 단자에는 듀폰 수 핀(0.64mm 각)이 그대로 꽂힙니다.</li>
   </ul>
 </div>
 <div class="tw"><table class="cards">
   <tr><th class="col-item">품목</th><th>상품 · 판매처</th><th class="col-qty">수량</th><th class="col-price">단가</th><th class="col-sum">금액 (배송비 포함)</th><th class="col-st">구분</th></tr>
   <tr><td class="k">온도 센서</td><td><a href="https://vctec.co.kr/product/mlx90614esf-bcc-%EB%B9%84%EC%A0%91%EC%B4%89-%EC%A0%81%EC%99%B8%EC%84%A0-%EC%98%A8%EB%8F%84-%EC%84%BC%EC%84%9C-i2cmlx90614esf-bcc-non-contact-ir-temper/25690/">MLX90614ESF-BCC 비접촉 적외선 온도 센서 (시야 35°)</a><span class="subnote">VCTEC · 배송비 3,500원 포함 · Pi 5 GPIO에 듀폰 점퍼로 연결, 핀은 ㄱ자 핀헤더로 위로 세움</span></td><td class="qty">4개</td><td class="price">19,800원</td><td class="price">82,700원</td><td><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">I2C 케이블 (양쪽 커넥터)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10919600">[NW3] 하네스 케이블 4핀-4핀 NW3-XH2.5-4Y (200mm)</a><span class="subnote">디바이스마트 · 비전 모듈 → 포트 1, LED → 포트 3 (대당 2개 + 여분 2) · 디바이스마트 묶음 배송비 2,700원 포함</span></td><td class="qty">10개</td><td class="price">660원</td><td class="price">9,300원</td><td><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">UART 케이블 (양쪽 커넥터)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10919600">[NW3] 하네스 케이블 4핀-4핀 NW3-XH2.5-4Y (200mm)</a><span class="subnote">MechDog 포트 2 → 반대쪽 하우징에 듀폰 수 핀을 꽂아 Pi 6 · 8 · 10번, 5V 선은 연결 안 함</span></td><td class="qty">4개</td><td class="price">660원</td><td class="price">2,640원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">I2C 케이블 (5264 양쪽)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10895280">[NW3] 하네스 케이블 4핀-4핀 NW3-5264-04 양쪽(정방향), 200mm</a><span class="subnote">디바이스마트 · Molex 5264 호환(A2506) · 비전 모듈 → 포트 1, LED → 포트 3 (대당 2개 + 여분 2) · 디바이스마트 묶음 배송비 2,700원 포함</span></td><td class="qty">10개</td><td class="price">616원</td><td class="price">8,860원</td><td><span class="badge buy">구매 필요</span></td></tr>
+  <tr><td class="k">UART 케이블 (5264 양쪽)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10895280">[NW3] 하네스 케이블 4핀-4핀 NW3-5264-04 양쪽(정방향), 200mm</a><span class="subnote">MechDog 포트 2 → 반대쪽 하우징에 듀폰 수 핀을 꽂아 Pi 6 · 8 · 10번, 5V 선은 연결 안 함</span></td><td class="qty">4개</td><td class="price">616원</td><td class="price">2,464원</td><td><span class="badge buy">구매 필요</span></td></tr>
   <tr><td class="k">듀폰 점퍼 수-암</td><td><a href="https://www.devicemart.co.kr/goods/view?no=1321195">[KEYES] 소켓 점퍼 케이블 40P (M/F) 20cm</a><span class="subnote">UART 케이블 끝 → Pi GPIO</span></td><td class="qty">1묶음</td><td class="price">935원</td><td class="price">935원</td><td><span class="badge buy">구매 필요</span></td></tr>
   <tr><td class="k">듀폰 점퍼 암-암</td><td><a href="https://www.devicemart.co.kr/goods/view?no=1321192">[KEYES] 소켓 점퍼 케이블 40P (F/F) 20cm</a><span class="subnote">온도 센서 → Pi GPIO 1 · 3 · 5 · 9번 (경로 약 14cm)</span></td><td class="qty">1묶음</td><td class="price">935원</td><td class="price">935원</td><td><span class="badge buy">구매 필요</span></td></tr>
-  <tr><td class="k">XH2.54 한쪽 하우징 케이블</td><td><a href="https://www.devicemart.co.kr/goods/view?no=15884112">[럭킷] XH2.54 FEMALE 4P 하네스와이어 20cm</a><span class="subnote">NW3 커넥터가 포트에 안 맞을 때 UART용. 이때만 맨 선 끝을 점퍼와 납땜하고 수축튜브로 감음</span></td><td class="qty">4개</td><td class="price">660원</td><td class="price">2,640원</td><td><span class="badge spare">예비용</span></td></tr>
+  <tr><td class="k">XH 양쪽 케이블 (예비)</td><td><a href="https://www.devicemart.co.kr/goods/view?no=10919600">[NW3] 하네스 케이블 4핀-4핀 NW3-XH2.5-4Y (A2501, 200mm)</a><span class="subnote">포트가 5264가 아니라 JST XH 계열일 때 납땜 없이 바로 바꿔 끼움</span></td><td class="qty">4개</td><td class="price">660원</td><td class="price">2,640원</td><td><span class="badge spare">예비용</span></td></tr>
   <tr><td class="k">액티브 쿨러</td><td><a href="https://www.devicemart.co.kr/goods/view?no=15276241">[정품] 라즈베리파이5 액티브 쿨러 (SC1148)</a><span class="subnote">케이스 없이 Pi 5에 스프링 푸시핀으로 직접 장착 · 나머지 1대는 보유분</span></td><td class="qty">3개</td><td class="price">7,700원</td><td class="price">23,100원</td><td><span class="badge buy">구매 필요</span></td></tr>
 </table></div>
 
@@ -191,9 +191,9 @@ td.price.muted{color:var(--muted);font-weight:400}
 <div class="tw"><table class="cards">
   <tr><th class="col-item">분류</th><th>포함 품목</th><th class="col-qty">건수</th><th class="col-price">배송비</th><th class="col-sum">금액</th><th class="col-st">비고</th></tr>
   <tr><td class="k">1-1. 미션맵 바닥 · 구조물</td><td>폼보드, 테이프 5종, 하드보드지</td><td class="qty">7건</td><td class="price">6,000원</td><td class="price">141,840원</td><td>intelrior · 더몰코리아</td></tr>
-  <tr><td class="k">1-2. 로봇 센서 · 배선 · 쿨러</td><td>온도 센서, 케이블 3종, 점퍼 2종, 쿨러</td><td class="qty">7건</td><td class="price">6,200원</td><td class="price">122,250원</td><td>디바이스마트 묶음</td></tr>
+  <tr><td class="k">1-2. 로봇 센서 · 배선 · 쿨러</td><td>온도 센서, 케이블 3종, 점퍼 2종, 쿨러</td><td class="qty">7건</td><td class="price">6,200원</td><td class="price">121,634원</td><td>디바이스마트 묶음</td></tr>
   <tr><td class="k">1-3. 시험 · 시연 소품</td><td>부탄가스, 안전모</td><td class="qty">2건</td><td class="price">4,950원</td><td class="price">14,450원</td><td>—</td></tr>
-  <tr class="total"><td class="k">전체 합계</td><td>구매 필요 15건 · 예비용 1건</td><td class="qty">16건</td><td class="price">17,150원</td><td class="price">278,540원</td><td>남은 예산 21,460원</td></tr>
+  <tr class="total"><td class="k">전체 합계</td><td>구매 필요 15건 · 예비용 1건</td><td class="qty">16건</td><td class="price">17,150원</td><td class="price">277,924원</td><td>남은 예산 22,076원</td></tr>
 </table></div>
 
 <h2>2. 보유분 · 신청하지 않는 품목</h2>

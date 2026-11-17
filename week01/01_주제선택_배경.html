@@ -4,57 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>주제 선택 · 배경</title>
-<style>
-:root{--bg:#eceff1;--paper:#fff;--ink:#111;--muted:#555;--rule:#111;--code:#f3f4f5;--todo:#b26a00}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 system-ui,"Malgun Gothic",sans-serif;word-break:keep-all;overflow-wrap:break-word;text-wrap:pretty}
-.doc{max-width:1200px;margin:24px auto;background:var(--paper);border:2px solid var(--rule);padding:0 22px 26px}
-@media (max-width:640px){.doc{margin:0;border-width:0 0 2px;padding:0 16px 20px}}
-h1{margin:0;padding:18px 0 4px;font-size:26px}
-.sub{color:var(--muted);margin:0 0 8px}
-h2{margin:26px 0 10px;padding:6px 10px;background:var(--ink);color:var(--paper);font-size:16px}
-.tw{overflow-x:auto;margin:8px 0}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th,td{border:1px solid var(--rule);padding:7px 10px;text-align:left;vertical-align:top}
-th{background:var(--code);font-weight:600;white-space:nowrap}
-ul{padding-left:22px;margin:6px 0}
-li{margin:3px 0}
-.todo{color:var(--todo);font-weight:700}
-.def{border:2px solid var(--ink);padding:10px 12px;margin:10px 0;font-size:17px;font-weight:700;text-wrap:balance}
-/* 구현 방향 위 운영 흐름: 표와 같은 테두리, 왼쪽 라벨은 소제목처럼 */
-.modes{border:2px solid var(--ink);margin:10px 0;font-size:14px}
-.modes div{display:grid;grid-template-columns:4.6em 1fr}
-.modes div+div{border-top:1px solid var(--rule)}
-.modes b{background:var(--ink);color:var(--paper);padding:6px 0;text-align:center;font-weight:600}
-.modes span{padding:6px 10px}
-.modes i{font-style:normal;color:var(--muted);margin:0 2px}
-td.k{white-space:nowrap}
-@media (max-width:640px){br.w{display:none}}
-.ev{display:block;color:var(--muted);font-size:13px}
-.src{margin:10px 0 0;padding-left:22px;color:var(--muted);font-size:12px}
-.src a{color:inherit}
-/* 상단 고정 문서 이동 바 */
-.topnav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:9px 18px;background:var(--ink);font-size:15px;font-weight:600;line-height:1.5;white-space:nowrap}
-.topnav a{color:#b8bec4;text-decoration:none}
-.topnav a:hover,.topnav a:focus-visible,.topnav a[aria-current]{color:#fff;text-decoration:underline;text-underline-offset:3px}
-.topnav>span{display:flex;gap:18px}
-body{padding-top:44px}
-@media (max-width:640px){.topnav .lbl{display:none}}
-/* 모바일: 머리줄이 있는 3칸 이상 표는 행마다 카드로 (칸 이름은 아래 스크립트가 붙임) */
-@media (max-width:640px){
-  table.cards,table.cards tbody,table.cards tr,table.cards td{display:block}
-  table.cards tr:first-child{display:none}
-  table.cards tr{border:1px solid var(--rule);margin:0 0 8px;padding:6px 10px}
-  table.cards td{border:0;padding:1px 0 1px 6.6em}
-  table.cards td:first-child{padding-left:0;font-weight:700}
-  table.cards td:empty{display:none}
-  table.cards td+td{display:flow-root}
-  table.cards td+td::before{content:attr(data-l);float:left;width:7.4em;margin-left:-7.4em;color:var(--muted);font-size:12px;font-weight:400;padding-top:2px}
-}
-</style>
+<link rel="stylesheet" href="../assets/doc.css">
 </head>
 <body>
-<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="2026-11-13_01_주제선택_배경.html" aria-current="page">01<span class="lbl"> 주제 · 배경</span></a><a href="2026-11-13_02_기능정의서.html">02<span class="lbl"> 기능 정의서</span></a><a href="2026-11-13_03_미션맵_시연구성안.html">03<span class="lbl"> 미션맵 · 시연</span></a><a href="2026-11-13_04_재료_목록.html">04<span class="lbl"> 재료 목록</span></a></span></nav>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_주제선택_배경.html" aria-current="page">01<span class="lbl"> 주제 · 배경</span></a><a href="02_기능정의서.html">02<span class="lbl"> 기능 정의서</span></a><a href="03_미션맵_시연구성안.html">03<span class="lbl"> 미션맵 · 시연</span></a><a href="04_재료_목록.html">04<span class="lbl"> 재료 목록</span></a></span></nav>
 <div class="doc">
 
 <h1>주제 선택 · 배경</h1>
@@ -82,7 +35,7 @@ body{padding-top:44px}
 <ul>
   <li><b>화재</b>: 하루 약 10건, 건축물 화재 재산피해의 69% (2021~2025)<sup>1</sup></li>
   <li><b>막힌 대피로</b>: 작업 동선이자 대피로인 통로를 쌓인 물건이 막는다
-    <span class="ev">경기 대형 물류창고 473곳 중 236곳 위법, 피난 통로 적치 포함 (2026.9)<sup>2</sup> · 이천 물류창고 화재(2020)는 대피로가 막힌 채 38명 사망<sup>3</sup></span></li>
+    <span class="subnote">경기 대형 물류창고 473곳 중 236곳 위법, 피난 통로 적치 포함 (2026.9)<sup>2</sup> · 이천 물류창고 화재(2020)는 대피로가 막힌 채 38명 사망<sup>3</sup></span></li>
   <li><b>바닥 위험</b>: 낮게 떨어진 물건은 잘 안 보여 밟거나 걸려 다친다</li>
   <li><b>고정 유도등</b>: 불 위치를 모르고 가까운 비상구만 가리키며, 쌓인 물품에 가려지기 쉽다<sup>4</sup></li>
 </ul>
@@ -108,7 +61,7 @@ body{padding-top:44px}
 <div class="def">따라서 현장에 바로 투입할 제품보다, <br class="w">미션맵 위에서 평상시 순찰부터 화재 대피 안내까지 <b>전체 흐름을 시뮬레이션으로 구현</b>해 <br class="w">가능성을 확인하는 데 집중한다.</div>
 
 <h2>5. 구현 방향</h2>
-<div class="modes">
+<div class="rows">
   <div><b>평상시</b><span>2대 순찰 · 2대 충전 대기 <i>→</i> 로봇이 감지 <i>→</i> 서버가 판단해 대시보드로 알림 <i>→</i> 관리자 조치</span></div>
   <div><b>비상시</b><span>충전 중인 로봇까지 4대 모두 출동</span></div>
 </div>
@@ -123,14 +76,6 @@ body{padding-top:44px}
 </table></div>
 
 </div>
-<script>
-// 모바일 카드 표: 머리줄(전부 th) · 3칸 이상인 표에만, 각 칸에 머리 이름을 붙여 둔다
-document.querySelectorAll("table").forEach(function(t){
-  var h = [].map.call(t.rows[0].cells, function(c){ return c.tagName === "TH" ? c.textContent : null; });
-  if (h.length < 3 || h.indexOf(null) >= 0) return;
-  t.classList.add("cards");
-  [].slice.call(t.rows, 1).forEach(function(r){ [].forEach.call(r.cells, function(c, i){ c.setAttribute("data-l", h[i]); }); });
-});
-</script>
+<script src="../assets/doc.js" defer></script>
 </body>
 </html>

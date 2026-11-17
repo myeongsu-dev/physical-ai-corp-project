@@ -7,7 +7,7 @@
 (function(){
   var root = document.querySelector('[data-widget="missionmap"]');
   if (!root) return;
-  root.innerHTML = "<div class=\"player\">\n  <button type=\"button\" id=\"sim-play\">일시정지</button>\n  <button type=\"button\" id=\"sim-reset\">처음부터</button>\n  <div class=\"grp\" id=\"sim-speed\" role=\"group\" aria-label=\"재생 속도\">속도\n    <button type=\"button\" data-sp=\"1\" aria-pressed=\"false\">1×</button>\n    <button type=\"button\" data-sp=\"2\" aria-pressed=\"true\">2×</button>\n    <button type=\"button\" data-sp=\"4\" aria-pressed=\"false\">4×</button>\n  </div>\n  <div class=\"grp\" id=\"sim-ch\" role=\"group\" aria-label=\"장면으로 이동\">장면\n    <button type=\"button\" data-ch=\"0\">1 평상시 순찰</button>\n    <button type=\"button\" data-ch=\"1\">2 바닥 물건</button>\n    <button type=\"button\" data-ch=\"2\">3 막힘 발견</button>\n    <button type=\"button\" data-ch=\"3\">4 충전 교대</button>\n    <button type=\"button\" data-ch=\"4\">5 과열 교차 확인</button>\n    <button type=\"button\" data-ch=\"5\">6 화재 대피 안내</button>\n  </div>\n  <span class=\"clock\" id=\"sim-clock\">0:00</span>\n</div>\n<div class=\"simwrap\">\n  <div class=\"simmain\">\n    <div class=\"chapter\" id=\"sim-chapter\"></div>\n    <div class=\"graph\"><svg id=\"sim\" viewBox=\"-36 -8 482 452\" role=\"img\" aria-label=\"평상시 순찰, 바닥 물건 발견, 막힘 발견, 충전 교대, 과열 교차 확인, 화재 대피 안내로 이어지는 4.1m × 4.35m 한 방향 미션맵 시나리오 애니메이션\"></svg></div>\n    <div class=\"status\" id=\"sim-status\" aria-live=\"off\"></div>\n  </div>\n  <div class=\"logbox\">\n    <div class=\"loghead\">관제 로그\n      <span><label title=\"디버그: 서버가 추정한 로봇 위치(점선 원) 표시\"><input type=\"checkbox\" id=\"ghost-on\"> 추정 위치</label>\n      <label>레벨 <select id=\"log-level\"><option value=\"10\">DEBUG</option><option value=\"20\" selected>INFO</option><option value=\"30\">WARNING</option></select></label></span>\n    </div>\n    <ol class=\"log\" id=\"sim-log\" aria-live=\"off\"></ol>\n  </div>\n</div>\n";
+  root.innerHTML = "<div class=\"player\">\n  <button type=\"button\" id=\"sim-play\">일시정지</button>\n  <button type=\"button\" id=\"sim-reset\">처음부터</button>\n  <div class=\"grp\" id=\"sim-speed\" role=\"group\" aria-label=\"재생 속도\">속도\n    <button type=\"button\" data-sp=\"1\" aria-pressed=\"false\">1×</button>\n    <button type=\"button\" data-sp=\"2\" aria-pressed=\"true\">2×</button>\n    <button type=\"button\" data-sp=\"4\" aria-pressed=\"false\">4×</button>\n  </div>\n  <div class=\"grp\" id=\"sim-ch\" role=\"group\" aria-label=\"장면으로 이동\">장면\n    <button type=\"button\" data-ch=\"0\">1 평상시 순찰</button>\n    <button type=\"button\" data-ch=\"1\">2 바닥 물건</button>\n    <button type=\"button\" data-ch=\"2\">3 막힘 발견</button>\n    <button type=\"button\" data-ch=\"3\">4 충전 교대</button>\n    <button type=\"button\" data-ch=\"4\">5 과열 교차 확인</button>\n    <button type=\"button\" data-ch=\"5\">6 화재 대피 안내</button>\n  </div>\n  <span class=\"clock\" id=\"sim-clock\">0:00</span>\n</div>\n<div class=\"simwrap\">\n  <div class=\"simmain\">\n    <div class=\"chapter\" id=\"sim-chapter\"></div>\n    <div class=\"graph\"><svg id=\"sim\" viewBox=\"-36 -8 482 312\" role=\"img\" aria-label=\"평상시 순찰, 바닥 물건 발견, 막힘 발견, 충전 교대, 과열 교차 확인, 화재 대피 안내로 이어지는 4.1m × 2.95m 한 방향 미션맵 시나리오 애니메이션\"></svg></div>\n    <div class=\"status\" id=\"sim-status\" aria-live=\"off\"></div>\n  </div>\n  <div class=\"logbox\">\n    <div class=\"loghead\">관제 로그\n      <span><label title=\"디버그: 서버가 추정한 로봇 위치(점선 원) 표시\"><input type=\"checkbox\" id=\"ghost-on\"> 추정 위치</label>\n      <label>레벨 <select id=\"log-level\"><option value=\"10\">DEBUG</option><option value=\"20\" selected>INFO</option><option value=\"30\">WARNING</option></select></label></span>\n    </div>\n    <ol class=\"log\" id=\"sim-log\" aria-live=\"off\"></ol>\n  </div>\n</div>\n";
   var NS = "http://www.w3.org/2000/svg";
   var meas = document.createElementNS(NS, "svg");
   meas.setAttribute("width", "0"); meas.setAttribute("height", "0"); meas.setAttribute("aria-hidden", "true");
@@ -46,99 +46,89 @@
     return P[P.length - 1];
   }
 
-  /* ================= 경로 (4.1m × 4.35m, 3줄 한 방향 · 후진 없음) ================= */
+  /* ================= 경로 (4.1m × 2.95m, 한 방향 · 후진 없음 · 교차 없이 합류만) ================= */
+  // 곡선 반지름은 25cm 이상(외곽 모서리 30): 로봇 길이 27cm가 선을 따라 돌 수 있는 값. 걸으며 회전 반경을 실측하면 이 값부터 맞춘다
   // ponytail: 바닥 카메라 = 머리의 모듈형 카메라를 아래로 꺾어 비스듬히 앞 바닥을 봄.
   //   02 장착 구성 3D(35° 꺾음)에서 라인 모드가 처리하는 화면 위 2/3 = 몸 중심 앞 15~33cm → 가운데 24 · 앞뒤 ±9. 좌우 ±10cm는 가정 — 실측하면 이 세 값만 바꾼다
   var CAM_AHEAD = 24, CAM_D = 9, CAM_W = 10;
-  var A_LOOP = "M65 365 H55 A30 30 0 0 1 25 335 V55 A30 30 0 0 1 55 25 H355 A30 30 0 0 1 385 55 V335 A30 30 0 0 1 355 365 H165 A25 25 0 0 0 140 390 A25 25 0 0 1 90 390 A25 25 0 0 0 65 365 Z";
-  var B_CORR1 = "M25 160 A25 25 0 0 1 50 135 H360 A25 25 0 0 1 385 160";
-  var B_CORR2 = "M385 230 A25 25 0 0 1 360 255 H50 A25 25 0 0 1 25 230";
-  var AISLE_A12 = "M120 135 A25 25 0 0 0 145 110 V50 A25 25 0 0 1 170 25";
-  var AISLE_A23 = "M240 25 A25 25 0 0 1 265 50 V110 A25 25 0 0 0 290 135";
-  var AISLE_B12 = "M230 255 A25 25 0 0 1 205 230 V160 A25 25 0 0 1 230 135";
-  var AISLE_C12 = "M230 255 A25 25 0 0 0 205 280 V340 A25 25 0 0 1 180 365";
-  var DOCK_UTURN = "M165 365 A25 25 0 0 0 140 390 A25 25 0 0 1 90 390 A25 25 0 0 0 65 365";
+  // 위 구역(A): 랙 A1~A3 둘레 시계 방향 · 아래 구역(B): 작업 공간 B1·B2 둘레 반시계 방향 · 1번 간선만 둘이 같은 방향(서쪽)으로 함께 쓴다
+  var UP_LOOP = "M50 135 A25 25 0 0 1 25 110 V55 A30 30 0 0 1 55 25 H355 A30 30 0 0 1 385 55 V110 A25 25 0 0 1 360 135";
+  var DOCK_UTURN = "M80 225 A25 25 0 0 1 105 250 A25 25 0 0 0 155 250 A25 25 0 0 1 180 225";
+  var LOW_LOOP = "M50 135 A25 25 0 0 0 25 160 V195 A30 30 0 0 0 55 225 H80 A25 25 0 0 1 105 250 A25 25 0 0 0 155 250 A25 25 0 0 1 180 225 H355 A30 30 0 0 0 385 195 V160 A25 25 0 0 0 360 135";
+  var MAIN = "M360 135 H50";
+  // 통로는 간선에서 갈라져 나간다: 랙 사이는 북쪽(위쪽 외곽에 합류), B1–B2 사이는 남쪽(아래 외곽에 합류)
+  var AISLE_A12 = "M170 135 A25 25 0 0 1 145 110 V50 A25 25 0 0 1 170 25";
+  var AISLE_A23 = "M290 135 A25 25 0 0 1 265 110 V50 A25 25 0 0 1 290 25";
+  var AISLE_B12 = "M230 135 A25 25 0 0 0 205 160 V200 A25 25 0 0 0 230 225"; // 폭 40cm 통로라 한 줄 · 남쪽 한 방향
+  var UP_START = "M50 135 A25 25 0 0 1 25 110 V55 A30 30 0 0 1 55 25 H", LOW_START = "M50 135 A25 25 0 0 0 25 160 V195 A30 30 0 0 0 55 225 H";
+  var R_DOWN = "M355 25 A30 30 0 0 1 385 55 V95", R_UP = " H355 A30 30 0 0 0 385 195 V175", E_IN_A = "M385 95 V110 A25 25 0 0 1 360 135 H", E_IN_B = "M385 175 V160 A25 25 0 0 0 360 135 H";
   var PATROLS = {
     A:{steps:[
-      "도크를 나와 왼쪽 외곽을 북쪽으로 · CP5 직진",
-      "위쪽 외곽을 동쪽으로 · 갈림길 직진",
-      "오른쪽 외곽을 남쪽으로 · 합류점 통과",
-      "아래 외곽을 서쪽으로 · 도크 U턴 통과"
+      "간선 서쪽 끝에서 위로 · 위쪽 외곽을 동쪽 끝까지",
+      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
+      "1번 간선 서쪽으로 · CP6 빨강에서 A1–A2 통로를 북쪽으로",
+      "합류 허가 후 위쪽 외곽을 동쪽 끝까지",
+      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
+      "1번 간선 서쪽으로 · CP7 빨강에서 A2–A3 통로를 북쪽으로",
+      "합류 허가 후 위쪽 외곽을 동쪽 끝까지",
+      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
+      "1번 간선을 서쪽 끝까지"
     ], segs:[
-      {d:"M65 365 H55 A30 30 0 0 1 25 335 V55", st:0},
-      {d:"M25 55 A30 30 0 0 1 55 25 H355", st:1},
-      {d:"M355 25 A30 30 0 0 1 385 55 V335", st:2},
-      {d:"M385 335 A30 30 0 0 1 355 365 H165 A25 25 0 0 0 140 390 A25 25 0 0 1 90 390 A25 25 0 0 0 65 365", st:3}
+      {d:UP_START + "355", st:0},
+      {d:R_DOWN, st:1},
+      {gate:"mergeE", st:1},
+      {d:E_IN_A + "170 A25 25 0 0 1 145 110 V60", st:2},
+      {gate:"mA12", st:2},
+      {d:"M145 60 V50 A25 25 0 0 1 170 25 H355", st:3},
+      {d:R_DOWN, st:4},
+      {gate:"mergeE", st:4},
+      {d:E_IN_A + "290 A25 25 0 0 1 265 110 V60", st:5},
+      {gate:"mA23", st:5},
+      {d:"M265 60 V50 A25 25 0 0 1 290 25 H355", st:6},
+      {d:R_DOWN, st:7},
+      {gate:"mergeE", st:7},
+      {d:E_IN_A + "50", st:8}
     ]},
     B:{steps:[
-      "도크를 나와 왼쪽 외곽을 북쪽으로 · CP5 빨강에서 1번 간선으로",
-      "1번 간선을 동쪽으로 직진 · 합류점 대기 확인",
-      "오른쪽 외곽을 거쳐 2번 간선 서쪽으로 · B1·B2 통로 입구",
-      "B1·B2 사이 통로를 북쪽으로 통과해 1번 간선 합류",
-      "1번 간선 동쪽 끝에서 합류 허가 후 2번 간선 서쪽으로",
-      "왼쪽 외곽 합류 후 CP5에서 다시 1번 간선으로",
-      "CP6 빨강 → A1·A2 통로를 북쪽으로 통과",
-      "위쪽 외곽 합류 후 CP7 → A2·A3 통로를 남쪽으로 통과",
-      "1번 간선 동쪽 끝 합류 후 2번 간선으로 내려감",
-      "CP8 빨강 → C1·C2 통로를 남쪽으로 통과해 도크 복귀"
+      "간선 서쪽 끝에서 아래로 · 도크 입구까지",
+      "도크 U턴 통과 · 아래쪽 외곽 동쪽 · 오른쪽 아래 외곽 북쪽으로",
+      "1번 간선 서쪽으로 · CP8 빨강에서 B1–B2 통로를 남쪽으로",
+      "합류 허가 후 아래쪽 외곽 동쪽 · 오른쪽 아래 외곽 북쪽으로",
+      "1번 간선을 서쪽 끝까지"
     ], segs:[
-      {gate:"start", st:0},
-      {d:"M65 365 H55 A30 30 0 0 1 25 335 V160", st:0},
-      {d:"M25 160 A25 25 0 0 1 50 135 H360", st:1},
-      {gate:"merge2", st:1},
-      {d:"M360 135 A25 25 0 0 1 385 160 V230 A25 25 0 0 1 360 255 H230", st:2},
-      {d:"M230 255 A25 25 0 0 1 205 230 V160 A25 25 0 0 1 230 135 H360", st:3},
-      {gate:"merge2", st:4},
-      {d:"M360 135 A25 25 0 0 1 385 160 V230 A25 25 0 0 1 360 255 H50", st:4},
-      {gate:"merge3", st:5},
-      {d:"M50 255 A25 25 0 0 1 25 230 V160 A25 25 0 0 1 50 135 H120", st:5},
-      {d:"M120 135 A25 25 0 0 0 145 110 V50", st:6},
-      {gate:"merge1", st:6},
-      {d:"M145 50 A25 25 0 0 1 170 25 H240 A25 25 0 0 1 265 50 V110 A25 25 0 0 0 290 135 H360", st:7},
-      {gate:"merge2", st:8},
-      {d:"M360 135 A25 25 0 0 1 385 160 V230 A25 25 0 0 1 360 255 H230", st:8},
-      {d:"M230 255 A25 25 0 0 0 205 280 V340", st:9},
-      {gate:"merge4", st:9},
-      {d:"M205 340 A25 25 0 0 1 180 365 H165 A25 25 0 0 0 140 390 A25 25 0 0 1 90 390 A25 25 0 0 0 65 365", st:9}
+      {d:LOW_START + "80", st:0},
+      {d:DOCK_UTURN + R_UP, st:1},
+      {gate:"mergeE", st:1},
+      {d:E_IN_B + "230 A25 25 0 0 0 205 160 V185", st:2},
+      {gate:"mB12", st:2},
+      {d:"M205 185 V200 A25 25 0 0 0 230 225" + R_UP, st:3},
+      {gate:"mergeE", st:3},
+      {d:E_IN_B + "50", st:4}
     ]}
   };
 
   /* ================= 라인 연결망 (한 방향 그래프 · 후진 없음) ================= */
-  var NODES = {
-    DOUT:1, M3:1, CP5:1, M1:1, TOP:1, D_A2:1, M2:1, D_C2:1, M4:1, DIN:1,
-    C1_W:1, D_A1:1, M_B12:1, M_A23:1, C1_E:1, C2_E:1, D_BC:1, C2_W:1
-  };
+  var NODES = {C1_W:1, D_A12:1, TOP:1, D_A23:1, C1_E:1, J_A23:1, J_B12:1, J_A12:1, DIN:1, DOUT:1, M_B12:1};
   var NODE_KO = {
-    DOUT:"도크 출구", M3:"왼쪽 합류점", CP5:"CP5", M1:"위쪽 합류점", TOP:"위쪽 외곽 가운데", D_A2:"CP7",
-    M2:"1번 간선 동쪽 끝", D_C2:"2번 간선 입구", M4:"아래 합류점", DIN:"도크 입구",
-    C1_W:"1번 간선 서쪽 끝", D_A1:"CP6", M_B12:"1번 간선 가운데", M_A23:"A2·A3 합류점", C1_E:"비상구 2 앞",
-    C2_E:"2번 간선 동쪽 끝", D_BC:"CP8", C2_W:"2번 간선 서쪽 끝"
+    C1_W:"1번 간선 서쪽 끝", D_A12:"A1·A2 합류점", TOP:"위쪽 외곽 가운데", D_A23:"A2·A3 합류점", C1_E:"1번 간선 동쪽 끝",
+    J_A23:"CP7", J_B12:"CP8", J_A12:"CP6", DIN:"도크 입구", DOUT:"도크 출구", M_B12:"B1·B2 합류점"
   };
   var EDGES = [
-    ["DOUT", "M3", "M65 365 H55 A30 30 0 0 1 25 335 V230"],
-    ["M3", "CP5", "M25 230 V160"],
-    ["CP5", "M1", "M25 160 V55 A30 30 0 0 1 55 25 H170"],
-    ["M1", "TOP", "M170 25 H205"],
-    ["TOP", "D_A2", "M205 25 H240"],
-    ["D_A2", "M2", "M240 25 H355 A30 30 0 0 1 385 55 V160"],
-    ["M2", "D_C2", "M385 160 V230"],
-    ["D_C2", "M4", "M385 230 V335 A30 30 0 0 1 355 365 H180"],
-    ["M4", "DIN", "M180 365 H165"],
+    ["C1_W", "D_A12", UP_START + "170"],
+    ["D_A12", "TOP", "M170 25 H230"],
+    ["TOP", "D_A23", "M230 25 H290"],
+    ["D_A23", "C1_E", "M290 25 H355 A30 30 0 0 1 385 55 V110 A25 25 0 0 1 360 135"],
+    ["C1_E", "J_A23", "M360 135 H290"],
+    ["J_A23", "J_B12", "M290 135 H230"],
+    ["J_B12", "J_A12", "M230 135 H170"],
+    ["J_A12", "C1_W", "M170 135 H50"],
+    ["J_A12", "D_A12", AISLE_A12],
+    ["J_A23", "D_A23", AISLE_A23],
+    ["C1_W", "DIN", LOW_START + "80"],
     ["DIN", "DOUT", DOCK_UTURN],
-    ["CP5", "C1_W", "M25 160 A25 25 0 0 1 50 135"],
-    ["C1_W", "D_A1", "M50 135 H120"],
-    ["D_A1", "M_B12", "M120 135 H230"],
-    ["M_B12", "M_A23", "M230 135 H290"],
-    ["M_A23", "C1_E", "M290 135 H360"],
-    ["C1_E", "M2", "M360 135 A25 25 0 0 1 385 160"],
-    ["D_C2", "C2_E", "M385 230 A25 25 0 0 1 360 255"],
-    ["C2_E", "D_BC", "M360 255 H230"],
-    ["D_BC", "C2_W", "M230 255 H50"],
-    ["C2_W", "M3", "M50 255 A25 25 0 0 1 25 230"],
-    ["D_A1", "M1", AISLE_A12],
-    ["D_A2", "M_A23", AISLE_A23],
-    ["D_BC", "M_B12", AISLE_B12],
-    ["D_BC", "M4", AISLE_C12]
+    ["DOUT", "M_B12", "M180 225 H230"],
+    ["M_B12", "C1_E", "M230 225 H355 A30 30 0 0 0 385 195 V160 A25 25 0 0 0 360 135"],
+    ["J_B12", "M_B12", AISLE_B12]
   ].map(function(e){
     var L = len(e[2]), smp = [];
     for (var s = 0; s <= L; s += 2){ var q = pt(e[2], s); smp.push([s, q.x, q.y]); }
@@ -149,15 +139,28 @@
   EDGES.forEach(function(e){ EDGE_BY_D[e.d] = e; NODE_XY.push(pt(e.d, 0), pt(e.d, e.L)); });
   var NODE_POS = {}; EDGES.forEach(function(e){ NODE_POS[e.a] = pt(e.d, 0); NODE_POS[e.b] = pt(e.d, e.L); });
   // 바닥 마커: 로봇은 좌표를 모르고 이 표식이 카메라에 들어올 때 "무슨 마커를 봤다"만 서버에 알린다
-  var MARKERS = [["CP5", 25, 182, "red"], ["CP6", 100, 135, "red"], ["CP7", 224, 25, "red"], ["CP8", 250, 255, "red"]]
+  var MARKERS = [["CP5", 72, 135, "red"], ["CP6", 192, 135, "red"], ["CP7", 312, 135, "red"], ["CP8", 252, 135, "red"]]
     .map(function(m){ return {name:m[0], x:m[1], y:m[2], c:m[3]}; });
-  (function(){ var z = 0; EDGES.forEach(function(e){ for (var s = 25; s < e.L - 10; s += 55){
-    var q = pt(e.d, s), qa = pt(e.d, s - CAM_AHEAD), qb = pt(e.d, s + CAM_AHEAD);
-    // 구간 마커는 직선에만: 앞을 비스듬히 보는 카메라는 곡선 위 마커를 화면에 못 담는다 (앞뒤 CAM_AHEAD가 곧아야 둠)
-    if (q.tx * qa.tx + q.ty * qa.ty < 0.999 || q.tx * qb.tx + q.ty * qb.ty < 0.999) continue;
-    if (MARKERS.some(function(m){ return Math.hypot(m.x - q.x, m.y - q.y) < 18; }) || NODE_XY.some(function(n){ return Math.hypot(n.x - q.x, n.y - q.y) < 12; })) continue;
-    z++; MARKERS.push({name:"Z" + z, x:q.x, y:q.y, c:z % 2 ? "yellow" : "green"});
-  } }); })();
+  // 구간 마커: 구간(갈림 · 합류 사이)마다 최소 하나, 빈 곳 없이.
+  //   먼저 직선에 55cm 간격(몸 뒤 CAM_AHEAD가 곧은 자리 = 카메라가 똑바로 보는 자리), 그래도 60cm 넘게 비는 곳(모서리 · 도크 U턴)은 곡선 위에도 채운다
+  (function(){
+    var z = 0;
+    function free(q){ return !MARKERS.some(function(m){ return Math.hypot(m.x - q.x, m.y - q.y) < 18; }) && !NODE_XY.some(function(n){ return Math.hypot(n.x - q.x, n.y - q.y) < 12; }); }
+    function put(q){ z++; MARKERS.push({name:"Z" + z, x:q.x, y:q.y, c:z % 2 ? "yellow" : "green"}); }
+    EDGES.forEach(function(e){
+      var last = -Infinity, at = [], s, q, b;
+      for (s = CAM_AHEAD; s < e.L - 12; s += 2){
+        q = pt(e.d, s); b = pt(e.d, s - CAM_AHEAD);
+        if (s - last >= 55 && q.tx * b.tx + q.ty * b.ty >= 0.999 && free(q)){ put(q); last = s; at.push(s); }
+      }
+      MARKERS.forEach(function(m){ var n = nearestRaw(m.x, m.y); if (m.c === "red" && n.e === e) at.push(n.s); });
+      for (s = 12; s < e.L - 12; s += 2){
+        var prev = Math.max.apply(null, [0].concat(at.filter(function(x){ return x <= s; }))), next = Math.min.apply(null, [e.L].concat(at.filter(function(x){ return x > s; })));
+        q = pt(e.d, s);
+        if ((s - prev >= 60 || (!at.length && s >= e.L / 2)) && next - s >= 15 && free(q)){ put(q); at.push(s); }
+      }
+    });
+  })();
   MARKERS.forEach(function(m){ var n = nearestRaw(m.x, m.y), t = pt(n.e.d, n.s); m.tx = t.tx; m.ty = t.ty; });
   function nearestRaw(x, y){ var best = null; EDGES.forEach(function(e){ e.smp.forEach(function(q){ var dd = Math.hypot(q[1] - x, q[2] - y); if (!best || dd < best.dd) best = {e:e, s:q[0], dd:dd}; }); }); return best; }
   var M_KO = {red:"빨강", yellow:"노랑", green:"초록"};
@@ -279,8 +282,8 @@
     var p = rb.pose, dx = it.x - p.x, dy = it.y - p.y, t = dx * p.hx + dy * p.hy;
     return t > 0 && t < 45 && Math.abs(dx * p.hy - dy * p.hx) < 18;
   }
-  var MGR_P = [[418, 135], [398, 135], [398, 152], [312, 152]], MGR_P2 = [[418, 135], [398, 135], [398, 12], [252, 12]]; // 관리자 동선: 1번 간선 박스 / 위쪽 외곽 바닥 물건 (비상구 2로 들어옴)
-  var WORKERS = [[[100, 35], [398, 35], [398, 135], [418, 135]], [[265, 80], [265, 135], [418, 135]], [[140, 355], [398, 355], [398, 135], [418, 135]]];
+  var MGR_P = [[418, 135], [398, 135], [398, 212], [222, 212]], MGR_P2 = [[418, 135], [398, 135], [398, 12], [252, 12]]; // 관리자 동선: B1–B2 통로 박스 / 위쪽 외곽 바닥 물건 (비상구 2로 들어옴)
+  var WORKERS = [[[100, 35], [398, 35], [398, 135], [418, 135]], [[265, 80], [265, 135], [418, 135]], [[140, 215], [398, 215], [398, 135], [418, 135]]];
   function workerPos(){
     if (!WORLD.people.on) return [];
     return WORKERS.map(function(P, i){ var d = Math.max(0, (T - (WORLD.people.t0 + 1.5 + i * 0.4)) * 22); return d > plen(P) ? null : along(P, d); }).filter(Boolean);
@@ -433,16 +436,16 @@
   };
 
   /* ================= 서버: 보고만 보고 판단해 명령 ================= */
-  var ROLE_LOG = {outer:"외곽", corr:"간선·통로", standby:"대기", check:"과열 교차 확인", guide:"대피 안내", relay:"외곽(교대)", dock:"도크 복귀"};
+  var ROLE_LOG = {upper:"위 구역", lower:"아래 구역", standby:"대기", check:"과열 교차 확인", guide:"대피 안내", relay:"위 구역(교대)", dock:"도크 복귀"};
   var PURPOSE_LOG = {relay:"교대 · 인수 위치로", dock:"도크 복귀 · 충전", check:"교차 확인 측정", guide:"대피 안내", evade:"위험 구역 회피 · 대기 지점으로"};
-  var PRIO = {guide:3, check:2, relay:2, outer:1, corr:1, dock:0, standby:0};
+  var PRIO = {guide:3, check:2, relay:2, upper:1, lower:1, dock:0, standby:0};
   var SPOTS = [
     {no:"①", name:"1번 간선 서쪽 끝", node:"C1_W", sym:"✕"},
     {no:"②", name:"1번 간선 동쪽 끝", node:"C1_E", sym:"→"},
-    {no:"③", name:"2번 간선 가운데", node:"D_BC", sym:["E", "N"]},
+    {no:"③", name:"아래 외곽 가운데", node:"M_B12", sym:["E", "N"]},
     {no:"④", name:"위쪽 외곽 가운데", node:"TOP", sym:["E", "S"]}
   ];
-  var DOCK_EXIT = {x:65, y:365}, SLOT = [{x:205, y:402, hx:-1, hy:0}, {x:255, y:402, hx:-1, hy:0}];
+  var SLOT = [{x:250, y:262, hx:1, hy:0}, {x:300, y:262, hx:1, hy:0}]; // 도크 옆 충전 자리 (B2 아래)
   var SV;
   function newServer(){
     return {view:{}, st:{}, plan:{}, pend:[], holds:[], ev:{}, relay:null, tt:0,
@@ -607,7 +610,7 @@
   }
   function closeObstacle(){ var o = SV.ev.obstacle; if (o && o.resolved && o.passed){ lg("INFO", "event", "막힘 해소 zone=" + o.zone); SV.ev.obstacle = null; flags.cleared = T; } }
   function checkBattery(v, id){
-    if (v.task === "patrol" && v.role === "outer" && v.bat < 20 && !SV.relay) startRelay(id);
+    if (v.task === "patrol" && v.role === "upper" && v.bat < 20 && !SV.relay) startRelay(id);
   }
   function svTick(){
     refresh();
@@ -616,15 +619,16 @@
       var ok = true, why = "";
       Object.keys(SV.view).forEach(function(id){
         if (id === r.id) return; var o = SV.view[id];
-        if (r.gate === "start" && o.task === "patrol" && Math.hypot(o.x - DOCK_EXIT.x, o.y - DOCK_EXIT.y) < 55){ ok = false; why = nameOf(id) + " 도크 출구 통과 중"; }
-        if (r.gate === "merge1" && o.task === "patrol" && o.y < 40 && o.x > 65 && o.x < 185){ ok = false; why = nameOf(id) + " 위쪽 외곽 우선"; }
-        if (r.gate === "merge2" && o.task === "patrol" && o.x > 370 && o.y > 45 && o.y < 175){ ok = false; why = nameOf(id) + " 오른쪽 외곽 우선"; }
-        if (r.gate === "merge3" && o.task === "patrol" && o.x < 40 && o.y > 215 && o.y < 345){ ok = false; why = nameOf(id) + " 왼쪽 외곽 우선"; }
-        if (r.gate === "merge4" && o.task === "patrol" && o.y > 350 && o.x > 165 && o.x < 295){ ok = false; why = nameOf(id) + " 아래 외곽 우선"; }
+        // 통로에서 외곽으로 합류할 때는 외곽 위 로봇이 먼저: 합류점 서쪽(다가오는 쪽) 95cm와 동쪽 25cm 안(도크 U턴 포함)에 있으면 대기. 간선 동쪽 끝은 위 · 아래가 같이 들어오니 먼저 허가받은 쪽이 지날 때까지 대기
+        var G = {mA12:{x:170, y:25, dy:12}, mA23:{x:290, y:25, dy:12}, mB12:{x:230, y:225, dy:55}}[r.gate];
+        if (G && o.task === "patrol" && Math.abs(o.y - G.y) < G.dy && o.x > G.x - 95 && o.x < G.x + 25){ ok = false; why = nameOf(id) + " 외곽 통과 중"; }
+        if (r.gate === "mergeE" && o.task === "patrol" && o.x > 330 && o.y > 100 && o.y < 170){ ok = false; why = nameOf(id) + " 간선 동쪽 끝 통과 중"; }
         var p = SV.plan[id];
         if (ok && p && p.kind === "go" && !(o.task === "go" && o.arrived) && clash(aheadOf(id, 400), aheadOf(r.id, 150))){ ok = false; why = nameOf(id) + " 통과 예정"; }
       });
+      if (ok && r.gate === "mergeE" && SV.eBusy && SV.eBusy.id !== r.id && T < SV.eBusy.until){ ok = false; why = nameOf(SV.eBusy.id) + " 먼저 합류 중"; }
       if (!ok){ if (!r.logged){ r.logged = true; lg("DEBUG", "traffic", (r.gate === "start" ? "출발" : "합류") + " 대기 robot=" + nameOf(r.id) + " reason=" + why); } return true; }
+      if (r.gate === "mergeE") SV.eBusy = {id:r.id, until:T + 3};
       cmd(r.id, {type:"GRANT", gate:r.gate}); lg("DEBUG", "traffic", (r.gate === "start" ? "출발" : "합류") + " 허가 robot=" + nameOf(r.id)); return false;
     });
     tryPendGo();
@@ -645,8 +649,8 @@
     // 교대: A가 비켜나면 3호에게 순찰을 넘긴다
     var rl = SV.relay;
     if (rl && rl.met && !rl.done && SV.view[rl.from] && Math.hypot(SV.view[rl.from].x - rl.holdAt.x, SV.view[rl.from].y - rl.holdAt.y) > 45){
-      rl.done = true; sendPatrol(rl.to, "A", "outer", rl.meet.i, rl.meet.s, true);
-      lg("INFO", "dispatch", "순찰 인계 robot=" + nameOf(rl.to) + " role=외곽 progress=구간 " + (PATROLS.A.segs[rl.meet.i].st + 1) + "/" + PATROLS.A.steps.length);
+      rl.done = true; sendPatrol(rl.to, "A", "upper", rl.meet.i, rl.meet.s, true);
+      lg("INFO", "dispatch", "순찰 인계 robot=" + nameOf(rl.to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[rl.meet.i].st + 1) + "/" + PATROLS.A.steps.length);
     }
     // 양보 해제
     SV.holds = SV.holds.filter(function(h){
@@ -674,7 +678,7 @@
     chapter(3);
     var meet = backAlong(PATROLS.A.segs, v.i, v.s, 40), mp = pt(PATROLS.A.segs[meet.i].d, meet.s);
     SV.relay = {from:from, to:to, meet:meet, holdAt:{x:v.x, y:v.y}, hold:{i:v.i, s:v.s}};
-    lg("INFO", "dispatch", "교대 결정 from=" + nameOf(from) + " battery=" + Math.round(v.bat) + "% to=" + nameOf(to) + " role=외곽 progress=구간 " + (PATROLS.A.segs[v.i].st + 1) + "/" + PATROLS.A.steps.length);
+    lg("INFO", "dispatch", "교대 결정 from=" + nameOf(from) + " battery=" + Math.round(v.bat) + "% to=" + nameOf(to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[v.i].st + 1) + "/" + PATROLS.A.steps.length);
     cmd(from, {type:"HOLD", by:"교대"});
     var rt = smartRoute(to, SV.view[to].x, SV.view[to].y, [mp.x, mp.y]);
     sendGo(to, rt, "relay", "relay");
@@ -683,15 +687,15 @@
   }
   function handOver(){
     var rl = SV.relay; rl.met = true;
-    lg("INFO", "dispatch", "인수인계 완료 from=" + nameOf(rl.from) + " to=" + nameOf(rl.to) + " role=외곽 progress=구간 " + (PATROLS.A.segs[rl.hold.i].st + 1) + "/" + PATROLS.A.steps.length);
+    lg("INFO", "dispatch", "인수인계 완료 from=" + nameOf(rl.from) + " to=" + nameOf(rl.to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[rl.hold.i].st + 1) + "/" + PATROLS.A.steps.length);
     // 받는 로봇이 뒤에 붙어 있으므로 A는 후진 없이 진행 방향 그대로 돌아 도크 충전 자리로
-    var segs = PATROLS.A.segs, pieces = [{d:segs[rl.hold.i].d, s0:rl.hold.s, s1:len(segs[rl.hold.i].d)}];
-    for (var k = rl.hold.i + 1; k < segs.length; k++) pieces.push({d:segs[k].d, s0:0, s1:len(segs[k].d)});
-    var tail = "M65 365 L115 402 H205"; pieces.push({d:tail, s0:0, s1:len(tail)});
+    // 진행 방향 그대로 선을 따라 아래 외곽까지 간 뒤, 충전 자리 바로 앞(x=213)에서 선을 벗어나 들어간다
+    var v = SV.view[rl.from], rt = route(v.x, v.y, [213, 225], null, stopsFor(rl.from));
+    var tail = "M213 225 A25 25 0 0 1 238 250 A12 12 0 0 0 250 262", pieces = rt.pieces.concat([{d:tail, s0:0, s1:len(tail)}]);
     var L = pieces.reduce(function(t, p){ return t + Math.abs(p.s1 - p.s0); }, 0);
     sendGo(rl.from, {pieces:pieces, L:L}, "dock", "dock");
   }
-  var WAIT_PT = [300, 255]; // 대기 지점: 2번 간선 동쪽 — 위험 구역과 비상구 동선을 비껴선 위치
+  var WAIT_PT = [300, 225]; // 대기 지점: 아래 외곽 동쪽 — 위험 구역과 비상구 동선을 비껴선 위치
   function evadeOthers(h){ // 의심 구역 250cm 안으로 들어올 순찰 로봇은 대기 지점으로 보내 세워 둔다
     Object.keys(SV.plan).forEach(function(id){
       var p = SV.plan[id], v = SV.view[id]; if (id === h.first || !p || p.kind !== "patrol" || !v || v.stop === "heat") return;
@@ -700,7 +704,7 @@
       if (!near) return;
       var rt = smartRoute(id, v.x, v.y, WAIT_PT, [{x:h.x, y:h.y}]);
       if (rt.L === Infinity){ lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 갈 길이 없어 현 위치 대기"); cmd(id, {type:"HOLD", by:"위험 구역"}); SV.plan[id] = {kind:"hold"}; return; }
-      lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 대기 지점(2번 간선 동쪽) length=" + Math.round(rt.L) + "cm");
+      lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 대기 지점(아래 외곽 동쪽) length=" + Math.round(rt.L) + "cm");
       sendGo(id, rt, "evade", p.role); planYield(id, "위험 구역 회피");
     });
   }
@@ -762,11 +766,24 @@
       var v = SV.view[id], stops = ids.filter(function(o){ return o !== id; }).map(function(o){ return SV.view[o]; });
       Lm[id] = SPOTS.map(function(s){ return route(v.x, v.y, s.node, null, stops); }); Em[id] = Lm[id].map(function(rt){ return pieceEdges(rt.pieces); });
     });
+    // 가는 길에 다른 로봇이 설 자리가 있으면, 그 로봇이 먼저 서는 경우 막힌다 → 충돌로 센다 (먼저 지나가면 괜찮다)
+    function passAt(rt, p){ // 길에서 p 바로 옆을 지나는 거리 (가장 가까워지는 순간 · 자기 도착 자리 20cm 앞까지만 본다)
+      var acc = 0, best = null;
+      for (var k = 0; k < rt.pieces.length; k++){ var pc = rt.pieces[k], span = Math.abs(pc.s1 - pc.s0), sg = pc.s1 > pc.s0 ? 1 : -1;
+        for (var u = 0; u <= span; u += 4){
+          if (acc + u > rt.L - 20) return best ? best.s : Infinity;
+          var q = pt(pc.d, pc.s0 + sg * u), d = Math.hypot(q.x - p.x, q.y - p.y);
+          if (d < 20 && (!best || d <= best.d)) best = {s:acc + u, d:d}; else if (best) return best.s;
+        }
+        acc += span; }
+      return best ? best.s : Infinity;
+    }
+    var Th = {}; ids.forEach(function(id){ Th[id] = Lm[id].map(function(rt){ return SPOTS.map(function(s){ return rt.L < Infinity ? passAt(rt, NODE_POS[s.node]) : Infinity; }); }); });
     (function perm(arr, used){ // 4대 × 4자리: 마지막 도착이 가장 빠른 한 방향 배정
       if (arr.length === 4){
         var worst = 0, sum = 0, cf = 0;
         var none = 0;
-        arr.forEach(function(k, i){ var L = Lm[ids[i]][k].L; if (L === Infinity){ none++; return; } worst = Math.max(worst, L); sum += L; for (var j = i + 1; j < 4; j++) if (clash(Em[ids[i]][k], Em[ids[j]][arr[j]])) cf++; });
+        arr.forEach(function(k, i){ var L = Lm[ids[i]][k].L; if (L === Infinity){ none++; return; } worst = Math.max(worst, L); sum += L; for (var j = 0; j < 4; j++){ if (j > i && clash(Em[ids[i]][k], Em[ids[j]][arr[j]])) cf++; var pa = j !== i ? Th[ids[i]][k][arr[j]] : Infinity; if (pa < Infinity && Lm[ids[j]][arr[j]].L < pa + 10) cf++; } });
         cf += none * 100;
         if (!best || cf < best.cf || (cf === best.cf && (worst < best.worst - 1e-6 || (Math.abs(worst - best.worst) < 1e-6 && sum < best.sum)))) best = {a:arr.slice(), worst:worst, sum:sum, cf:cf};
         return;
@@ -795,40 +812,42 @@
   /* ================= 그리기 ================= */
   var svg = document.getElementById("sim");
   svg.innerHTML = '' +
-    '<rect x="0" y="0" width="410" height="435" fill="#fff"/>' +
-    '<path d="M0 120 V0 H410 V120 M410 150 V435 H0 V150" fill="none" stroke="#111" stroke-width="2"/>' +
+    '<rect x="0" y="0" width="410" height="295" fill="#fff"/>' +
+    '<path d="M0 120 V0 H410 V120 M410 150 V295 H0 V150" fill="none" stroke="#111" stroke-width="2"/>' +
     '<g fill="#e9ecef" stroke="#111" stroke-width=".8">' +
       '<rect x="45" y="45" width="80" height="60"/><rect x="165" y="45" width="80" height="60"/><rect x="285" y="45" width="80" height="60"/>' +
-      '<rect x="45" y="165" width="140" height="60"/><rect x="225" y="165" width="140" height="60"/>' +
-      '<rect x="45" y="285" width="140" height="60"/><rect x="225" y="285" width="140" height="60"/>' +
+      '<rect x="45" y="165" width="140" height="40"/><rect x="225" y="165" width="140" height="40"/>' +
     '</g>' +
     '<g class="t" font-size="6.5" text-anchor="middle">' +
       '<text x="85" y="78">A1</text><text x="205" y="78">A2</text><text x="325" y="78">A3</text>' +
-      '<text x="115" y="198">B1</text><text x="295" y="198">B2</text>' +
-      '<text x="115" y="318">C1</text><text x="295" y="318">C2</text>' +
+      '<text x="115" y="188">B1</text><text x="295" y="188">B2</text>' +
     '</g>' +
-    '<rect x="76" y="374" width="78" height="56" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="3 2"/>' +
-    '<text class="t" x="115" y="396" font-size="5.5" text-anchor="middle">도크</text>';
+    '<rect x="91" y="234" width="78" height="56" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="3 2"/>' +
+    '<text class="t" x="130" y="256" font-size="5.5" text-anchor="middle">도크</text>';
   var ex1 = el("text", {"class":"t", x:-4, y:138, "font-size":6, "text-anchor":"end", "font-weight":700}, "비상구 1");
   var ex2 = el("text", {"class":"t", x:414, y:138, "font-size":6, "font-weight":700}, "비상구 2");
   svg.appendChild(ex1); svg.appendChild(ex2);
   var hl = el("g", {fill:"none", "stroke-width":11, "stroke-linejoin":"round", "stroke-linecap":"round", opacity:.14});
-  hl.appendChild(el("path", {d:A_LOOP, stroke:"#1971c2"}));
-  [B_CORR1, B_CORR2, AISLE_A12, AISLE_A23, AISLE_B12, AISLE_C12].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#2f9e44"})); });
+  [UP_LOOP, AISLE_A12, AISLE_A23, MAIN].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#1971c2"})); });
+  [LOW_LOOP, AISLE_B12, MAIN].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#2f9e44"})); });
   svg.appendChild(hl);
   var MCOL = {red:"#e03131", yellow:"#f2c94c", green:"#40c057"};
   MARKERS.forEach(function(m){ var nx = m.ty, ny = -m.tx, h = m.c === "red" ? 16 : 7, w = m.c === "red" ? 4 : 3;
     svg.appendChild(el("line", {x1:m.x - nx * h, y1:m.y - ny * h, x2:m.x + nx * h, y2:m.y + ny * h, stroke:MCOL[m.c], "stroke-width":w})); });
   var ln = el("g", {fill:"none", stroke:"#111", "stroke-width":2, "stroke-linejoin":"round"});
-  [A_LOOP, B_CORR1, B_CORR2, AISLE_A12, AISLE_A23, AISLE_B12, AISLE_C12].forEach(function(d){ ln.appendChild(el("path", {d:d})); });
+  [UP_LOOP, LOW_LOOP, MAIN, AISLE_A12, AISLE_A23, AISLE_B12].forEach(function(d){ ln.appendChild(el("path", {d:d})); });
   svg.appendChild(ln);
+  // 진행 방향: 구간마다 가운데에 작은 화살표
+  var arw = el("g", {fill:"#495057"});
+  EDGES.forEach(function(e){ var q = pt(e.d, e.L / 2), a = Math.atan2(q.ty, q.tx) * 180 / Math.PI; arw.appendChild(el("path", {d:"M3 0 L-2 -2.6 L-2 2.6 Z", transform:"translate(" + q.x.toFixed(1) + " " + q.y.toFixed(1) + ") rotate(" + a.toFixed(0) + ")"})); });
+  svg.appendChild(arw);
   // 마커 이름은 띠 · 선과 겹치지 않는 빈 자리에 (흰 테두리로 위에 지나가는 것과도 구분)
   var HALO = {stroke:"#fff", "stroke-width":2, "paint-order":"stroke"};
   var lb = el("g", Object.assign({"class":"t", "font-size":5.5, "text-anchor":"middle"}, HALO));
-  [["CP5", 33, 184, "start"], ["CP6", 100, 118], ["CP7", 224, 15], ["CP8", 250, 240]].forEach(function(c){ lb.appendChild(el("text", {x:c[1], y:c[2], "text-anchor":c[3] || "middle"}, c[0])); });
+  [["CP5", 72, 126], ["CP6", 192, 126], ["CP7", 312, 126], ["CP8", 252, 126]].forEach(function(c){ lb.appendChild(el("text", {x:c[1], y:c[2], "text-anchor":c[3] || "middle"}, c[0])); });
   svg.appendChild(lb);
   var spotG = el("g", {display:"none"});
-  [["①", 50, 135], ["②", 360, 135], ["③", 230, 255], ["④", 205, 25]].forEach(function(s){
+  [["①", 50, 135], ["②", 360, 135], ["③", 230, 225], ["④", 230, 25]].forEach(function(s){
     spotG.appendChild(el("circle", {cx:s[1], cy:s[2], r:9, fill:"none", stroke:"#2f9e44", "stroke-width":1, "stroke-dasharray":"2 2"}));
     spotG.appendChild(el("text", Object.assign({"class":"t", x:s[1], y:s[2] + 19, "font-size":6, "font-weight":700, "text-anchor":"middle"}, HALO), s[0]));
   });
@@ -838,11 +857,11 @@
   glowG.appendChild(el("stop", {offset:"0", "stop-color":"#ff6b00", "stop-opacity":.55})); glowG.appendChild(el("stop", {offset:"1", "stop-color":"#ff6b00", "stop-opacity":0}));
   defs.appendChild(glowG); svg.appendChild(defs);
   var boxG = el("g", {display:"none"});
-  boxG.appendChild(el("rect", {x:293.2, y:128.2, width:16, height:16, rx:.6, fill:"#000", opacity:.18}));
-  boxG.appendChild(el("rect", {x:292, y:127, width:16, height:16, rx:.6, fill:"#c8a26b", stroke:"#6d4c2f", "stroke-width":.7}));
-  boxG.appendChild(el("path", {d:"M292 135 H308", stroke:"#8d6e45", "stroke-width":.5}));
-  boxG.appendChild(el("rect", {x:298.6, y:127, width:2.8, height:16, fill:"#e9d8b4", opacity:.9}));
-  boxG.appendChild(el("text", {"class":"t", x:300, y:153, "font-size":5.5, "text-anchor":"middle"}, "박스"));
+  boxG.appendChild(el("rect", {x:198.2, y:191.2, width:16, height:16, rx:.6, fill:"#000", opacity:.18}));
+  boxG.appendChild(el("rect", {x:197, y:190, width:16, height:16, rx:.6, fill:"#c8a26b", stroke:"#6d4c2f", "stroke-width":.7}));
+  boxG.appendChild(el("path", {d:"M197 198 H213", stroke:"#8d6e45", "stroke-width":.5}));
+  boxG.appendChild(el("rect", {x:203.6, y:190, width:2.8, height:16, fill:"#e9d8b4", opacity:.9}));
+  boxG.appendChild(el("text", {"class":"t", x:214, y:203, "font-size":5.5}, "박스")); // 아래는 관리자 자리라 오른쪽에
   var itemG = el("g", {display:"none", transform:"translate(230 14)"});
   var drv = el("g", {transform:"rotate(-20)"});
   drv.appendChild(el("rect", {x:-5.5, y:-1.4, width:11, height:3.4, rx:1.4, fill:"#000", opacity:.15}));
@@ -886,7 +905,7 @@
     svg.appendChild(g);
     return {body:body, shell:shell, text:tx, bub:bub, bubR:bubR, bubT:bubT, bubA:bubA, bubH:bubH};
   }
-  var ROLE_COLOR = {outer:"#1971c2", relay:"#1971c2", corr:"#2f9e44"};
+  var ROLE_COLOR = {upper:"#1971c2", relay:"#1971c2", lower:"#2f9e44"};
   function placeBot(bot, pose, role, sym){
     var ang = Math.atan2(pose.hy, pose.hx) * 180 / Math.PI;
     bot.body.setAttribute("transform", "translate(" + pose.x.toFixed(1) + " " + pose.y.toFixed(1) + ") rotate(" + ang.toFixed(1) + ")");
@@ -961,10 +980,10 @@
   var ROBOTS, dir, flags, playing;
   var CHAPTERS = ["평상시 순찰", "바닥 물건", "막힘 발견", "충전 교대", "과열 교차 확인", "화재 대피 안내"];
   var CHTXT = [
-    "<b>1 평상시 순찰</b> · A는 외곽(큰 바퀴), B는 1·2번 간선과 블록 사이 통로, 3·4호는 도크 충전 대기. 전진 한 방향으로 돌며 합류점에선 A 우선으로 양보한다.",
+    "<b>1 평상시 순찰</b> · A는 위 구역(랙 A1~A3 둘레, 시계 방향), B는 아래 구역(작업 공간 B1·B2 둘레, 반시계 방향). 1번 간선은 둘 다 서쪽으로 함께 쓰고, 합류점에선 간선 위 로봇이 먼저. 3·4호는 도크 옆 충전 대기.",
     "<b>2 바닥 물건</b> · 위쪽 외곽 바닥에 공구. 초음파엔 안 잡히고 A의 바닥 카메라가 본다. A는 순찰을 계속하고 서버가 '밟힘 주의'로 관리자 호출 → 치우고 체크하면 해제.",
-    "<b>3 막힘 발견</b> · 1번 간선에 박스. B가 초음파로 멈춰 보고하고 머리 카메라 사진을 전송 → 대시보드 지도 구역·사진 팝업 알림 → 치우고 B가 다시 지나가면 해소.",
-    "<b>4 충전 교대</b> · A 배터리 부족. 서버가 A를 세우고 3호를 A 뒤 40cm로 보냄 → 인수인계 → A는 진행 방향 그대로 도크로 복귀, 3호가 A의 진행 위치부터 이어 돎.",
+    "<b>3 막힘 발견</b> · B1–B2 통로에 박스. B가 초음파로 멈춰 보고하고 머리 카메라 사진을 전송 → 대시보드 지도 구역·사진 팝업 알림 → 치우고 B가 다시 지나가면 해소.",
+    "<b>4 충전 교대</b> · A 배터리 부족. 서버가 A를 세우고 3호를 A 뒤 40cm로 보냄 → 인수인계 → A는 진행 방향 그대로 돌아 충전 자리로, 3호가 A의 진행 위치부터 이어 돎.",
     "<b>5 과열 교차 확인</b> · A1 랙 오른쪽 위 모서리 과열(가스버너). 지나던 로봇이 온도·머리 카메라 불꽃 확인 후 정지 → 서버가 대기 로봇을 반대편 접근로로 보내 재확인 → 둘 다 50℃ 초과·불꽃 확인 시 화재 확정.",
     "<b>6 화재 대피 안내</b> · 4대를 갈림길 ①~④에 배정. 출발부터 LED를 켜고 사람 대피 동선 기준으로 화살표 갱신 (꺾이면 꺾인 화살표) · ✕는 ① 자리에서."
   ];
@@ -976,26 +995,27 @@
 
   function reset(){
     T = 0; BUS = []; SV = newServer();
-    WORLD = {box:{on:false, x:300, y:135}, heat:{on:false, x:124, y:48, H:62, big:false}, item:{on:false, x:230, y:14}, mgr:{state:"off", d:0, t:0, P:MGR_P, kind:"box"}, people:{on:false, t0:0}};
-    var a0 = PATROLS.A.segs[0], b0 = PATROLS.B.segs[PATROLS.B.segs.length - 1];
-    ROBOTS = {A:new Robot("A", pt(a0.d, 0), 37), B:new Robot("B", pt(b0.d, len(b0.d) - 40), 82), "3":new Robot("3", SLOT[0], 100), "4":new Robot("4", SLOT[1], 100)};
+    WORLD = {box:{on:false, x:205, y:198}, heat:{on:false, x:124, y:48, H:62, big:false}, item:{on:false, x:230, y:14}, mgr:{state:"off", d:0, t:0, P:MGR_P, kind:"box"}, people:{on:false, t0:0}};
+    var a0 = PATROLS.A.segs[13], b0 = PATROLS.B.segs[1]; // A는 간선 동쪽(서쪽으로 가는 중), B는 도크 U턴 안
+    ROBOTS = {A:new Robot("A", pt(a0.d, 114), 47), B:new Robot("B", pt(b0.d, 30), 82), "3":new Robot("3", SLOT[0], 100), "4":new Robot("4", SLOT[1], 100)};
     ["A", "B", "3", "4"].forEach(function(id){ var p = ROBOTS[id].pose; ROBOTS[id].pose = {x:p.x, y:p.y, hx:p.hx != null ? p.hx : p.tx, hy:p.hy != null ? p.hy : p.ty}; });
     dir = {ch:0, end:false}; flags = {};
     logEl.textContent = "";
     note("─ 장면 1 " + CHAPTERS[0]);
     lg("INFO", "", "관제 서버 시작 robots=4 report=0.5s latency=0.15s");
-    // 첫 명령: A 외곽, B 간선(도크 안 40cm 뒤에서), 3·4호 대기
-    // 처음 배치는 운영자가 서버에 입력해 둔 것 (A 도크 출구, B 도크 안, 3·4호 충전 자리)
+    // 첫 명령: A 위 구역, B 아래 구역, 3·4호 대기
+    // 처음 배치는 운영자가 서버에 입력해 둔 것 (A 간선 동쪽, B 도크 U턴 안, 3·4호 충전 자리)
     ["A", "B", "3", "4"].forEach(function(id){ SV.st[id] = {track:null, prog:0, moving:0, lastT:0, task:"idle", role:"standby", stop:"", hold:false, arrived:false, bat:ROBOTS[id].bat, park:id === "4" ? SLOT[1] : SLOT[0]}; });
-    sendPatrol("A", "A", "outer", 0, 0, true);
-    sendPatrol("B", "B", "corr", PATROLS.B.segs.length - 1, len(b0.d) - 40, false);
+    sendPatrol("A", "A", "upper", 13, 114, true);
+    sendPatrol("B", "B", "lower", 1, 30, true);
     ["3", "4"].forEach(function(id){ ROBOTS[id].report(true); });
     draw();
   }
   function direct(){
     var B = ROBOTS.B;
     if (dir.ch === 0 && T >= 10){ chapter(1); WORLD.item.on = true; note("[연출] 위쪽 외곽 통로 바닥에 공구가 떨어짐", "stage"); }
-    if (dir.ch === 1 && flags.itemDone && T >= 15 && B.task === "patrol" && (B.segs[B.i].st === 1 || B.segs[B.i].st === 3) && B.pose.x < 255){ chapter(2); WORLD.box.on = true; note("[연출] 1번 간선 동쪽에 박스(적치물)가 놓임", "stage"); }
+    // 박스는 B가 B1–B2 통로로 들어가기 전에 놓는다 (도크 · 아래 외곽을 지나는 중이거나 간선 동쪽)
+    if (dir.ch === 1 && flags.itemDone && T >= 15 && B.task === "patrol" && B.segs[B.i].d && (B.segs[B.i].st === 1 || (B.segs[B.i].st === 2 && B.pose.x > 260))){ chapter(2); WORLD.box.on = true; note("[연출] B1–B2 통로에 박스(적치물)가 놓임", "stage"); }
     // 관리자: 호출되면 걸어와 확인하고 치운 뒤 관제 대시보드에서 체크 (서버로 RESOLVE)
     var m = WORLD.mgr;
     var what = m.kind === "item" ? "바닥 물건" : "박스";
@@ -1005,7 +1025,9 @@
       m.state = "out"; note("[연출] 관리자가 " + (m.kind === "item" ? "바닥 물건을" : "박스를") + " 치우고 관제 대시보드에서 체크", "stage"); send("server", {type:"RESOLVE", ev:m.kind === "item" ? "item" : "obstacle"});
     }
     if (m.state === "out" && (m.d -= 40 * DT) <= 0){ m.d = 0; m.state = "off"; }
-    if (dir.ch === 3 && flags.docked && T - flags.docked >= 2 && !WORLD.heat.on){ chapter(4); WORLD.heat.on = true; note("[연출] A1 랙 오른쪽 위 모서리에 과열 발생 (실외 시험 기준: 가스버너)", "stage"); }
+    // 과열은 위 구역 순찰 로봇이 왼쪽 위 외곽을 올라올 때 켠다 (불은 시간이 갈수록 커져서, 늦게 오면 불꽃이 안 보이는 먼 자리에서 멈춘다)
+    var up = Object.keys(ROBOTS).map(function(id){ return ROBOTS[id]; }).filter(function(r){ return r.task === "patrol" && r.role === "upper"; })[0];
+    if (dir.ch === 3 && flags.docked && T - flags.docked >= 2 && !WORLD.heat.on && up && up.segs[up.i].st === 0 && up.pose.x < 30 && up.pose.y > 60){ chapter(4); WORLD.heat.on = true; note("[연출] A1 랙 오른쪽 위 모서리에 과열 발생 (실외 시험 기준: 가스버너)", "stage"); }
     if (WORLD.heat.on) WORLD.heat.H += 3 * DT;
     if (flags.fireT && !flags.evac && T - flags.fireT >= 1.5){ flags.evac = true; chapter(5); startFire(); }
     if (flags.evac && !dir.end){
@@ -1025,7 +1047,7 @@
   }
 
   /* ================= 화면 ================= */
-  var ROLE_NAME = {outer:"외곽 담당", corr:"간선 담당", standby:"대기 · 충전", check:"과열 교차 확인", guide:"대피 안내", relay:"교대 · 인수하러", dock:"도크 복귀"};
+  var ROLE_NAME = {upper:"위 구역 담당", lower:"아래 구역 담당", standby:"대기 · 충전", check:"과열 교차 확인", guide:"대피 안내", relay:"교대 · 인수하러", dock:"도크 복귀"};
   function statusLine(id){
     var r = ROBOTS[id], mode, detail = r.wait ? r.wait + " · " : "";
     if (r.task === "patrol"){ var sg = r.segs[r.i]; mode = r.wait ? "대기" : "전진"; detail += (sg.st + 1) + ". " + r.steps[sg.st]; }

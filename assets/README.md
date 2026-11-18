@@ -114,7 +114,7 @@
 | `i.dot` (+ 인라인 `style="background:var(--*)"`) | `i.dot.blue` / `i.dot.green` / `i.dot.gray` | 인라인 `style` 제거 |
 | `div.player`, `div.grp`, `span.clock`, `div.simwrap`, `div.simmain`, `div.chapter`, `div.graph`(내부), `div.status`, `div.logbox`, `div.loghead`, `ol.log` | `<div data-widget="missionmap">` | (위젯 몫 · W4) |
 
-### 4. `week01/04_재료_목록.html`
+### 4. `week02/02_재료_목록.html`
 | 옛 클래스 | 새 컴포넌트 | 비고 |
 |---|---|---|
 | `div.doc`, `nav.topnav`, `span.lbl`, `p.sub`, `span.nw` | 그대로 | |

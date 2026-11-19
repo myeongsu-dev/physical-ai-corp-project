@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시연 시나리오</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/sim/missionmap.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_시스템_아키텍처.html">01<span class="lbl"> 시스템 아키텍처</span></a><a href="02_재료_목록.html">02<span class="lbl"> 재료 목록</span></a><a href="03_개발계획.html">03<span class="lbl"> 개발 계획</span></a><a href="04_로봇하드웨어.html">04<span class="lbl"> 로봇 하드웨어</span></a><a href="05_AI모델.html">05<span class="lbl"> AI 모델</span></a><a href="06_기술검증.html">06<span class="lbl"> 기술 검증</span></a><a href="07_시연시나리오.html" aria-current="page">07<span class="lbl"> 시연 시나리오</span></a></span></nav>
+<div class="doc">
+
+<h1>시연 시나리오</h1>
+<p class="sub">12/10 발표 시연의 장면 순서, 시뮬레이션, 소품</p>
+
+<div class="def">평상시 순찰에서 시작해 바닥 물건 · 통로 막힘 · 충전 교대 · 화재 교차 확인을 거쳐 화재 대피 안내로 끝나는 한 흐름을 <a href="../week01/03_미션맵.html">미션맵</a> 위에서 보여 준다.</div>
+
+<h2>1. 장면</h2>
+<div class="tw"><table>
+  <tr><th>장면</th><th>로봇</th><th>사람&nbsp;· 관제</th><th>기능</th></tr>
+  <tr><td class="k">문제 제기</td><td>—</td><td>적치물&nbsp;· 바닥 물건&nbsp;· 불 위치를 모르는 고정 유도등</td><td>—</td></tr>
+  <tr><td class="k">1 평상시 순찰</td><td>A 바깥&nbsp;· B 안쪽 8자<br>3&nbsp;· 4호 도크 대기</td><td>대시보드 지도에 구역 통과 표시</td><td><span class="nw">F-01</span>&nbsp;· <span class="nw">F-02</span></td></tr>
+  <tr><td class="k">2 바닥 물건</td><td>지나던 로봇의 바닥 카메라가 공구 발견 (초음파 무반응 = 낮은 물체)<br>순찰 계속</td><td>"밟힘 주의"&nbsp;· 사진 팝업&nbsp;→ 관리자가 치우고 체크</td><td><span class="nw">F-04</span>&nbsp;· <span class="nw">F-08</span></td></tr>
+  <tr><td class="k">3 막힘 발견</td><td>B가 1번 간선(A1 아래)의 박스 앞에서 멈춤&nbsp;· ✕<br>머리 카메라로 막힌 곳 사진 촬영·전송</td><td>대시보드 지도 구역·사진 팝업 경보<br>→ 관리자가 치우고 체크&nbsp;→ B 재통과</td><td><span class="nw">F-03</span>&nbsp;· <span class="nw">F-08</span>&nbsp;· <span class="nw">F-09</span></td></tr>
+  <tr><td class="k">4 충전 교대</td><td>B 배터리 부족&nbsp;→ 3호가 진입 통로로 나가 이어 돎<br>B는 A1&nbsp;· A3 중 가까운 쪽을 돌아 도크로</td><td>서버가 구간&nbsp;· 진행 위치 인계</td><td><span class="nw">F-11</span></td></tr>
+  <tr><td class="k">5 화재 교차 확인</td><td>안쪽 로봇이 A1–A2 통로를 내려오다 화재 의심 감지&nbsp;· 정지<br>4호가 간선 쪽으로 접근해 다시 잼</td><td>온도 이상 + 머리 카메라 불꽃 확인 결합&nbsp;→ 화재 확정</td><td><span class="nw">F-05</span>&nbsp;· <span class="nw">F-10</span></td></tr>
+  <tr><td class="k">6 화재 대피 안내</td><td>4대가 갈림길 ①~④&nbsp;· LED 화살표 / ✕</td><td>작업자가 화살표 따라 대피</td><td><span class="nw">F-12</span>&nbsp;· <span class="nw">F-13</span></td></tr>
+</table></div>
+<p class="note">장면 번호는 2절 시뮬레이션의 장면 버튼과 같다. 자리와 경로 이름은 <a href="../week01/03_미션맵.html">미션맵</a>, 기능 번호는 <a href="../week01/02_기능정의서.html">기능 정의서</a>. 안전모 착용 확인(<span class="nw">F-06</span>)과 보행자 구분(<span class="nw">F-07</span>)은 실제 사람이 미션맵에 들어가 순찰 중에 함께 보여 주고, 어려우면 같은 장소 · 같은 배경에서 따로 찍는다.</p>
+
+<h2>2. 시뮬레이션</h2>
+<h3>그림 보는 법</h3>
+<div class="tw"><table>
+  <tr><th>구분</th><th>표시</th></tr>
+  <tr><td class="k">로봇</td><td><span class="item"><svg width="26" height="12" role="img" aria-label="파란 테두리 로봇 아이콘"><rect x="1" y="1" width="24" height="10" rx="2" fill="#2b3640" stroke="var(--blue)" stroke-width="1.6"/></svg> A 바깥 순찰</span><span class="item"><svg width="26" height="12" role="img" aria-label="초록 테두리 로봇 아이콘"><rect x="1" y="1" width="24" height="10" rx="2" fill="#2b3640" stroke="var(--green)" stroke-width="1.6"/></svg> B 안쪽 순찰</span><span class="item"><svg width="26" height="12" role="img" aria-label="회색 테두리 로봇 아이콘"><rect x="1" y="1" width="24" height="10" rx="2" fill="#2b3640" stroke="var(--gray)" stroke-width="1.6"/></svg> 3&nbsp;· 4호 충전 대기&nbsp;· 교대&nbsp;· 출동</span></td></tr>
+  <tr><td class="k">사람</td><td><span class="item"><svg width="14" height="14" viewBox="-7 -7 14 14" role="img" aria-label="작업자 아이콘"><g transform="rotate(-90) scale(1.3)"><ellipse cx="-.4" rx="2.7" ry="4.6" fill="#c0eb75" stroke="#111" stroke-width=".6"/><path d="M-1.8 -4V4" stroke="#adb5bd" stroke-width=".9"/><circle cx=".7" r="2.2" fill="#fcc419" stroke="#111" stroke-width=".6"/></g></svg> 작업자: 화살표 따라 대피</span><span class="item"><svg width="14" height="14" viewBox="-7 -7 14 14" role="img" aria-label="관리자 아이콘"><g transform="rotate(-90) scale(1.3)"><ellipse cx="-.4" rx="2.7" ry="4.6" fill="#364fc7" stroke="#111" stroke-width=".6"/><circle cx=".7" r="2.2" fill="#fff" stroke="#111" stroke-width=".6"/></g></svg> 관리자: 사진·구역 확인 후 현장 조치</span></td></tr>
+  <tr><td class="k">바닥 띠</td><td><a href="../week01/03_미션맵.html">미션맵</a> 3절 바닥 마커 표의 색과 같음&nbsp;· 선 위 작은 화살표는 다니는 방향</td></tr>
+  <tr><td class="k">그 밖</td><td><span class="item"><svg width="14" height="12" role="img" aria-label="바닥 카메라 시야 표시"><rect x="2" y="1" width="10" height="10" fill="#fab005" fill-opacity=".45" stroke="#e67700"/></svg> 바닥 카메라가 보는 곳</span><span class="item"><svg width="14" height="14" role="img" aria-label="추정 위치 점선 원"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#868e96" stroke-dasharray="2 2"/></svg> 서버가 추정한 위치 (관제 로그의 "추정 위치"를 켜면 보임)</span></td></tr>
+</table></div>
+
+<div data-widget="missionmap"></div>
+
+<h2>3. 소품</h2>
+<div class="tw"><table>
+  <tr><th>소품</th><th>쓰임</th><th>기능</th></tr>
+  <tr><td class="k">조립식 폼보드</td><td>4.1m × 2.95m 분할 조립 바닥 (보관·이동 겸용)</td><td>전체</td></tr>
+  <tr><td class="k">바닥 테이프</td><td>순찰 길 (검정)&nbsp;· 갈림 (빨강&nbsp;· 파랑)&nbsp;· 구간 (노랑·초록)</td><td><span class="nw">F-01</span>&nbsp;· <span class="nw">F-02</span></td></tr>
+  <tr><td class="k">바닥 마커</td><td>색 테이프 (노랑&nbsp;· 초록&nbsp;· 빨강&nbsp;· 파랑)</td><td><span class="nw">F-02</span></td></tr>
+  <tr><td class="k">박스</td><td>통로를 막는 적치물&nbsp;· 랙/작업 공간 구조물</td><td><span class="nw">F-03</span>&nbsp;· <span class="nw">F-09</span></td></tr>
+  <tr><td class="k">작은 공구&nbsp;· 부품</td><td>바닥에 떨어진 물건</td><td><span class="nw">F-04</span></td></tr>
+  <tr><td class="k">가스버너&nbsp;· 부탄가스&nbsp;· 신문지&nbsp;· 소화기</td><td>화재 불꽃: 구조물(랙&nbsp;· 작업 공간) 한가운데에 둔다&nbsp;· 실외 시험 (실내는 불 없이 진행)</td><td><span class="nw">F-05</span>&nbsp;· <span class="nw">F-10</span></td></tr>
+  <tr><td class="k">안전모</td><td>작업자 착용 여부 시연 (사람이 쓰고 벗으며)</td><td><span class="nw">F-06</span></td></tr>
+</table></div>
+<p class="note">구매 현황은 <a href="02_재료_목록.html">재료 목록</a>.</p>
+
+</div>
+<script src="../assets/sim/missionmap.js" defer></script>
+<script src="../assets/doc.js" defer></script>
+</body>
+</html>

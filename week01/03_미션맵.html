@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미션맵</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/diagram.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_기획배경.html">01<span class="lbl"> 기획 배경</span></a><a href="02_기능정의서.html">02<span class="lbl"> 기능 정의서</span></a><a href="03_미션맵.html" aria-current="page">03<span class="lbl"> 미션맵</span></a></span></nav>
+<div class="doc">
+
+<h1>미션맵</h1>
+<p class="sub">공장&nbsp;· 창고를 줄여 바닥에 꾸민 시연 무대. 크기와 배치, 순찰 경로, 바닥 마커, 동선 규칙, 대피 안내 자리, 구조물</p>
+
+<h2>1. 크기와 배치</h2>
+<div class="tw"><table>
+  <tr><th>크기</th><td>4.1m × 2.95m (약 12.1㎡)&nbsp;· 조립식 두꺼운 폼보드&nbsp;· 바닥 라인 약 19.4m&nbsp;· 한 바퀴 바깥 약 10.6m · 안쪽 약 10.6m</td></tr>
+  <tr><th>배치</th><td>위쪽 랙 A1~A3 (80×60cm)&nbsp;· 가운데 <b>1번 간선</b>&nbsp;· 아래쪽 작업 공간 B1&nbsp;· B2 (140×40cm)<br><b>도크</b>(충전 자리 두 곳)는 맵 아래 바깥, B1–B2 사이 <b>진입 통로</b>로 간선과 이어짐&nbsp;· 양 끝에 비상구 1&nbsp;· 2</td></tr>
+  <tr><th>간격</th><td>선 ↔ 랙&nbsp;· 작업 공간 20cm: 로봇 폭 절반 6.5 + 좌우 흔들림 5 + 여유 8.5<br>곡선 반지름 25cm 이상 (외곽 모서리 30cm): 걸으며 회전 반경을 재면 이 값부터 맞춤<br>간선 폭 60cm: 곡선 진입&nbsp;· 합류 여유<br>B1–B2 진입 통로 폭 40cm: 선 한 줄을 양쪽으로, 한 번에 한 대&nbsp;· 아래쪽 외곽선과 한 번 엇갈림<br>아래쪽 벽에 진입 통로 폭(40cm)만큼 틈, 그 밖에 도크</td></tr>
+</table></div>
+
+<figure class="fig" data-kind="map">
+  <svg viewBox="-62 -16 534 374" role="img" aria-label="4.1m × 2.95m 미션맵 약도: 위쪽 랙 A1~A3, 가운데 1번 간선, 아래쪽 작업 공간 B1 · B2, 맵 아래 바깥 도크와 B1–B2 사이 진입 통로, 양 끝 비상구 1 · 2, 갈림 표시 CP1~CP4, 대피 안내 자리 ①~④">
+    <rect class="box" x="0" y="0" width="410" height="295"/>
+    <g class="mute">
+      <rect class="zone mute" x="45" y="45" width="80" height="60"/><text class="s" x="85" y="80" text-anchor="middle">A1</text>
+      <rect class="zone mute" x="165" y="45" width="80" height="60"/><text class="s" x="205" y="80" text-anchor="middle">A2</text>
+      <rect class="zone mute" x="285" y="45" width="80" height="60"/><text class="s" x="325" y="80" text-anchor="middle">A3</text>
+      <rect class="zone mute" x="45" y="165" width="140" height="40"/><text class="s" x="115" y="190" text-anchor="middle">B1</text>
+      <rect class="zone mute" x="225" y="165" width="140" height="40"/><text class="s" x="295" y="190" text-anchor="middle">B2</text>
+    </g>
+    <rect class="dash" x="168" y="302" width="74" height="44"/>
+    <text class="s" x="250" y="330">도크 (맵 밖)</text>
+
+    <path class="ln" d="M55 25 H355 A30 30 0 0 1 385 55 V195 A30 30 0 0 1 355 225 H55 A30 30 0 0 1 25 195 V55 A30 30 0 0 1 55 25"/>
+    <path class="ln" d="M360 135 H50"/>
+    <path class="ln" d="M120 25 A25 25 0 0 1 145 50 V110 A25 25 0 0 0 170 135"/>
+    <path class="ln" d="M240 135 A25 25 0 0 0 265 110 V50 A25 25 0 0 1 290 25"/>
+    <path class="ln" d="M50 135 A25 25 0 0 1 25 110"/>
+    <path class="ln" d="M385 110 A25 25 0 0 1 360 135"/>
+    <path class="ln" d="M230 135 A25 25 0 0 0 205 160 A25 25 0 0 0 180 135"/>
+    <path class="ln" d="M205 316 V160"/>
+
+    <path class="ln flow" d="M160 25 H200"/>
+    <path class="ln flow" d="M385 140 V180"/>
+    <path class="ln flow" d="M320 225 H280"/>
+    <path class="ln flow" d="M25 180 V140"/>
+    <path class="ln flow" d="M145 65 V95"/>
+    <path class="ln flow" d="M265 95 V65"/>
+    <path class="ln flow" d="M330 135 H290"/>
+    <path class="ln flow" d="M120 135 H80"/>
+    <path class="ln flow bi" d="M205 272 V244"/>
+
+    <text class="s b c-blue halo" x="120" y="14" text-anchor="middle">CP1</text>
+    <text class="s b c-red halo" x="236" y="126" text-anchor="end">CP2</text>
+    <text class="s b c-blue halo" x="176" y="156" text-anchor="end">CP3</text>
+    <text class="s b c-blue halo" x="380" y="124" text-anchor="end">CP4</text>
+
+    <circle class="dash c-green" cx="50" cy="135" r="10"/><text class="s b ok halo" x="50" y="160" text-anchor="middle">①</text>
+    <circle class="dash c-green" cx="360" cy="135" r="10"/><text class="s b ok halo" x="360" y="160" text-anchor="middle">②</text>
+    <circle class="dash c-green" cx="130" cy="225" r="10"/><text class="s b ok halo" x="130" y="250" text-anchor="middle">③</text>
+    <circle class="dash c-green" cx="205" cy="25" r="10"/><text class="s b ok halo" x="205" y="50" text-anchor="middle">④</text>
+
+    <text class="s b" x="-6" y="139" text-anchor="end">비상구 1</text>
+    <text class="s b" x="416" y="139">비상구 2</text>
+  </svg>
+  <figcaption>그림 1. 미션맵 약도. 검정 선이 순찰 길, 화살표가 다니는 방향(양쪽 화살표는 양쪽 통행), 점선 원이 대피 안내 자리 ①~④ (<code>map</code>)</figcaption>
+</figure>
+
+<h2>2. 순찰 경로 (<span class="nw">F-01</span>)</h2>
+<p><b>2대 순찰&nbsp;· 2대 도크 충전 대기.</b> A는 맵 가장 바깥을 돌고, B는 안쪽에서 A1&nbsp;· A3 둘레를 번갈아 8자로 돈다. <br class="w">B는 A1&nbsp;· A3의 바깥 면에서 외곽선을 A와 같은 방향으로 함께 쓰고, A2 아래 간선만 양쪽으로 다닌다. 후진은 없다. <br class="w">B1–B2 사이는 순찰하지 않고, 맵 밖 도크와 1번 간선을 잇는 진입&nbsp;· 퇴장 통로로만 쓴다.</p>
+<div class="tw"><table>
+  <tr><th>로봇</th><th>맡은 곳</th><th>움직임</th></tr>
+  <tr><td class="k"><i class="dot blue"></i>A</td><td>바깥: 위쪽&nbsp;· 오른쪽&nbsp;· 아래쪽&nbsp;· 왼쪽 외곽</td><td>맵 가장 바깥을 시계 방향으로 계속 돎</td></tr>
+  <tr><td class="k"><i class="dot green"></i>B</td><td>안쪽: A1&nbsp;· A3 둘레와 1번 간선 (A1–A2 통로는 남쪽, A2–A3 통로는 북쪽 한 방향)</td><td>A2 아래&nbsp;→ A1 아래 (간선 서쪽)&nbsp;→ A1 왼쪽&nbsp;· 위&nbsp;→ CP1에서 A1 오른쪽 (남쪽)&nbsp;→ A2 아래 (동쪽)&nbsp;→ CP2에서 A3 왼쪽 (북쪽)&nbsp;→ A3 위&nbsp;· 오른쪽&nbsp;→ CP4에서 A3 아래 (간선 서쪽)&nbsp;→ 반복<br>빠질 때는 A1&nbsp;· A3 중 진입 통로에 가까운 쪽을 돌아 도크로</td></tr>
+  <tr><td class="k"><i class="dot gray"></i>3&nbsp;· 4</td><td>도크 대기</td><td>충전 대기&nbsp;→ 진입 통로로 나가 교대<br>이상이 생기면 모두 출동</td></tr>
+</table></div>
+
+<h2>3. 바닥 마커 (<span class="nw">F-02</span>)</h2>
+<p>바닥 카메라에 마커가 들어올 때마다 서버에 알리고, <br class="w">서버는 카메라가 읽는 거리(몸 중심 앞 15~33cm, 가운데 약 24cm)만큼 뒤를 로봇 위치로 잡는다. <br class="w">마커는 아래 색의 테이프로 붙인다.</p>
+<div class="tw"><table>
+  <tr><th>색</th><th>놓는 곳</th><th>하는 일</th></tr>
+  <tr><td class="k"><svg width="22" height="10" role="img" aria-label="검정 선"><rect x="1" y="4" width="20" height="2.5" fill="#111"/></svg> 검정 선</td><td>모든 길</td><td>로봇이 따라 걷는 한 방향 순찰 길</td></tr>
+  <tr><td class="k"><svg width="22" height="10" role="img" aria-label="빨강 띠"><rect x="1" y="3" width="20" height="4" fill="var(--red)"/></svg> <svg width="22" height="10" role="img" aria-label="파랑 띠"><rect x="1" y="3" width="20" height="4" fill="var(--blue)"/></svg> 빨강&nbsp;· 파랑&nbsp;· 갈림</td><td>CP1 ~ CP4 (갈림길 바로 앞)</td><td>갈래가 어느 쪽인지 색으로 알림: 빨강 왼쪽 갈래&nbsp;· 파랑 오른쪽 갈래. 갈래로 들어갈지는 로봇이 받은 경로대로<br>CP1: 위쪽 외곽&nbsp;→ A1–A2 통로 (파랑) · CP2: A2 아래&nbsp;→ 동쪽으로 가면 A2–A3 통로, 서쪽으로 가면 진입 통로 (빨강) · CP3: A2 아래 동쪽으로&nbsp;→ 진입 통로 (파랑) · CP4: 오른쪽 외곽&nbsp;→ 간선 (파랑)</td></tr>
+  <tr><td class="k"><svg width="22" height="10" role="img" aria-label="노랑·초록 띠"><rect x="1" y="3" width="9" height="4" fill="#f2c94c"/><rect x="12" y="3" width="9" height="4" fill="#40c057"/></svg> 노랑&nbsp;· 초록&nbsp;· 구간</td><td>모든 구간에 번갈아, 빈 곳 없이</td><td>직선은 약 55cm 간격, 모서리&nbsp;· 곡선도 60cm 넘게 비지 않게<br>지난 마커 수 = 구간 번호&nbsp;· 같은 색이 연달아 읽히면 하나 놓침&nbsp;· 갈림 표시(CP)를 지날 때마다 다시 맞춤</td></tr>
+</table></div>
+
+<h2>4. 동선 규칙 (<span class="nw">F-13</span>)</h2>
+<div class="tw"><table>
+  <tr><th>상황</th><th>동작</th></tr>
+  <tr><td class="k">순찰을 시작할 때</td><td>도크에서 진입 통로로 올라와 A2 아래에서 간선 서쪽으로 들어감&nbsp;· 바깥 로봇은 간선 서쪽 끝에서 외곽으로</td></tr>
+  <tr><td class="k">합류점에서 만날 때</td><td>통로&nbsp;· 간선에서 외곽으로 들어갈 때는 외곽 위 로봇이 먼저 (간선 서쪽 끝, A2–A3 통로 위 끝)</td></tr>
+  <tr><td class="k">같은 방향 앞에 로봇이 있을 때</td><td>초음파에 잡히면 정지</td></tr>
+  <tr><td class="k">출동 로봇과 길이 겹칠 때</td><td>한 방향 선을 따라 길 예약&nbsp;· 순찰 로봇은 후진 없이 현 위치 대기 후 재개</td></tr>
+  <tr><td class="k">도크에 드나들 때</td><td>진입 통로는 한 줄이라 한 번에 한 대&nbsp;· 아래쪽 외곽선과 엇갈리는 곳은 먼저 들어선 로봇이 지나가고, 뒤에 온 로봇은 초음파로 멈췄다 감&nbsp;· 들어온 로봇은 통로 끝에서 충전 자리로 비켜 선다</td></tr>
+</table></div>
+
+<h2>5. 대피 안내 자리 (<span class="nw">F-12</span>)</h2>
+<p>고정 유도등 대신 <b>로봇이 갈림길에 서서 LED 도트 매트릭스로 불 반대쪽 비상구를 가리킨다.</b> <br class="w">화재 확정&nbsp;→ 4대 모두 갈림길 ①~④로 (마지막 로봇이 가장 빨리 닿게 배정). <br class="w">가는 길부터 LED로 지금 위치 기준 화살표, 길이 꺾이면 꺾인 화살표(⮧)&nbsp;· ✕는 ① 자리에서만.</p>
+<div class="tw"><table>
+  <tr><th>자리</th><th>왜 여기</th><th>서쪽 화재</th><th>동쪽 화재</th></tr>
+  <tr><td>① 1번 간선 서쪽 끝 (비상구 1 앞)</td><td>비상구 1로 가는 마지막 갈림</td><td>✕ 진입&nbsp;금지</td><td>← 비상구 1</td></tr>
+  <tr><td>② 1번 간선 동쪽 끝 (비상구 2 앞)</td><td>비상구 2로 가는 마지막 갈림</td><td>→ 비상구 2</td><td>✕ 진입&nbsp;금지</td></tr>
+  <tr><td>③ 아래쪽 외곽 (B1 아래)</td><td>작업 공간 아래쪽에 있는 사람은 간선을 안 지남</td><td>→↑</td><td>←↑</td></tr>
+  <tr><td>④ 위쪽 외곽 가운데</td><td>랙 위쪽에 있는 사람은 간선을 안 지남</td><td>→↓</td><td>←↓</td></tr>
+</table></div>
+<p><b>막힌 길 피하기</b>: 1번 간선의 박스를 못 치운 채 서쪽에서 불이 나면 <br class="w">③은 진입 통로 대신 아래&nbsp;· 오른쪽 외곽으로 비상구 2 방향 안내</p>
+
+<h2>6. 구조물</h2>
+<ul>
+  <li><b>구역 경계는 바닥에</b>: 랙 3곳(A1~A3)과 작업 공간 2곳(B1&nbsp;· B2)은 테이프로 바닥 테두리를 먼저 표시해, 보관 부피를 줄이고 카메라 사각지대를 없앤다.</li>
+  <li><b>입체 구조물은 가볍고 낮게</b>: 구획 안쪽 모서리에만 하드보드지와 남는 폼보드로 낮은 가벽(높이 15~25cm)과 이름표를 세워, 시연 뒤 쉽게 해체해 보관한다.</li>
+  <li><b>초음파 오인식 막기</b>: 주행선과 구역 경계 사이가 20cm이므로 가벽은 경계선 안쪽으로 들여 놓고, 초음파 센서가 잘못 반응하지 않는지 시험한다.</li>
+</ul>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+<script src="../assets/diagram.js" defer></script>
+</body>
+</html>

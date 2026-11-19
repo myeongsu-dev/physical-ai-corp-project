@@ -29,3 +29,5 @@
 [data-widget="v3d"] details{margin:8px 0}
 [data-widget="v3d"] details summary{cursor:pointer;font-weight:700}
 [data-widget="v3d"] details[open] summary{margin-bottom:6px}
+
+.v3d [hidden]{display:none}

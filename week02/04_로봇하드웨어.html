@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로봇 하드웨어</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/3d/viewer.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_시스템_아키텍처.html">01<span class="lbl"> 시스템 아키텍처</span></a><a href="02_재료_목록.html">02<span class="lbl"> 재료 목록</span></a><a href="03_개발계획.html">03<span class="lbl"> 개발 계획</span></a><a href="04_로봇하드웨어.html" aria-current="page">04<span class="lbl"> 로봇 하드웨어</span></a><a href="05_AI모델.html">05<span class="lbl"> AI 모델</span></a><a href="06_기술검증.html">06<span class="lbl"> 기술 검증</span></a><a href="07_시연시나리오.html">07<span class="lbl"> 시연 시나리오</span></a></span></nav>
+<div class="doc">
+
+<h1>로봇 하드웨어</h1>
+<p class="sub">MechDog 한 대에 다는 부품의 자리와 배선, 3D 장착 모델. 4대 모두 같은 구성</p>
+
+<div class="def">MechDog 기본 장치는 제어 보드에, 더한 머리 카메라와 온도 센서는 라즈베리 파이 5에 잇고, Pi 5와 보드는 USB 케이블 하나로 잇는다. 납땜은 하지 않는다.</div>
+
+<h2>1. 장착 부품</h2>
+<div class="tw"><table>
+  <tr><th>부품</th><th>자리</th><th>연결</th></tr>
+  <tr class="grp"><td colspan="3">제어 보드에 잇는 MechDog 기본 장치</td></tr>
+  <tr><td class="k">바닥 카메라 (기본 비전 모듈)</td><td>머리 아래에서 35° 꺾어 몸 중심 앞 14~30cm 바닥을 봄</td><td>보드 포트 1 (코드에서는 <code>IIC(2)</code>). 경로가 약 19cm라 20cm 케이블을 배 아래에 바짝 붙여 묶음</td></tr>
+  <tr><td class="k">초음파 센서</td><td>머리 앞 (기본 위치)</td><td>보드 I2C 1번</td></tr>
+  <tr><td class="k">LED 도트 매트릭스 (8×16)</td><td>등뼈 덮개 위 데크의 위층에 스탠드오프로 달아 화면이 위를 봄</td><td>보드 포트 3</td></tr>
+  <tr><td class="k">스피커 (MP3 모듈)</td><td>LED 받침판 앞 끝에 세워 스피커가 앞을 봄</td><td>보드 포트 2 (I2C <code>0x7B</code>)</td></tr>
+  <tr class="grp"><td colspan="3">라즈베리 파이 5와 Pi에 잇는 장치</td></tr>
+  <tr><td class="k">라즈베리 파이 5</td><td>뒤 윗판의 3D 출력 캐리어에 가로로 눕혀 꼬리 밖으로 나가지 않음. 쿨러는 케이스 없이 바로 끼우고, microSD는 캐리어에서 빼지 않고 바꿈</td><td>보드 USB ↔ Pi USB-A</td></tr>
+  <tr><td class="k">머리 카메라 (XIAO ESP32-S3 Sense)</td><td>머리 위 3D 출력 브래킷에서 정면을 봄</td><td>Pi 5 USB (USB-C to A, 경로 약 25cm)</td></tr>
+  <tr><td class="k">온도 센서 (GY-906)</td><td>머리 브래킷. 핀은 ㄱ자 핀헤더로 위로 세워 안테나 선반에 닿지 않게</td><td>Pi 5 I2C (GPIO 2·3), 듀폰 점퍼로 1·3·5·9번 핀 (경로 약 18cm)</td></tr>
+  <tr><td class="k">보조배터리 (Pi 5 전용)</td><td>LED · 배터리 데크 아래층의 배터리 칸</td><td>USB-C → Pi 5</td></tr>
+</table></div>
+<p class="note">부품이 맡은 일과 통신은 <a href="01_시스템_아키텍처.html">시스템 아키텍처</a>, 구매 현황은 <a href="02_재료_목록.html">재료 목록</a>.</p>
+
+<h2>2. 무게 배치</h2>
+<ul>
+  <li><b>배터리</b>: 가장 무거운 보조배터리를 몸 중심 바로 위, 장착 부품 중 가장 낮은 자리에 둬 방향을 틀 때 넘어지지 않게 한다. 네 벽과 위 받침판이 배터리를 잡아 따로 묶지 않고, 오른쪽 끝 창으로 꽂은 채 충전한다.</li>
+  <li><b>Pi 5</b>: 데크 뒤쪽 뒤 윗판에 가로로 눕혀 꼬리 끝 밖으로 나가지 않게 한다.</li>
+  <li><b>머리</b>: 머리 카메라와 온도 센서가 앞에, 스피커는 그보다 뒤 · 위에 있어 시야를 가리지 않는다.</li>
+</ul>
+
+<h2>3. 3D 장착 모델</h2>
+<p class="note">실물 사진 9장을 바탕으로 앞뒤 덮개의 타공, 배터리 덮개, 다리의 판금과 푸시로드, 머리 아래로 접은 비전 모듈을 재현했다. 접은 자세와 선 자세를 돌려 보거나 위·아래에서 부품 배치를 확인할 수 있다. 사양서의 기본형 외형은 기립 시 214 × 126 × 138 mm이며, 사진에서 읽은 판금과 관절 치수는 추정값이다.</p>
+<p>‘프로젝트 장착안’을 선택하면 Pi 5, 배터리 데크와 추가 센서가 보인다. 카메라와 다리 각도를 바꾸면 시야와 간섭 추정값을 확인할 수 있다. 3D 표시는 인터넷 연결이 필요하며, 서보·XIAO·Pi 5는 공식 STEP에서 변환한 모델을 불러온다. HTML 파일을 직접 열면 이 세 부품은 간략 모델로 표시된다.</p>
+  <div id="v3d" data-widget="v3d"></div>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script src="../assets/3d/viewer.js" defer></script>
+</body>
+</html>

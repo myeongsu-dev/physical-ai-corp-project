@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 모델</title>
+<link rel="stylesheet" href="../assets/doc.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_시스템_아키텍처.html">01<span class="lbl"> 시스템 아키텍처</span></a><a href="02_재료_목록.html">02<span class="lbl"> 재료 목록</span></a><a href="03_개발계획.html">03<span class="lbl"> 개발 계획</span></a><a href="04_로봇하드웨어.html">04<span class="lbl"> 로봇 하드웨어</span></a><a href="05_AI모델.html" aria-current="page">05<span class="lbl"> AI 모델</span></a><a href="06_기술검증.html">06<span class="lbl"> 기술 검증</span></a><a href="07_시연시나리오.html">07<span class="lbl"> 시연 시나리오</span></a></span></nav>
+<div class="doc">
+
+<h1>AI 모델</h1>
+<p class="sub">라즈베리 파이 5에서 돌릴 안전모 · 불꽃 모델의 구성, 데이터, 라벨링, 학습과 변환, 평가</p>
+
+<div class="def">작은 YOLO 모델 두 개를 따로 학습해 라즈베리 파이 5 CPU에서 돌린다. 안전모 모델은 순찰 중 늘, 불꽃 모델은 화재가 의심될 때만 돌린다.</div>
+
+<h2>1. 모델 구성</h2>
+<div class="tw"><table>
+  <tr><th>모델</th><th>클래스</th><th>언제 돌리나</th><th>쓰는 기능</th></tr>
+  <tr><td class="k">안전모 모델</td><td><code>person</code> · <code>head</code> · <code>helmet</code></td><td>순찰 중 늘</td><td><span class="nw">F-06</span> · <span class="nw">F-07</span> 안전모 착용 확인 · 보행자 구분</td></tr>
+  <tr><td class="k">불꽃 모델</td><td><code>fire</code></td><td>온도 센서가 화재를 의심할 때만 (Pi 5 CPU 부담을 줄임)</td><td><span class="nw">F-05</span> · <span class="nw">F-10</span> 화재 감지 · 교차 확인</td></tr>
+</table></div>
+<p class="note">몇 장 중 몇 장으로 확정하는지, 몇 도에서 의심하는지 같은 판정 기준은 <a href="../week01/02_기능정의서.html">기능 정의서</a> 4절.</p>
+
+<h2>2. 데이터</h2>
+<ul>
+  <li><b>출처</b>: 멘토가 주는 안전모 · 불꽃 데이터셋 + 공개 데이터(Roboflow · Kaggle · AI Hub · COCO) + 미션맵에서 XIAO로 찍은 사진</li>
+  <li><b>카메라 화질</b>: 실제로 쓰는 ESP32 카메라 화질로 찍은 사진을 꼭 섞는다</li>
+  <li><b>균형</b>: 모델마다 클래스별 사진 수를 비슷하게 맞춘다</li>
+  <li><b>다양성</b>: 안전모는 정면만이 아니라 옆 · 뒤 · 위에서 본 모습과 여러 색을 넣어, 학습 사진에만 맞춰지지 않게 한다</li>
+</ul>
+
+<h2>3. 라벨링</h2>
+<p>모델을 맡은 두 사람이 하고, 자동 라벨 결과를 무작위로 골라 사람이 검수한다. 사람이 로봇을 가르치는 협동 장면으로 발표에도 쓴다.</p>
+
+<h2>4. 학습과 변환</h2>
+<div class="tw"><table>
+  <tr><th>항목</th><th>내용</th></tr>
+  <tr><td class="k">학습 환경</td><td>팀에 GPU가 없어 CPU 학습은 오래 걸린다. Colab 무료 GPU와 Vast.ai(남는 GPU를 시간 단위로 빌림, 시간당 약 0.2~0.35달러)를 후보로 두고 멘토와 정한다</td></tr>
+  <tr><td class="k">변환</td><td>학습한 모델을 Pi 5 CPU용으로 바꾼다 (NCNN 등, 입력 320~640). 추론 가속 보드(Hailo) 없이 CPU로만 돌린다</td></tr>
+  <tr><td class="k">배포</td><td>Pi의 <code>models/</code>에 버전을 붙여 넣는다 (방법은 <a href="01_시스템_아키텍처.html">시스템 아키텍처</a> 6절 업데이트)</td></tr>
+  <tr><td class="k">진행</td><td>학습을 돌려 두고 기능 구현을 함께 진행한다</td></tr>
+</table></div>
+
+<h2>5. 평가</h2>
+<p>모델이 낸 답을 사람이 적은 정답표와 비교해 센다. 처음 목표는 10번 중 5번이고, 자주 틀리는 상황의 사진을 더 넣어 다시 학습한다.</p>
+<div class="tw"><table>
+  <tr><th>지표</th><th>뜻 (화재 예)</th></tr>
+  <tr><td class="k">TP · FP · FN</td><td>불이라고 했고 진짜 불(정탐) · 불이라고 했는데 아님(오탐) · 진짜 불을 놓침(미탐)</td></tr>
+  <tr><td class="k">정밀도</td><td>불이라고 한 것 중 진짜 불의 비율. 오탐이 많으면 떨어진다</td></tr>
+  <tr><td class="k">재현율</td><td>진짜 불 중 찾아낸 비율. 화재는 놓치면 위험해 이 값을 먼저 본다</td></tr>
+  <tr><td class="k">F1 · mAP@0.5</td><td>F1은 정밀도와 재현율의 조화 평균. mAP@0.5는 예측 상자와 정답 상자가 절반 이상 겹치면 맞힌 것으로 쳐서 낸 평균 정확도로, YOLO 모델을 비교할 때 쓴다</td></tr>
+</table></div>
+<ul>
+  <li><b>화재</b>: 불을 여러 번 낼 수 없어 영상과 실외 불(가스버너 · 신문지)로 평가한다</li>
+  <li><b>안전모</b>: 사람이 직접 쓰고 벗으며 미션맵 거리(1~3m)에서 시험한다</li>
+</ul>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+</body>
+</html>

@@ -7,7 +7,7 @@
 (function(){
   var root = document.querySelector('[data-widget="missionmap"]');
   if (!root) return;
-  root.innerHTML = "<div class=\"player\">\n  <button type=\"button\" id=\"sim-play\">일시정지</button>\n  <button type=\"button\" id=\"sim-reset\">처음부터</button>\n  <div class=\"grp\" id=\"sim-speed\" role=\"group\" aria-label=\"재생 속도\">속도\n    <button type=\"button\" data-sp=\"1\" aria-pressed=\"false\">1×</button>\n    <button type=\"button\" data-sp=\"2\" aria-pressed=\"true\">2×</button>\n    <button type=\"button\" data-sp=\"4\" aria-pressed=\"false\">4×</button>\n  </div>\n  <div class=\"grp\" id=\"sim-ch\" role=\"group\" aria-label=\"장면으로 이동\">장면\n    <button type=\"button\" data-ch=\"0\">1 평상시 순찰</button>\n    <button type=\"button\" data-ch=\"1\">2 바닥 물건</button>\n    <button type=\"button\" data-ch=\"2\">3 막힘 발견</button>\n    <button type=\"button\" data-ch=\"3\">4 충전 교대</button>\n    <button type=\"button\" data-ch=\"4\">5 과열 교차 확인</button>\n    <button type=\"button\" data-ch=\"5\">6 화재 대피 안내</button>\n  </div>\n  <span class=\"clock\" id=\"sim-clock\">0:00</span>\n</div>\n<div class=\"simwrap\">\n  <div class=\"simmain\">\n    <div class=\"chapter\" id=\"sim-chapter\"></div>\n    <div class=\"graph\"><svg id=\"sim\" viewBox=\"-36 -8 482 312\" role=\"img\" aria-label=\"평상시 순찰, 바닥 물건 발견, 막힘 발견, 충전 교대, 과열 교차 확인, 화재 대피 안내로 이어지는 4.1m × 2.95m 한 방향 미션맵 시나리오 애니메이션\"></svg></div>\n    <div class=\"status\" id=\"sim-status\" aria-live=\"off\"></div>\n  </div>\n  <div class=\"logbox\">\n    <div class=\"loghead\">관제 로그\n      <span><label title=\"디버그: 서버가 추정한 로봇 위치(점선 원) 표시\"><input type=\"checkbox\" id=\"ghost-on\"> 추정 위치</label>\n      <label>레벨 <select id=\"log-level\"><option value=\"10\">DEBUG</option><option value=\"20\" selected>INFO</option><option value=\"30\">WARNING</option></select></label></span>\n    </div>\n    <ol class=\"log\" id=\"sim-log\" aria-live=\"off\"></ol>\n  </div>\n</div>\n";
+  root.innerHTML = "<div class=\"player\">\n  <button type=\"button\" id=\"sim-play\">일시정지</button>\n  <button type=\"button\" id=\"sim-reset\">처음부터</button>\n  <div class=\"grp\" id=\"sim-speed\" role=\"group\" aria-label=\"재생 속도\">속도\n    <button type=\"button\" data-sp=\"1\" aria-pressed=\"false\">1×</button>\n    <button type=\"button\" data-sp=\"2\" aria-pressed=\"true\">2×</button>\n    <button type=\"button\" data-sp=\"4\" aria-pressed=\"false\">4×</button>\n  </div>\n  <div class=\"grp\" id=\"sim-ch\" role=\"group\" aria-label=\"장면으로 이동\">장면\n    <button type=\"button\" data-ch=\"0\">1 평상시 순찰</button>\n    <button type=\"button\" data-ch=\"1\">2 바닥 물건</button>\n    <button type=\"button\" data-ch=\"2\">3 막힘 발견</button>\n    <button type=\"button\" data-ch=\"3\">4 충전 교대</button>\n    <button type=\"button\" data-ch=\"4\">5 화재 교차 확인</button>\n    <button type=\"button\" data-ch=\"5\">6 화재 대피 안내</button>\n  </div>\n  <span class=\"clock\" id=\"sim-clock\">0:00</span>\n</div>\n<div class=\"simwrap\">\n  <div class=\"simmain\">\n    <div class=\"chapter\" id=\"sim-chapter\"></div>\n    <div class=\"graph\"><svg id=\"sim\" viewBox=\"-36 -8 482 360\" role=\"img\" aria-label=\"평상시 순찰, 바닥 물건 발견, 막힘 발견, 충전 교대, 화재 교차 확인, 화재 대피 안내로 이어지는 4.1m × 2.95m 한 방향 미션맵 시나리오 애니메이션\"></svg></div>\n    <div class=\"status\" id=\"sim-status\" aria-live=\"off\"></div>\n  </div>\n  <div class=\"logbox\">\n    <div class=\"loghead\">관제 로그\n      <span><label title=\"디버그: 서버가 추정한 로봇 위치(점선 원) 표시\"><input type=\"checkbox\" id=\"ghost-on\"> 추정 위치</label>\n      <label>레벨 <select id=\"log-level\"><option value=\"10\">DEBUG</option><option value=\"20\" selected>INFO</option><option value=\"30\">WARNING</option></select></label></span>\n    </div>\n    <ol class=\"log\" id=\"sim-log\" aria-live=\"off\"></ol>\n  </div>\n</div>\n";
   var NS = "http://www.w3.org/2000/svg";
   var meas = document.createElementNS(NS, "svg");
   meas.setAttribute("width", "0"); meas.setAttribute("height", "0"); meas.setAttribute("aria-hidden", "true");
@@ -46,101 +46,90 @@
     return P[P.length - 1];
   }
 
-  /* ================= 경로 (4.1m × 2.95m, 한 방향 · 후진 없음 · 교차 없이 합류만) ================= */
+  /* ================= 경로 (4.1m × 2.95m, 후진 없음 · 진입 통로와 아래쪽 외곽만 한 번 엇갈림) ================= */
   // 곡선 반지름은 25cm 이상(외곽 모서리 30): 로봇 길이 27cm가 선을 따라 돌 수 있는 값. 걸으며 회전 반경을 실측하면 이 값부터 맞춘다
   // ponytail: 바닥 카메라 = 머리의 모듈형 카메라를 아래로 꺾어 비스듬히 앞 바닥을 봄.
   //   02 장착 구성 3D(35° 꺾음)에서 라인 모드가 처리하는 화면 위 2/3 = 몸 중심 앞 15~33cm → 가운데 24 · 앞뒤 ±9. 좌우 ±10cm는 가정 — 실측하면 이 세 값만 바꾼다
   var CAM_AHEAD = 24, CAM_D = 9, CAM_W = 10;
-  // 위 구역(A): 랙 A1~A3 둘레 시계 방향 · 아래 구역(B): 작업 공간 B1·B2 둘레 반시계 방향 · 1번 간선만 둘이 같은 방향(서쪽)으로 함께 쓴다
-  var UP_LOOP = "M50 135 A25 25 0 0 1 25 110 V55 A30 30 0 0 1 55 25 H355 A30 30 0 0 1 385 55 V110 A25 25 0 0 1 360 135";
-  var DOCK_UTURN = "M80 225 A25 25 0 0 1 105 250 A25 25 0 0 0 155 250 A25 25 0 0 1 180 225";
-  var LOW_LOOP = "M50 135 A25 25 0 0 0 25 160 V195 A30 30 0 0 0 55 225 H80 A25 25 0 0 1 105 250 A25 25 0 0 0 155 250 A25 25 0 0 1 180 225 H355 A30 30 0 0 0 385 195 V160 A25 25 0 0 0 360 135";
+  // 바깥(A): 맵 가장 바깥 한 바퀴, 시계 방향
+  // 안쪽(B): A1 · A3 둘레를 번갈아 도는 8자. 간선 서쪽(A2 아래 → A1 아래) → A1 왼쪽 · 위 → A1–A2 통로 남쪽 → A2 아래 동쪽
+  //   → A2–A3 통로 북쪽 → A3 위 · 오른쪽 → A3 아래 서쪽 → 반복. A1 · A3 바깥 면은 외곽선을 A와 같은 방향으로 함께 쓴다 (합류점에선 외곽 위 로봇이 먼저)
+  //   A2 아래 간선은 동쪽 · 서쪽을 모두 다닌다 (한 줄을 양쪽으로)
+  // 도크는 맵 아래 바깥. B1–B2 사이 진입 · 퇴장 통로(폭 40cm, 한 줄을 양쪽으로)로 간선과 이어지고, 가는 길에 아래쪽 외곽선과 한 번 엇갈린다
+  var OUTER = "M55 25 H355 A30 30 0 0 1 385 55 V195 A30 30 0 0 1 355 225 H55 A30 30 0 0 1 25 195 V55 A30 30 0 0 1 55 25";
   var MAIN = "M360 135 H50";
-  // 통로는 간선에서 갈라져 나간다: 랙 사이는 북쪽(위쪽 외곽에 합류), B1–B2 사이는 남쪽(아래 외곽에 합류)
-  var AISLE_A12 = "M170 135 A25 25 0 0 1 145 110 V50 A25 25 0 0 1 170 25";
-  var AISLE_A23 = "M290 135 A25 25 0 0 1 265 110 V50 A25 25 0 0 1 290 25";
-  var AISLE_B12 = "M230 135 A25 25 0 0 0 205 160 V200 A25 25 0 0 0 230 225"; // 폭 40cm 통로라 한 줄 · 남쪽 한 방향
-  var UP_START = "M50 135 A25 25 0 0 1 25 110 V55 A30 30 0 0 1 55 25 H", LOW_START = "M50 135 A25 25 0 0 0 25 160 V195 A30 30 0 0 0 55 225 H";
-  var R_DOWN = "M355 25 A30 30 0 0 1 385 55 V95", R_UP = " H355 A30 30 0 0 0 385 195 V175", E_IN_A = "M385 95 V110 A25 25 0 0 1 360 135 H", E_IN_B = "M385 175 V160 A25 25 0 0 0 360 135 H";
+  var AISLE_A12 = "M120 25 A25 25 0 0 1 145 50 V110 A25 25 0 0 0 170 135"; // A1 오른쪽: 남쪽 한 방향
+  var AISLE_A23 = "M240 135 A25 25 0 0 0 265 110 V50 A25 25 0 0 1 290 25"; // A3 왼쪽: 북쪽 한 방향
+  var MAIN_W = "M50 135 A25 25 0 0 1 25 110", MAIN_E = "M385 110 A25 25 0 0 1 360 135"; // 간선 서쪽 끝 → 왼쪽 외곽 합류 · 오른쪽 외곽 갈림 → 간선 동쪽 끝
+  var GATE_DN = "M230 135 A25 25 0 0 0 205 160", GATE_UP = "M205 160 A25 25 0 0 0 180 135", STEM = "M205 316 V160"; // 진입 · 퇴장 통로: 서쪽으로 가다 내려가는 곡선 · 오르내리는 곡선(양쪽) · 도크까지 한 줄(양쪽)
   var PATROLS = {
     A:{steps:[
-      "간선 서쪽 끝에서 위로 · 위쪽 외곽을 동쪽 끝까지",
-      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
-      "1번 간선 서쪽으로 · CP6 빨강에서 A1–A2 통로를 북쪽으로",
-      "합류 허가 후 위쪽 외곽을 동쪽 끝까지",
-      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
-      "1번 간선 서쪽으로 · CP7 빨강에서 A2–A3 통로를 북쪽으로",
-      "합류 허가 후 위쪽 외곽을 동쪽 끝까지",
-      "오른쪽 위 외곽을 남쪽으로 · 간선 합류 허가 대기",
-      "1번 간선을 서쪽 끝까지"
+      "위쪽 외곽을 동쪽 끝까지",
+      "오른쪽 외곽을 남쪽으로",
+      "아래쪽 외곽을 서쪽으로 (진입 통로와 엇갈림)",
+      "왼쪽 외곽을 북쪽으로"
     ], segs:[
-      {d:UP_START + "355", st:0},
-      {d:R_DOWN, st:1},
-      {gate:"mergeE", st:1},
-      {d:E_IN_A + "170 A25 25 0 0 1 145 110 V60", st:2},
-      {gate:"mA12", st:2},
-      {d:"M145 60 V50 A25 25 0 0 1 170 25 H355", st:3},
-      {d:R_DOWN, st:4},
-      {gate:"mergeE", st:4},
-      {d:E_IN_A + "290 A25 25 0 0 1 265 110 V60", st:5},
-      {gate:"mA23", st:5},
-      {d:"M265 60 V50 A25 25 0 0 1 290 25 H355", st:6},
-      {d:R_DOWN, st:7},
-      {gate:"mergeE", st:7},
-      {d:E_IN_A + "50", st:8}
+      {d:"M55 25 H355", st:0},
+      {d:"M355 25 A30 30 0 0 1 385 55 V195", st:1},
+      {d:"M385 195 A30 30 0 0 1 355 225 H55", st:2},
+      {d:"M55 225 A30 30 0 0 1 25 195 V55 A30 30 0 0 1 55 25", st:3}
     ]},
     B:{steps:[
-      "간선 서쪽 끝에서 아래로 · 도크 입구까지",
-      "도크 U턴 통과 · 아래쪽 외곽 동쪽 · 오른쪽 아래 외곽 북쪽으로",
-      "1번 간선 서쪽으로 · CP8 빨강에서 B1–B2 통로를 남쪽으로",
-      "합류 허가 후 아래쪽 외곽 동쪽 · 오른쪽 아래 외곽 북쪽으로",
-      "1번 간선을 서쪽 끝까지"
+      "1번 간선 서쪽으로 (A2 · A1 아래)",
+      "합류 허가 후 A1 왼쪽 · 위 (외곽 함께 씀)",
+      "CP1 파랑에서 A1–A2 통로 남쪽 · A2 아래 동쪽 · CP2 빨강에서 A2–A3 통로 북쪽",
+      "합류 허가 후 A3 위 · 오른쪽 (외곽 함께 씀)",
+      "CP4 파랑에서 A3 아래 간선 서쪽으로"
     ], segs:[
-      {d:LOW_START + "80", st:0},
-      {d:DOCK_UTURN + R_UP, st:1},
-      {gate:"mergeE", st:1},
-      {d:E_IN_B + "230 A25 25 0 0 0 205 160 V185", st:2},
-      {gate:"mB12", st:2},
-      {d:"M205 185 V200 A25 25 0 0 0 230 225" + R_UP, st:3},
-      {gate:"mergeE", st:3},
-      {d:E_IN_B + "50", st:4}
+      {d:"M240 135 H70", st:0},
+      {gate:"mW", st:0},
+      {d:"M70 135 H50 A25 25 0 0 1 25 110 V55 A30 30 0 0 1 55 25 H120", st:1},
+      {d:"M120 25 A25 25 0 0 1 145 50 V110 A25 25 0 0 0 170 135 H240 A25 25 0 0 0 265 110 V60", st:2},
+      {gate:"mA23", st:2},
+      {d:"M265 60 V50 A25 25 0 0 1 290 25 H355 A30 30 0 0 1 385 55 V110", st:3},
+      {d:"M385 110 A25 25 0 0 1 360 135 H240", st:4}
     ]}
   };
 
   /* ================= 라인 연결망 (한 방향 그래프 · 후진 없음) ================= */
-  var NODES = {C1_W:1, D_A12:1, TOP:1, D_A23:1, C1_E:1, J_A23:1, J_B12:1, J_A12:1, DIN:1, DOUT:1, M_B12:1};
+  var NODES = {W_M:1, T_A12:1, T_M:1, T_A23:1, R_D:1, B_M:1, C1_E:1, C_A23:1, P_E:1, P_W:1, C_A12:1, C1_W:1, P_TOP:1, DK:1};
   var NODE_KO = {
-    C1_W:"1번 간선 서쪽 끝", D_A12:"A1·A2 합류점", TOP:"위쪽 외곽 가운데", D_A23:"A2·A3 합류점", C1_E:"1번 간선 동쪽 끝",
-    J_A23:"CP7", J_B12:"CP8", J_A12:"CP6", DIN:"도크 입구", DOUT:"도크 출구", M_B12:"B1·B2 합류점"
+    W_M:"왼쪽 외곽 합류점", T_A12:"CP1", T_M:"위쪽 외곽 가운데", T_A23:"A2·A3 합류점", R_D:"CP4", B_M:"아래쪽 외곽 B1 아래", C1_E:"1번 간선 동쪽 끝",
+    C_A23:"CP2", P_E:"진입 통로 동쪽", P_W:"진입 통로 서쪽", C_A12:"A1·A2 합류점", C1_W:"1번 간선 서쪽 끝", P_TOP:"진입 통로 위", DK:"도크"
   };
   var EDGES = [
-    ["C1_W", "D_A12", UP_START + "170"],
-    ["D_A12", "TOP", "M170 25 H230"],
-    ["TOP", "D_A23", "M230 25 H290"],
-    ["D_A23", "C1_E", "M290 25 H355 A30 30 0 0 1 385 55 V110 A25 25 0 0 1 360 135"],
-    ["C1_E", "J_A23", "M360 135 H290"],
-    ["J_A23", "J_B12", "M290 135 H230"],
-    ["J_B12", "J_A12", "M230 135 H170"],
-    ["J_A12", "C1_W", "M170 135 H50"],
-    ["J_A12", "D_A12", AISLE_A12],
-    ["J_A23", "D_A23", AISLE_A23],
-    ["C1_W", "DIN", LOW_START + "80"],
-    ["DIN", "DOUT", DOCK_UTURN],
-    ["DOUT", "M_B12", "M180 225 H230"],
-    ["M_B12", "C1_E", "M230 225 H355 A30 30 0 0 0 385 195 V160 A25 25 0 0 0 360 135"],
-    ["J_B12", "M_B12", AISLE_B12]
+    ["W_M", "T_A12", "M25 110 V55 A30 30 0 0 1 55 25 H120"],
+    ["T_A12", "T_M", "M120 25 H205"],
+    ["T_M", "T_A23", "M205 25 H290"],
+    ["T_A23", "R_D", "M290 25 H355 A30 30 0 0 1 385 55 V110"],
+    ["R_D", "B_M", "M385 110 V195 A30 30 0 0 1 355 225 H130"],
+    ["B_M", "W_M", "M130 225 H55 A30 30 0 0 1 25 195 V110"],
+    ["R_D", "C1_E", MAIN_E],
+    ["C1_E", "C_A23", "M360 135 H240"],
+    ["P_E", "C_A23", "M230 135 H240", true], // A2 아래 간선: 한 줄을 양쪽으로 (both)
+    ["P_W", "P_E", "M180 135 H230", true],
+    ["C_A12", "P_W", "M170 135 H180", true],
+    ["C_A12", "C1_W", "M170 135 H50"],
+    ["C1_W", "W_M", MAIN_W],
+    ["T_A12", "C_A12", AISLE_A12],
+    ["C_A23", "T_A23", AISLE_A23],
+    ["P_E", "P_TOP", GATE_DN],
+    ["P_TOP", "P_W", GATE_UP, true],
+    ["DK", "P_TOP", STEM, true]
   ].map(function(e){
     var L = len(e[2]), smp = [];
     for (var s = 0; s <= L; s += 2){ var q = pt(e[2], s); smp.push([s, q.x, q.y]); }
     var xs = smp.map(function(q){ return q[1]; }), ys = smp.map(function(q){ return q[2]; });
-    return {a:e[0], b:e[1], d:e[2], L:L, smp:smp, box:[Math.min.apply(null, xs), Math.min.apply(null, ys), Math.max.apply(null, xs), Math.max.apply(null, ys)]};
+    return {a:e[0], b:e[1], d:e[2], both:!!e[3], L:L, smp:smp, box:[Math.min.apply(null, xs), Math.min.apply(null, ys), Math.max.apply(null, xs), Math.max.apply(null, ys)]};
   });
   var EDGE_BY_D = {}, NODE_XY = [];
   EDGES.forEach(function(e){ EDGE_BY_D[e.d] = e; NODE_XY.push(pt(e.d, 0), pt(e.d, e.L)); });
   var NODE_POS = {}; EDGES.forEach(function(e){ NODE_POS[e.a] = pt(e.d, 0); NODE_POS[e.b] = pt(e.d, e.L); });
   // 바닥 마커: 로봇은 좌표를 모르고 이 표식이 카메라에 들어올 때 "무슨 마커를 봤다"만 서버에 알린다
-  var MARKERS = [["CP5", 72, 135, "red"], ["CP6", 192, 135, "red"], ["CP7", 312, 135, "red"], ["CP8", 252, 135, "red"]]
-    .map(function(m){ return {name:m[0], x:m[1], y:m[2], c:m[3]}; });
+  // 갈림 표시: 갈림길 바로 앞에 갈래 방향 색 선 (빨강 = 왼쪽 갈래, 파랑 = 오른쪽 갈래). 갈래로 들어갈지는 로봇이 받은 경로대로
+  //   CP1 위쪽 외곽 → A1–A2 통로 · CP2 A2 아래(동쪽으로 가면 A2–A3 통로, 서쪽으로 가면 진입 통로: 둘 다 왼쪽) · CP3 A2 아래 동쪽으로 → 진입 통로 · CP4 오른쪽 외곽 → 간선
+  var MARKERS = [["CP1", 108, 25, "blue"], ["CP2", 235, 135, "red"], ["CP3", 175, 135, "blue"], ["CP4", 385, 97, "blue"]]
+    .map(function(m){ return {name:m[0], x:m[1], y:m[2], c:m[3], j:true}; });
   // 구간 마커: 구간(갈림 · 합류 사이)마다 최소 하나, 빈 곳 없이.
   //   먼저 직선에 55cm 간격(몸 뒤 CAM_AHEAD가 곧은 자리 = 카메라가 똑바로 보는 자리), 그래도 60cm 넘게 비는 곳(모서리 · 도크 U턴)은 곡선 위에도 채운다
   (function(){
@@ -153,7 +142,7 @@
         q = pt(e.d, s); b = pt(e.d, s - CAM_AHEAD);
         if (s - last >= 55 && q.tx * b.tx + q.ty * b.ty >= 0.999 && free(q)){ put(q); last = s; at.push(s); }
       }
-      MARKERS.forEach(function(m){ var n = nearestRaw(m.x, m.y); if (m.c === "red" && n.e === e) at.push(n.s); });
+      MARKERS.forEach(function(m){ var n = nearestRaw(m.x, m.y); if (m.j && n.e === e) at.push(n.s); });
       for (s = 12; s < e.L - 12; s += 2){
         var prev = Math.max.apply(null, [0].concat(at.filter(function(x){ return x <= s; }))), next = Math.min.apply(null, [e.L].concat(at.filter(function(x){ return x > s; })));
         q = pt(e.d, s);
@@ -163,7 +152,7 @@
   })();
   MARKERS.forEach(function(m){ var n = nearestRaw(m.x, m.y), t = pt(n.e.d, n.s); m.tx = t.tx; m.ty = t.ty; });
   function nearestRaw(x, y){ var best = null; EDGES.forEach(function(e){ e.smp.forEach(function(q){ var dd = Math.hypot(q[1] - x, q[2] - y); if (!best || dd < best.dd) best = {e:e, s:q[0], dd:dd}; }); }); return best; }
-  var M_KO = {red:"빨강", yellow:"노랑", green:"초록"};
+  var M_KO = {red:"빨강", blue:"파랑", yellow:"노랑", green:"초록"};
   function markerName(m){ return m.name + "(" + M_KO[m.c] + ")"; }
   function nearest(x, y, skip){
     var best = null;
@@ -179,35 +168,44 @@
   // (x, y)에서 tgt(노드 이름 또는 [x, y])까지 한 방향 선을 따라가는 조각 [{d, s0, s1}]과 길이 (후진 없음)
   // avoid: [{e, dir}] 다른 로봇이 쓸 구간 → 가급적 피한다
   // stops: [{x, y}] 멈춰 있는 장애물 · 로봇 자리 → 그 자리를 지나는 길은 쓰지 않는다
-  function route(x, y, tgt, avoid, stops, undirected){
+  // hd: {hx, hy} 지금 바라보는 방향. 양쪽 통행 구간 위에서 출발할 때 되돌아가는 길을 막는다
+  function route(x, y, tgt, avoid, stops, undirected, hd){
     function rangeBlocked(e, s0, s1){ var lo = Math.min(s0, s1), hi = Math.max(s0, s1); return (stops || []).some(function(p){ return e.smp.some(function(q){ return q[0] >= lo - 1 && q[0] <= hi + 1 && Math.hypot(q[1] - p.x, q[2] - p.y) < 22; }); }); }
     function blocked(f, u){ var td = f.a === u ? 1 : -1; return (avoid || []).some(function(o){ return o.e === f && (undirected ? o.dir !== td : true); }) || rangeBlocked(f, 0, f.L); }
-    var n = nearest(x, y), e = n.e, dd = {}, prev = {}, todo = Object.keys(NODES);
-    todo.forEach(function(k){ dd[k] = Infinity; });
-    if (undirected && !rangeBlocked(e, n.s, 0)){ dd[e.a] = n.s; prev[e.a] = {start:true, s1:0}; }
-    if (!rangeBlocked(e, n.s, e.L) && e.L - n.s < dd[e.b]){ dd[e.b] = e.L - n.s; prev[e.b] = {start:true, s1:e.L}; }
+    var n = nearest(x, y), e = n.e;
+    function ok(sg){ if (undirected || !e.both || !hd || n.dd > 6) return true; var q = pt(e.d, n.s); return (q.tx * hd.hx + q.ty * hd.hy) * sg > -0.2; }
+    // 상태 = (노드, 그 노드에 들어온 방향). 들어온 방향과 반대로 나가는 길(제자리 되돌기)은 쓰지 않는다 (사람 동선 undirected는 허용)
+    function tan(f, s, sg){ var q = pt(f.d, s); return {x:q.tx * sg, y:q.ty * sg}; }
+    function turnOk(h, h0){ return undirected || h0.x * h.x + h0.y * h.y > -0.2; }
+    var dd = {}, prev = {}, info = {}, done = {}, todo = [];
+    function push(k, node, h, d, pv){ if (!done[k] && !(dd[k] <= d)){ dd[k] = d; prev[k] = pv; info[k] = {node:node, h:h}; if (todo.indexOf(k) < 0) todo.push(k); } }
+    if ((undirected || e.both) && ok(-1) && !rangeBlocked(e, n.s, 0)) push("s-", e.a, tan(e, 0, -1), n.s, {start:true, s1:0});
+    if (ok(1) && !rangeBlocked(e, n.s, e.L)) push("s+", e.b, tan(e, e.L, 1), e.L - n.s, {start:true, s1:e.L});
     while (todo.length){
       todo.sort(function(p, q){ return dd[p] - dd[q]; });
-      var u = todo.shift(); if (dd[u] === Infinity) break;
-      EDGES.forEach(function(f){
-        if (undirected ? (f.a !== u && f.b !== u) : (f.a !== u)) return;
-        if (blocked(f, u)) return;
-        var v = f.a === u ? f.b : f.a;
-        if (dd[u] + f.L < dd[v]){ dd[v] = dd[u] + f.L; prev[v] = {from:u, edge:f}; }
+      var k0 = todo.shift(), u = info[k0].node, hu = info[k0].h; done[k0] = true;
+      EDGES.forEach(function(f, fi){
+        [[f.a === u, 1], [f.b === u && (undirected || f.both), -1]].forEach(function(c){
+          if (!c[0] || blocked(f, u)) return;
+          var sg = c[1];
+          if (!turnOk(hu, tan(f, sg > 0 ? 0 : f.L, sg))) return;
+          push((sg > 0 ? f.b : f.a) + "@" + fi + (sg > 0 ? "+" : "-"), sg > 0 ? f.b : f.a, tan(f, sg > 0 ? f.L : 0, sg), dd[k0] + f.L, {from:k0, edge:f, sg:sg});
+        });
       });
     }
-    var endK = tgt, last = null, total;
+    function best(node, h0){ var bk = null; Object.keys(dd).forEach(function(k){ if (info[k].node === node && (!h0 || turnOk(info[k].h, h0)) && (bk === null || dd[k] < dd[bk])) bk = k; }); return bk; }
+    var endK, last = null, total;
     if (typeof tgt !== "string"){
       var t = nearest(tgt[0], tgt[1]), f = t.e;
-      var ca = rangeBlocked(f, 0, t.s) ? Infinity : dd[f.a] + t.s;
-      var cb = undirected && !rangeBlocked(f, t.s, f.L) ? dd[f.b] + (f.L - t.s) : Infinity;
-      if (f === e && (undirected || t.s >= n.s) && !rangeBlocked(e, n.s, t.s) && Math.abs(t.s - n.s) <= Math.min(ca, cb)) return finish([{d:e.d, s0:n.s, s1:t.s}], Math.abs(t.s - n.s));
+      var ka = rangeBlocked(f, 0, t.s) ? null : best(f.a, tan(f, 0, 1)), ca = ka === null ? Infinity : dd[ka] + t.s;
+      var kb = (undirected || f.both) && !rangeBlocked(f, t.s, f.L) ? best(f.b, tan(f, f.L, -1)) : null, cb = kb === null ? Infinity : dd[kb] + (f.L - t.s);
+      if (f === e && (undirected || (f.both ? ok(t.s >= n.s ? 1 : -1) : t.s >= n.s)) && !rangeBlocked(e, n.s, t.s) && Math.abs(t.s - n.s) <= Math.min(ca, cb)) return finish([{d:e.d, s0:n.s, s1:t.s}], Math.abs(t.s - n.s));
       if (ca === Infinity && cb === Infinity) return {pieces:[], L:Infinity};
-      if (ca <= cb){ endK = f.a; last = {d:f.d, s0:0, s1:t.s}; total = ca; } else { endK = f.b; last = {d:f.d, s0:f.L, s1:t.s}; total = cb; }
-    } else total = dd[tgt];
-    if (!prev[endK]) return {pieces:[], L:Infinity};
+      if (ca <= cb){ endK = ka; last = {d:f.d, s0:0, s1:t.s}; total = ca; } else { endK = kb; last = {d:f.d, s0:f.L, s1:t.s}; total = cb; }
+    } else { endK = best(tgt); total = endK === null ? Infinity : dd[endK]; }
+    if (endK === null) return {pieces:[], L:Infinity};
     var pieces = [], k = endK;
-    while (!prev[k].start){ var p = prev[k]; pieces.unshift(p.edge.a === p.from ? {d:p.edge.d, s0:0, s1:p.edge.L} : {d:p.edge.d, s0:p.edge.L, s1:0}); k = p.from; }
+    while (!prev[k].start){ var p = prev[k]; pieces.unshift(p.sg > 0 ? {d:p.edge.d, s0:0, s1:p.edge.L} : {d:p.edge.d, s0:p.edge.L, s1:0}); k = p.from; }
     pieces.unshift({d:e.d, s0:n.s, s1:prev[k].s1});
     if (last) pieces.push(last);
     return finish(pieces, total);
@@ -219,10 +217,11 @@
   function edgeAt(x, y, hx, hy){ // 이 자리 · 이 방향이면 어느 구간을 가는가 (갈림길 바로 위는 판단하지 않음)
     if (NODE_XY.some(function(n){ return Math.hypot(n.x - x, n.y - y) < 6; })) return null;
     var n = nearest(x, y); if (n.dd > 6) return null;
-    return {e:n.e, dir:1};
+    if (!n.e.both) return {e:n.e, dir:1};
+    var t = pt(n.e.d, n.s); return {e:n.e, dir:t.tx * hx + t.ty * hy >= 0 ? 1 : -1}; // 양쪽 통행 구간은 가는 방향까지
   }
   function addE(out, o){ if (o && !out.some(function(q){ return q.e === o.e && q.dir === o.dir; })) out.push(o); }
-  function pieceEdges(pieces, k0){ var out = []; pieces.slice(k0 || 0).forEach(function(pc){ var e = EDGE_BY_D[pc.d]; if (e) addE(out, {e:e, dir:1}); }); return out; }
+  function pieceEdges(pieces, k0){ var out = []; pieces.slice(k0 || 0).forEach(function(pc){ var e = EDGE_BY_D[pc.d]; if (e) addE(out, {e:e, dir:e.both && pc.s1 < pc.s0 ? -1 : 1}); }); return out; }
   function goAhead(pieces, k, prog, K){
     var out = [], left = K;
     while (k < pieces.length && left > 0){
@@ -271,19 +270,19 @@
   }
   function thermalRead(rb){ // 표면 온도: 열원과 멀수록 주변 온도에 가까워진다
     var h = WORLD.heat; if (!h.on) return 24.1;
-    return 24.1 + h.H * Math.exp(-dist(rb.pose, h) / 25);
+    return 24.1 + h.H * Math.exp(-dist(rb.pose, h) / 45);
   }
   function flameRead(rb){ // 머리 카메라: 열원 앞쪽에서 불꽃이 보이는지 확인
     var h = WORLD.heat; if (!h.on) return false;
-    return dist(rb.pose, h) < 48 && h.H >= 60;
+    return dist(rb.pose, h) < 100 && h.H >= 60;
   }
   function floorCamRead(rb){ // 바닥 카메라: 발 앞 바닥에 놓인 물건이 화면에 들어왔는가 (낮아서 초음파 콘에는 안 잡힌다)
     var it = WORLD.item; if (!it.on) return false;
     var p = rb.pose, dx = it.x - p.x, dy = it.y - p.y, t = dx * p.hx + dy * p.hy;
     return t > 0 && t < 45 && Math.abs(dx * p.hy - dy * p.hx) < 18;
   }
-  var MGR_P = [[418, 135], [398, 135], [398, 212], [222, 212]], MGR_P2 = [[418, 135], [398, 135], [398, 12], [252, 12]]; // 관리자 동선: B1–B2 통로 박스 / 위쪽 외곽 바닥 물건 (비상구 2로 들어옴)
-  var WORKERS = [[[100, 35], [398, 35], [398, 135], [418, 135]], [[265, 80], [265, 135], [418, 135]], [[140, 215], [398, 215], [398, 135], [418, 135]]];
+  var MGR_P = [[-8, 135], [90, 135]], MGR_P2 = [[-8, 135], [12, 135], [12, 8], [208, 8]]; // 관리자 동선: 1번 간선 박스 / 위쪽 외곽 바닥 물건 (둘 다 비상구 1로 들어옴 · 물건은 벽 쪽으로 걸어 로봇 선과 13cm 넘게 떨어짐)
+  var WORKERS = [[[100, 35], [398, 35], [398, 135], [418, 135]], [[265, 80], [265, 135], [418, 135]], [[140, 260], [398, 260], [398, 135], [418, 135]]];
   function workerPos(){
     if (!WORLD.people.on) return [];
     return WORKERS.map(function(P, i){ var d = Math.max(0, (T - (WORLD.people.t0 + 1.5 + i * 0.4)) * 22); return d > plen(P) ? null : along(P, d); }).filter(Boolean);
@@ -355,7 +354,7 @@
     this.moved = false;
     var moving = (this.task === "patrol" || (this.task === "go" && !this.arrived)) && !this.hold && !this.stop;
     if (this.task === "idle") this.bat = Math.min(100, this.bat + 0.6 * dt);
-    else if (moving) this.bat = Math.max(0, this.bat - (this.id === "A" ? 0.3 : 0.08) * dt);
+    else if (moving) this.bat = Math.max(0, this.bat - (this.id === "B" ? 0.3 : 0.08) * dt);
     if (this.bat < 20 && !this.warned && this.task === "patrol"){ this.warned = true; this.say("WARNING", "battery", "배터리 부족 battery=" + Math.round(this.bat) + "% threshold=20%"); this.report(true); }
     this.wait = "";
     if (this.task === "idle"){ this.report(); return; }
@@ -436,16 +435,16 @@
   };
 
   /* ================= 서버: 보고만 보고 판단해 명령 ================= */
-  var ROLE_LOG = {upper:"위 구역", lower:"아래 구역", standby:"대기", check:"과열 교차 확인", guide:"대피 안내", relay:"위 구역(교대)", dock:"도크 복귀"};
+  var ROLE_LOG = {outer:"바깥", inner:"안쪽", standby:"대기", check:"화재 교차 확인", guide:"대피 안내", relay:"안쪽(교대)", dock:"도크 복귀"};
   var PURPOSE_LOG = {relay:"교대 · 인수 위치로", dock:"도크 복귀 · 충전", check:"교차 확인 측정", guide:"대피 안내", evade:"위험 구역 회피 · 대기 지점으로"};
-  var PRIO = {guide:3, check:2, relay:2, upper:1, lower:1, dock:0, standby:0};
+  var PRIO = {guide:3, check:2, relay:2, outer:1, inner:1, dock:0, standby:0};
   var SPOTS = [
     {no:"①", name:"1번 간선 서쪽 끝", node:"C1_W", sym:"✕"},
     {no:"②", name:"1번 간선 동쪽 끝", node:"C1_E", sym:"→"},
-    {no:"③", name:"아래 외곽 가운데", node:"M_B12", sym:["E", "N"]},
-    {no:"④", name:"위쪽 외곽 가운데", node:"TOP", sym:["E", "S"]}
+    {no:"③", name:"아래쪽 외곽 B1 아래", node:"B_M", sym:["E", "N"]},
+    {no:"④", name:"위쪽 외곽 가운데", node:"T_M", sym:["E", "S"]}
   ];
-  var SLOT = [{x:250, y:262, hx:1, hy:0}, {x:300, y:262, hx:1, hy:0}]; // 도크 옆 충전 자리 (B2 아래)
+  var SLOT = [{x:188, y:328, hx:0, hy:-1}, {x:222, y:328, hx:0, hy:-1}]; // 도크 충전 자리 (맵 아래 바깥, 진입 통로 끝 양옆 · 통로 쪽을 보고 선다)
   var SV;
   function newServer(){
     return {view:{}, st:{}, plan:{}, pend:[], holds:[], ev:{}, relay:null, tt:0,
@@ -523,7 +522,7 @@
   }
   function smartRoute(id, x, y, tgt, extraStops){ // 최단 경로와, 움직이는 로봇과 마주치지 않는 경로 중 고른다 (멈춘 로봇 자리는 둘 다 피한다)
     var stops = stopsFor(id).concat(extraStops || []);
-    var a = route(x, y, tgt, null, stops), b = route(x, y, tgt, movingUse(id), stops);
+    var hd = SV.view[id], a = route(x, y, tgt, null, stops, false, hd), b = route(x, y, tgt, movingUse(id), stops, false, hd);
     if (b.L < Infinity && (a.L === Infinity || b.L <= a.L * 1.35)){ if (b.L > a.L + 1) lg("INFO", "traffic", "우회 경로 선택 robot=" + nameOf(id) + " extra=+" + Math.round(b.L - a.L) + "cm reason=순찰 로봇과 마주침 회피"); return b; }
     return a;
   }
@@ -538,6 +537,8 @@
     if (m.type === "MARK"){
       var mk = MARKERS[m.m]; if (!S_.track) return;
       var p = S_.track.snap(S_.prog, mk);
+      // 갈림길에서 꺾기 시작할 때는 다른 갈래 위 마커가 화면 끝에 잠깐 들어온다 → 무시
+      if (p == null && NODE_XY.some(function(q){ return Math.hypot(q.x - SV.view[m.id].x, q.y - SV.view[m.id].y) < 20; })){ lg("DEBUG", "pos", "갈림길 옆 갈래 마커 무시 robot=" + nameOf(m.id) + " marker=" + markerName(mk)); return; }
       if (p == null){ lg("WARNING", "pos", "경로 밖 마커 robot=" + nameOf(m.id) + " marker=" + markerName(mk) + " → 위치 재확인 필요"); return; }
       lg("DEBUG", "pos", "위치 보정 robot=" + nameOf(m.id) + " marker=" + markerName(mk) + " err=" + Math.round(Math.abs(p - S_.prog)) + "cm");
       S_.prog = p; refresh(); return;
@@ -585,7 +586,7 @@
       var h = SV.ev.heat;
       if (!h){
         var hv = V_[m.id]; SV.ev.heat = h = {first:m.id, temp:m.temp, flame:!!m.flame, x:hv.x, y:hv.y, zone:zoneOf(hv.x, hv.y)};
-        lg("WARNING", "event", "과열 · 불꽃 의심 등록 zone=" + h.zone + " temp=" + m.temp.toFixed(1) + "℃ flame=" + (m.flame ? "감지" : "미감지") + " reporter=" + nameOf(m.id) + " status=교차 확인 필요");
+        lg("WARNING", "event", "화재 의심 등록 zone=" + h.zone + " temp=" + m.temp.toFixed(1) + "℃ flame=" + (m.flame ? "감지" : "미감지") + " reporter=" + nameOf(m.id) + " status=교차 확인 필요");
         dispatchCheck(); flags.heatSeen = T;
       } else if (m.id === h.first){ h.temp = m.temp; h.flame = h.flame || !!m.flame; }
       return;
@@ -610,7 +611,7 @@
   }
   function closeObstacle(){ var o = SV.ev.obstacle; if (o && o.resolved && o.passed){ lg("INFO", "event", "막힘 해소 zone=" + o.zone); SV.ev.obstacle = null; flags.cleared = T; } }
   function checkBattery(v, id){
-    if (v.task === "patrol" && v.role === "upper" && v.bat < 20 && !SV.relay) startRelay(id);
+    if (v.task === "patrol" && v.role === "inner" && v.bat < 20 && !SV.relay) startRelay(id);
   }
   function svTick(){
     refresh();
@@ -619,16 +620,13 @@
       var ok = true, why = "";
       Object.keys(SV.view).forEach(function(id){
         if (id === r.id) return; var o = SV.view[id];
-        // 통로에서 외곽으로 합류할 때는 외곽 위 로봇이 먼저: 합류점 서쪽(다가오는 쪽) 95cm와 동쪽 25cm 안(도크 U턴 포함)에 있으면 대기. 간선 동쪽 끝은 위 · 아래가 같이 들어오니 먼저 허가받은 쪽이 지날 때까지 대기
-        var G = {mA12:{x:170, y:25, dy:12}, mA23:{x:290, y:25, dy:12}, mB12:{x:230, y:225, dy:55}}[r.gate];
-        if (G && o.task === "patrol" && Math.abs(o.y - G.y) < G.dy && o.x > G.x - 95 && o.x < G.x + 25){ ok = false; why = nameOf(id) + " 외곽 통과 중"; }
-        if (r.gate === "mergeE" && o.task === "patrol" && o.x > 330 && o.y > 100 && o.y < 170){ ok = false; why = nameOf(id) + " 간선 동쪽 끝 통과 중"; }
+        // 통로 · 간선에서 외곽으로 합류할 때는 외곽 위 로봇이 먼저: 합류점으로 다가오는 쪽 95cm와 지난 쪽 25cm 안에 있으면 대기
+        if (r.gate === "mA23" && o.task === "patrol" && Math.abs(o.y - 25) < 12 && o.x > 290 - 95 && o.x < 290 + 25){ ok = false; why = nameOf(id) + " 외곽 통과 중"; }
+        if (r.gate === "mW" && o.task === "patrol" && Math.abs(o.x - 25) < 12 && o.y > 110 - 25 && o.y < 110 + 90){ ok = false; why = nameOf(id) + " 외곽 통과 중"; }
         var p = SV.plan[id];
         if (ok && p && p.kind === "go" && !(o.task === "go" && o.arrived) && clash(aheadOf(id, 400), aheadOf(r.id, 150))){ ok = false; why = nameOf(id) + " 통과 예정"; }
       });
-      if (ok && r.gate === "mergeE" && SV.eBusy && SV.eBusy.id !== r.id && T < SV.eBusy.until){ ok = false; why = nameOf(SV.eBusy.id) + " 먼저 합류 중"; }
       if (!ok){ if (!r.logged){ r.logged = true; lg("DEBUG", "traffic", (r.gate === "start" ? "출발" : "합류") + " 대기 robot=" + nameOf(r.id) + " reason=" + why); } return true; }
-      if (r.gate === "mergeE") SV.eBusy = {id:r.id, until:T + 3};
       cmd(r.id, {type:"GRANT", gate:r.gate}); lg("DEBUG", "traffic", (r.gate === "start" ? "출발" : "합류") + " 허가 robot=" + nameOf(r.id)); return false;
     });
     tryPendGo();
@@ -649,8 +647,8 @@
     // 교대: A가 비켜나면 3호에게 순찰을 넘긴다
     var rl = SV.relay;
     if (rl && rl.met && !rl.done && SV.view[rl.from] && Math.hypot(SV.view[rl.from].x - rl.holdAt.x, SV.view[rl.from].y - rl.holdAt.y) > 45){
-      rl.done = true; sendPatrol(rl.to, "A", "upper", rl.meet.i, rl.meet.s, true);
-      lg("INFO", "dispatch", "순찰 인계 robot=" + nameOf(rl.to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[rl.meet.i].st + 1) + "/" + PATROLS.A.steps.length);
+      rl.done = true; sendPatrol(rl.to, "B", "inner", rl.meet.i, rl.meet.s, true);
+      lg("INFO", "dispatch", "순찰 인계 robot=" + nameOf(rl.to) + " role=안쪽 progress=구간 " + (PATROLS.B.segs[rl.meet.i].st + 1) + "/" + PATROLS.B.steps.length);
     }
     // 양보 해제
     SV.holds = SV.holds.filter(function(h){
@@ -676,9 +674,9 @@
     var v = SV.view[from], to = Object.keys(SV.view).filter(function(id){ return SV.view[id].task === "idle" && SV.view[id].bat >= 50; })[0];
     if (!to) return;
     chapter(3);
-    var meet = backAlong(PATROLS.A.segs, v.i, v.s, 40), mp = pt(PATROLS.A.segs[meet.i].d, meet.s);
+    var meet = backAlong(PATROLS.B.segs, v.i, v.s, 40), mp = pt(PATROLS.B.segs[meet.i].d, meet.s);
     SV.relay = {from:from, to:to, meet:meet, holdAt:{x:v.x, y:v.y}, hold:{i:v.i, s:v.s}};
-    lg("INFO", "dispatch", "교대 결정 from=" + nameOf(from) + " battery=" + Math.round(v.bat) + "% to=" + nameOf(to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[v.i].st + 1) + "/" + PATROLS.A.steps.length);
+    lg("INFO", "dispatch", "교대 결정 from=" + nameOf(from) + " battery=" + Math.round(v.bat) + "% to=" + nameOf(to) + " role=안쪽 progress=구간 " + (PATROLS.B.segs[v.i].st + 1) + "/" + PATROLS.B.steps.length);
     cmd(from, {type:"HOLD", by:"교대"});
     var rt = smartRoute(to, SV.view[to].x, SV.view[to].y, [mp.x, mp.y]);
     sendGo(to, rt, "relay", "relay");
@@ -687,24 +685,25 @@
   }
   function handOver(){
     var rl = SV.relay; rl.met = true;
-    lg("INFO", "dispatch", "인수인계 완료 from=" + nameOf(rl.from) + " to=" + nameOf(rl.to) + " role=위 구역 progress=구간 " + (PATROLS.A.segs[rl.hold.i].st + 1) + "/" + PATROLS.A.steps.length);
-    // 받는 로봇이 뒤에 붙어 있으므로 A는 후진 없이 진행 방향 그대로 돌아 도크 충전 자리로
-    // 진행 방향 그대로 선을 따라 아래 외곽까지 간 뒤, 충전 자리 바로 앞(x=213)에서 선을 벗어나 들어간다
-    var v = SV.view[rl.from], rt = route(v.x, v.y, [213, 225], null, stopsFor(rl.from));
-    var tail = "M213 225 A25 25 0 0 1 238 250 A12 12 0 0 0 250 262", pieces = rt.pieces.concat([{d:tail, s0:0, s1:len(tail)}]);
+    lg("INFO", "dispatch", "인수인계 완료 from=" + nameOf(rl.from) + " to=" + nameOf(rl.to) + " role=안쪽 progress=구간 " + (PATROLS.B.segs[rl.hold.i].st + 1) + "/" + PATROLS.B.steps.length);
+    // 받는 로봇이 뒤에 붙어 있으므로 B는 후진 없이 진행 방향 그대로 빠진다: 지금 자리에서 A1 쪽 · A3 쪽 중 진입 통로까지 가까운 쪽으로 돌아
+    // A2 아래 간선에서 진입 통로로 내려간 뒤(동쪽으로 가던 중이면 CP3, 서쪽이면 CP2), 통로 끝에서 충전 자리로 비켜 선다
+    var v = SV.view[rl.from], rt = route(v.x, v.y, [205, 316], null, stopsFor(rl.from), false, v);
+    var tail = "M205 316 Q205 328 188 328", pieces = rt.pieces.concat([{d:tail, s0:0, s1:len(tail)}]);
     var L = pieces.reduce(function(t, p){ return t + Math.abs(p.s1 - p.s0); }, 0);
     sendGo(rl.from, {pieces:pieces, L:L}, "dock", "dock");
   }
-  var WAIT_PT = [300, 225]; // 대기 지점: 아래 외곽 동쪽 — 위험 구역과 비상구 동선을 비껴선 위치
+  var WAITS = [{p:[300, 225], name:"아래쪽 외곽 동쪽"}, {p:[320, 135], name:"1번 간선 동쪽"}]; // 대기 지점: 위험 구역과 비상구 동선을 비껴선 자리 (앞쪽부터 갈 수 있는 곳)
   function evadeOthers(h){ // 의심 구역 250cm 안으로 들어올 순찰 로봇은 대기 지점으로 보내 세워 둔다
     Object.keys(SV.plan).forEach(function(id){
       var p = SV.plan[id], v = SV.view[id]; if (id === h.first || !p || p.kind !== "patrol" || !v || v.stop === "heat") return;
       var segs = PATROLS[p.route].segs, near = false;
       for (var d = 0; d <= 250 && !near; d += 10){ var q = forwardAlong(segs, v.i, v.s, d); if (Math.hypot(q.x - h.x, q.y - h.y) < 55) near = true; }
       if (!near) return;
-      var rt = smartRoute(id, v.x, v.y, WAIT_PT, [{x:h.x, y:h.y}]);
-      if (rt.L === Infinity){ lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 갈 길이 없어 현 위치 대기"); cmd(id, {type:"HOLD", by:"위험 구역"}); SV.plan[id] = {kind:"hold"}; return; }
-      lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 대기 지점(아래 외곽 동쪽) length=" + Math.round(rt.L) + "cm");
+      var w = null, rt;
+      WAITS.some(function(c){ rt = smartRoute(id, v.x, v.y, c.p, [{x:h.x, y:h.y}]); if (rt.L < Infinity){ w = c; return true; } return false; });
+      if (!w){ lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 갈 길이 없어 현 위치 대기"); cmd(id, {type:"HOLD", by:"위험 구역"}); SV.plan[id] = {kind:"hold"}; return; }
+      lg("INFO", "traffic", "위험 구역 접근 금지 robot=" + nameOf(id) + " zone=" + h.zone + " → 대기 지점(" + w.name + ") length=" + Math.round(rt.L) + "cm");
       sendGo(id, rt, "evade", p.role); planYield(id, "위험 구역 회피");
     });
   }
@@ -720,8 +719,8 @@
   }
   function dispatchCheck(){
     var h = SV.ev.heat, v0 = SV.view[h.first];
-    // 교차 확인 지점: 한 방향 동선에 맞춰 열원의 다른 접근로 반대편(A1·A2 통로 ↔ 위쪽 외곽)
-    var tp = v0.y < 38 ? {x:145, y:55} : {x:124, y:25};
+    // 교차 확인 지점: 불이 난 구조물(A1)의 다른 면 가운데 (첫 로봇이 왼쪽 · 위 면이면 A1 아래 간선)
+    var tp = v0.y > 120 && v0.x > 40 ? {x:Math.min(170, v0.x + 45), y:135} : {x:85, y:135}; // 간선에서 잡았으면 다른 면으로 갈 길이 그 로봇에 막혀 같은 면 뒤에서
     var pick = null;
     Object.keys(SV.view).filter(function(id){ return SV.view[id].task === "idle"; }).forEach(function(id){
       var v = SV.view[id];
@@ -763,8 +762,9 @@
     spotG.setAttribute("display", "inline");
     var ids = ["A", "B", "3", "4"], best = null, Lm = {}, Em = {};
     ids.forEach(function(id){
-      var v = SV.view[id], stops = ids.filter(function(o){ return o !== id; }).map(function(o){ return SV.view[o]; });
-      Lm[id] = SPOTS.map(function(s){ return route(v.x, v.y, s.node, null, stops); }); Em[id] = Lm[id].map(function(rt){ return pieceEdges(rt.pieces); });
+      // 불은 구조물 한가운데라 선은 막히지 않는다. 모두 함께 움직이므로 막힌 곳 없이 배정하고 지나침 · 마주침으로 따진다
+      var v = SV.view[id], stops = [];
+      Lm[id] = SPOTS.map(function(s){ return route(v.x, v.y, s.node, null, stops, false, v); }); Em[id] = Lm[id].map(function(rt){ return pieceEdges(rt.pieces); });
     });
     // 가는 길에 다른 로봇이 설 자리가 있으면, 그 로봇이 먼저 서는 경우 막힌다 → 충돌로 센다 (먼저 지나가면 괜찮다)
     function passAt(rt, p){ // 길에서 p 바로 옆을 지나는 거리 (가장 가까워지는 순간 · 자기 도착 자리 20cm 앞까지만 본다)
@@ -813,41 +813,47 @@
   var svg = document.getElementById("sim");
   svg.innerHTML = '' +
     '<rect x="0" y="0" width="410" height="295" fill="#fff"/>' +
-    '<path d="M0 120 V0 H410 V120 M410 150 V295 H0 V150" fill="none" stroke="#111" stroke-width="2"/>' +
+    '<path d="M0 120 V0 H410 V120 M410 150 V295 H225 M185 295 H0 V150" fill="none" stroke="#111" stroke-width="2"/>' +
     '<g fill="#e9ecef" stroke="#111" stroke-width=".8">' +
       '<rect x="45" y="45" width="80" height="60"/><rect x="165" y="45" width="80" height="60"/><rect x="285" y="45" width="80" height="60"/>' +
       '<rect x="45" y="165" width="140" height="40"/><rect x="225" y="165" width="140" height="40"/>' +
     '</g>' +
     '<g class="t" font-size="6.5" text-anchor="middle">' +
-      '<text x="85" y="78">A1</text><text x="205" y="78">A2</text><text x="325" y="78">A3</text>' +
+      '<text x="85" y="100">A1</text><text x="205" y="100">A2</text><text x="325" y="100">A3</text>' +
       '<text x="115" y="188">B1</text><text x="295" y="188">B2</text>' +
     '</g>' +
-    '<rect x="91" y="234" width="78" height="56" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="3 2"/>' +
-    '<text class="t" x="130" y="256" font-size="5.5" text-anchor="middle">도크</text>';
+    '<rect x="168" y="302" width="74" height="44" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="3 2"/>' +
+    '<text class="t" x="246" y="343" font-size="5.5">도크 (맵 밖)</text>' +
+    '<text class="t" x="211" y="221" font-size="5">교차</text>';
   var ex1 = el("text", {"class":"t", x:-4, y:138, "font-size":6, "text-anchor":"end", "font-weight":700}, "비상구 1");
   var ex2 = el("text", {"class":"t", x:414, y:138, "font-size":6, "font-weight":700}, "비상구 2");
   svg.appendChild(ex1); svg.appendChild(ex2);
   var hl = el("g", {fill:"none", "stroke-width":11, "stroke-linejoin":"round", "stroke-linecap":"round", opacity:.14});
-  [UP_LOOP, AISLE_A12, AISLE_A23, MAIN].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#1971c2"})); });
-  [LOW_LOOP, AISLE_B12, MAIN].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#2f9e44"})); });
+  [OUTER].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#1971c2"})); });
+  [MAIN, AISLE_A12, AISLE_A23, MAIN_W, MAIN_E, "M25 110 V55 A30 30 0 0 1 55 25 H120", "M290 25 H355 A30 30 0 0 1 385 55 V110"].forEach(function(d){ hl.appendChild(el("path", {d:d, stroke:"#2f9e44"})); });
   svg.appendChild(hl);
-  var MCOL = {red:"#e03131", yellow:"#f2c94c", green:"#40c057"};
-  MARKERS.forEach(function(m){ var nx = m.ty, ny = -m.tx, h = m.c === "red" ? 16 : 7, w = m.c === "red" ? 4 : 3;
+  var MCOL = {red:"#e03131", blue:"#1c7ed6", yellow:"#f2c94c", green:"#40c057"};
+  MARKERS.forEach(function(m){ var nx = m.ty, ny = -m.tx, h = m.j ? 12 : 7, w = m.j ? 4 : 3;
     svg.appendChild(el("line", {x1:m.x - nx * h, y1:m.y - ny * h, x2:m.x + nx * h, y2:m.y + ny * h, stroke:MCOL[m.c], "stroke-width":w})); });
   var ln = el("g", {fill:"none", stroke:"#111", "stroke-width":2, "stroke-linejoin":"round"});
-  [UP_LOOP, LOW_LOOP, MAIN, AISLE_A12, AISLE_A23, AISLE_B12].forEach(function(d){ ln.appendChild(el("path", {d:d})); });
+  EDGES.forEach(function(e){ ln.appendChild(el("path", {d:e.d})); });
   svg.appendChild(ln);
   // 진행 방향: 구간마다 가운데에 작은 화살표
   var arw = el("g", {fill:"#495057"});
-  EDGES.forEach(function(e){ var q = pt(e.d, e.L / 2), a = Math.atan2(q.ty, q.tx) * 180 / Math.PI; arw.appendChild(el("path", {d:"M3 0 L-2 -2.6 L-2 2.6 Z", transform:"translate(" + q.x.toFixed(1) + " " + q.y.toFixed(1) + ") rotate(" + a.toFixed(0) + ")"})); });
+  EDGES.forEach(function(e){ // 양쪽 통행 구간은 위아래 화살표 두 개
+    (e.both ? [[e.L / 3, 0], [e.L * 2 / 3, 180]] : [[e.L / 2, 0]]).forEach(function(w){
+      var q = pt(e.d, w[0]), a = Math.atan2(q.ty, q.tx) * 180 / Math.PI + w[1];
+      arw.appendChild(el("path", {d:"M3 0 L-2 -2.6 L-2 2.6 Z", transform:"translate(" + q.x.toFixed(1) + " " + q.y.toFixed(1) + ") rotate(" + a.toFixed(0) + ")"}));
+    });
+  });
   svg.appendChild(arw);
   // 마커 이름은 띠 · 선과 겹치지 않는 빈 자리에 (흰 테두리로 위에 지나가는 것과도 구분)
   var HALO = {stroke:"#fff", "stroke-width":2, "paint-order":"stroke"};
   var lb = el("g", Object.assign({"class":"t", "font-size":5.5, "text-anchor":"middle"}, HALO));
-  [["CP5", 72, 126], ["CP6", 192, 126], ["CP7", 312, 126], ["CP8", 252, 126]].forEach(function(c){ lb.appendChild(el("text", {x:c[1], y:c[2], "text-anchor":c[3] || "middle"}, c[0])); });
+  [["CP1", 108, 18], ["CP2", 236, 126], ["CP3", 172, 148], ["CP4", 377, 99, "end"]].forEach(function(c){ lb.appendChild(el("text", {x:c[1], y:c[2], "text-anchor":c[3] || "middle"}, c[0])); });
   svg.appendChild(lb);
   var spotG = el("g", {display:"none"});
-  [["①", 50, 135], ["②", 360, 135], ["③", 230, 225], ["④", 230, 25]].forEach(function(s){
+  [["①", 50, 135], ["②", 360, 135], ["③", 130, 225], ["④", 205, 25]].forEach(function(s){
     spotG.appendChild(el("circle", {cx:s[1], cy:s[2], r:9, fill:"none", stroke:"#2f9e44", "stroke-width":1, "stroke-dasharray":"2 2"}));
     spotG.appendChild(el("text", Object.assign({"class":"t", x:s[1], y:s[2] + 19, "font-size":6, "font-weight":700, "text-anchor":"middle"}, HALO), s[0]));
   });
@@ -857,11 +863,11 @@
   glowG.appendChild(el("stop", {offset:"0", "stop-color":"#ff6b00", "stop-opacity":.55})); glowG.appendChild(el("stop", {offset:"1", "stop-color":"#ff6b00", "stop-opacity":0}));
   defs.appendChild(glowG); svg.appendChild(defs);
   var boxG = el("g", {display:"none"});
-  boxG.appendChild(el("rect", {x:198.2, y:191.2, width:16, height:16, rx:.6, fill:"#000", opacity:.18}));
-  boxG.appendChild(el("rect", {x:197, y:190, width:16, height:16, rx:.6, fill:"#c8a26b", stroke:"#6d4c2f", "stroke-width":.7}));
-  boxG.appendChild(el("path", {d:"M197 198 H213", stroke:"#8d6e45", "stroke-width":.5}));
-  boxG.appendChild(el("rect", {x:203.6, y:190, width:2.8, height:16, fill:"#e9d8b4", opacity:.9}));
-  boxG.appendChild(el("text", {"class":"t", x:214, y:203, "font-size":5.5}, "박스")); // 아래는 관리자 자리라 오른쪽에
+  boxG.appendChild(el("rect", {x:103.2, y:128.2, width:16, height:16, rx:.6, fill:"#000", opacity:.18}));
+  boxG.appendChild(el("rect", {x:102, y:127, width:16, height:16, rx:.6, fill:"#c8a26b", stroke:"#6d4c2f", "stroke-width":.7}));
+  boxG.appendChild(el("path", {d:"M102 135 H118", stroke:"#8d6e45", "stroke-width":.5}));
+  boxG.appendChild(el("rect", {x:108.6, y:127, width:2.8, height:16, fill:"#e9d8b4", opacity:.9}));
+  boxG.appendChild(el("text", {"class":"t", x:110, y:124, "font-size":5.5, "text-anchor":"middle"}, "박스")); // 왼쪽은 관리자 자리라 위에
   var itemG = el("g", {display:"none", transform:"translate(230 14)"});
   var drv = el("g", {transform:"rotate(-20)"});
   drv.appendChild(el("rect", {x:-5.5, y:-1.4, width:11, height:3.4, rx:1.4, fill:"#000", opacity:.15}));
@@ -874,7 +880,7 @@
   itemG.appendChild(itemLbl); svg.appendChild(itemG);
   var FLAME = "M0 -6 C1.7 -3.6 2.1 -1.6 0 0 C-2.1 -1.6 -1.7 -3.6 0 -6 Z";
   function makeFlame(){ var g = el("g", {}); g.appendChild(el("path", {d:FLAME, fill:"#fd7e14"})); g.appendChild(el("path", {d:FLAME, fill:"#ffd43b", transform:"translate(0 -.4) scale(.55)"})); return g; }
-  var heatG = el("g", {display:"none", transform:"translate(124 48)"});
+  var heatG = el("g", {display:"none", transform:"translate(85 75)"});
   var heatGlow = el("circle", {r:9, fill:"url(#sim-glow)"});
   var burner = el("g", {});
   burner.appendChild(el("rect", {x:-4.2, y:-3.2, width:8.4, height:6.4, rx:1, fill:"#495057", stroke:"#212529", "stroke-width":.5}));
@@ -884,7 +890,7 @@
   var fireG = el("g", {}), FIRE = [[-4.5, 2.5, 1.4, 0], [4.5, 2, 1.3, 2.1], [0, 1, 2.1, 4.2], [-1.8, 3.5, 1, 1.3], [2.2, 3.8, 1, 3.3]];
   var fireF = FIRE.map(function(){ var f = makeFlame(); fireG.appendChild(f); return f; });
   fireF.forEach(function(f){ f.firstChild.setAttribute("fill", "#f03e3e"); });
-  var heatLbl = el("text", {"class":"t", y:-11, "font-size":5.5, "text-anchor":"middle", "font-weight":700, fill:"#e03131"}, "과열");
+  var heatLbl = el("text", {"class":"t", y:-11, "font-size":5.5, "text-anchor":"middle", "font-weight":700, fill:"#e03131"}, "화재 의심");
   [heatGlow, burner, fireG, heatLbl].forEach(function(e){ heatG.appendChild(e); });
   [boxG, heatG].forEach(function(g){ svg.appendChild(g); });
   function makeBot(label){
@@ -905,7 +911,7 @@
     svg.appendChild(g);
     return {body:body, shell:shell, text:tx, bub:bub, bubR:bubR, bubT:bubT, bubA:bubA, bubH:bubH};
   }
-  var ROLE_COLOR = {upper:"#1971c2", relay:"#1971c2", lower:"#2f9e44"};
+  var ROLE_COLOR = {outer:"#1971c2", relay:"#2f9e44", inner:"#2f9e44"};
   function placeBot(bot, pose, role, sym){
     var ang = Math.atan2(pose.hy, pose.hx) * 180 / Math.PI;
     bot.body.setAttribute("transform", "translate(" + pose.x.toFixed(1) + " " + pose.y.toFixed(1) + ") rotate(" + ang.toFixed(1) + ")");
@@ -978,13 +984,13 @@
 
   /* ================= 시나리오 (세계에 소품을 놓고 치우는 쪽) ================= */
   var ROBOTS, dir, flags, playing;
-  var CHAPTERS = ["평상시 순찰", "바닥 물건", "막힘 발견", "충전 교대", "과열 교차 확인", "화재 대피 안내"];
+  var CHAPTERS = ["평상시 순찰", "바닥 물건", "막힘 발견", "충전 교대", "화재 교차 확인", "화재 대피 안내"];
   var CHTXT = [
-    "<b>1 평상시 순찰</b> · A는 위 구역(랙 A1~A3 둘레, 시계 방향), B는 아래 구역(작업 공간 B1·B2 둘레, 반시계 방향). 1번 간선은 둘 다 서쪽으로 함께 쓰고, 합류점에선 간선 위 로봇이 먼저. 3·4호는 도크 옆 충전 대기.",
-    "<b>2 바닥 물건</b> · 위쪽 외곽 바닥에 공구. 초음파엔 안 잡히고 A의 바닥 카메라가 본다. A는 순찰을 계속하고 서버가 '밟힘 주의'로 관리자 호출 → 치우고 체크하면 해제.",
-    "<b>3 막힘 발견</b> · B1–B2 통로에 박스. B가 초음파로 멈춰 보고하고 머리 카메라 사진을 전송 → 대시보드 지도 구역·사진 팝업 알림 → 치우고 B가 다시 지나가면 해소.",
-    "<b>4 충전 교대</b> · A 배터리 부족. 서버가 A를 세우고 3호를 A 뒤 40cm로 보냄 → 인수인계 → A는 진행 방향 그대로 돌아 충전 자리로, 3호가 A의 진행 위치부터 이어 돎.",
-    "<b>5 과열 교차 확인</b> · A1 랙 오른쪽 위 모서리 과열(가스버너). 지나던 로봇이 온도·머리 카메라 불꽃 확인 후 정지 → 서버가 대기 로봇을 반대편 접근로로 보내 재확인 → 둘 다 50℃ 초과·불꽃 확인 시 화재 확정.",
+    "<b>1 평상시 순찰</b> · A는 바깥(맵 가장 바깥 한 바퀴, 시계 방향). B는 안쪽에서 A1 · A3 둘레를 번갈아 8자로 돈다: 간선 서쪽 → A1 왼쪽 · 위 · 오른쪽 → A2 아래 동쪽 → A3 왼쪽 · 위 · 오른쪽 → A3 아래 서쪽. A1 · A3 바깥 면은 외곽을 A와 함께 쓰고 합류점에선 외곽 위 로봇이 먼저. 도크는 맵 아래 바깥, B1–B2 진입 통로로 드나든다.",
+    "<b>2 바닥 물건</b> · 위쪽 외곽 바닥에 공구. 초음파엔 안 잡히고 지나던 로봇의 바닥 카메라가 본다. 로봇은 순찰을 계속하고 서버가 '밟힘 주의'로 관리자 호출 → 치우고 체크하면 해제.",
+    "<b>3 막힘 발견</b> · 1번 간선(A1 아래)에 박스. B가 초음파로 멈춰 보고하고 머리 카메라 사진을 전송 → 대시보드 지도 구역·사진 팝업 알림 → 치우고 B가 다시 지나가면 해소.",
+    "<b>4 충전 교대</b> · B 배터리 부족. 서버가 B를 세우고 3호를 진입 통로로 내보내 B 뒤 40cm로 보냄 → 인수인계 → B는 A1 · A3 중 진입 통로에 가까운 쪽을 돌아 도크로 빠지고, 3호가 B의 진행 위치부터 이어 돎.",
+    "<b>5 화재 교차 확인</b> · A1 랙 한가운데에 불(가스버너). 지나던 로봇이 온도·머리 카메라 불꽃 확인 후 정지 → 서버가 대기 로봇을 A1의 다른 면으로 보내 재확인 → 둘 다 50℃ 초과·불꽃 확인 시 화재 확정.",
     "<b>6 화재 대피 안내</b> · 4대를 갈림길 ①~④에 배정. 출발부터 LED를 켜고 사람 대피 동선 기준으로 화살표 갱신 (꺾이면 꺾인 화살표) · ✕는 ① 자리에서."
   ];
   var statusEl = document.getElementById("sim-status"), chEl = document.getElementById("sim-chapter"), clockEl = document.getElementById("sim-clock");
@@ -995,27 +1001,27 @@
 
   function reset(){
     T = 0; BUS = []; SV = newServer();
-    WORLD = {box:{on:false, x:205, y:198}, heat:{on:false, x:124, y:48, H:62, big:false}, item:{on:false, x:230, y:14}, mgr:{state:"off", d:0, t:0, P:MGR_P, kind:"box"}, people:{on:false, t0:0}};
-    var a0 = PATROLS.A.segs[13], b0 = PATROLS.B.segs[1]; // A는 간선 동쪽(서쪽으로 가는 중), B는 도크 U턴 안
-    ROBOTS = {A:new Robot("A", pt(a0.d, 114), 47), B:new Robot("B", pt(b0.d, 30), 82), "3":new Robot("3", SLOT[0], 100), "4":new Robot("4", SLOT[1], 100)};
+    WORLD = {box:{on:false, x:110, y:135}, heat:{on:false, x:85, y:75, H:62, big:false}, item:{on:false, x:230, y:14}, mgr:{state:"off", d:0, t:0, P:MGR_P, kind:"box"}, people:{on:false, t0:0}};
+    var a0 = PATROLS.A.segs[2], b0 = PATROLS.B.segs[0]; // A는 아래쪽 외곽(서쪽으로 가는 중), B는 A2 아래 간선(서쪽으로 가는 중)
+    ROBOTS = {A:new Robot("A", pt(a0.d, 60), 82), B:new Robot("B", pt(b0.d, 10), 47), "3":new Robot("3", SLOT[0], 100), "4":new Robot("4", SLOT[1], 100)};
     ["A", "B", "3", "4"].forEach(function(id){ var p = ROBOTS[id].pose; ROBOTS[id].pose = {x:p.x, y:p.y, hx:p.hx != null ? p.hx : p.tx, hy:p.hy != null ? p.hy : p.ty}; });
     dir = {ch:0, end:false}; flags = {};
     logEl.textContent = "";
     note("─ 장면 1 " + CHAPTERS[0]);
     lg("INFO", "", "관제 서버 시작 robots=4 report=0.5s latency=0.15s");
-    // 첫 명령: A 위 구역, B 아래 구역, 3·4호 대기
-    // 처음 배치는 운영자가 서버에 입력해 둔 것 (A 간선 동쪽, B 도크 U턴 안, 3·4호 충전 자리)
+    // 첫 명령: A 바깥, B 안쪽, 3·4호 대기
+    // 처음 배치는 운영자가 서버에 입력해 둔 것 (A 아래쪽 외곽, B A2 아래 간선, 3·4호 충전 자리)
     ["A", "B", "3", "4"].forEach(function(id){ SV.st[id] = {track:null, prog:0, moving:0, lastT:0, task:"idle", role:"standby", stop:"", hold:false, arrived:false, bat:ROBOTS[id].bat, park:id === "4" ? SLOT[1] : SLOT[0]}; });
-    sendPatrol("A", "A", "upper", 13, 114, true);
-    sendPatrol("B", "B", "lower", 1, 30, true);
+    sendPatrol("A", "A", "outer", 2, 60, true);
+    sendPatrol("B", "B", "inner", 0, 10, true);
     ["3", "4"].forEach(function(id){ ROBOTS[id].report(true); });
     draw();
   }
   function direct(){
     var B = ROBOTS.B;
     if (dir.ch === 0 && T >= 10){ chapter(1); WORLD.item.on = true; note("[연출] 위쪽 외곽 통로 바닥에 공구가 떨어짐", "stage"); }
-    // 박스는 B가 B1–B2 통로로 들어가기 전에 놓는다 (도크 · 아래 외곽을 지나는 중이거나 간선 동쪽)
-    if (dir.ch === 1 && flags.itemDone && T >= 15 && B.task === "patrol" && B.segs[B.i].d && (B.segs[B.i].st === 1 || (B.segs[B.i].st === 2 && B.pose.x > 260))){ chapter(2); WORLD.box.on = true; note("[연출] B1–B2 통로에 박스(적치물)가 놓임", "stage"); }
+    // 박스는 B가 A3 둘레를 도는 중에 A1 아래 간선에 놓는다 (곧 간선을 서쪽으로 지난다)
+    if (dir.ch === 1 && flags.itemDone && T >= 15 && B.task === "patrol" && B.segs[B.i].d && B.segs[B.i].st === 3){ chapter(2); WORLD.box.on = true; note("[연출] 1번 간선(A1 아래)에 박스(적치물)가 놓임", "stage"); }
     // 관리자: 호출되면 걸어와 확인하고 치운 뒤 관제 대시보드에서 체크 (서버로 RESOLVE)
     var m = WORLD.mgr;
     var what = m.kind === "item" ? "바닥 물건" : "박스";
@@ -1025,9 +1031,10 @@
       m.state = "out"; note("[연출] 관리자가 " + (m.kind === "item" ? "바닥 물건을" : "박스를") + " 치우고 관제 대시보드에서 체크", "stage"); send("server", {type:"RESOLVE", ev:m.kind === "item" ? "item" : "obstacle"});
     }
     if (m.state === "out" && (m.d -= 40 * DT) <= 0){ m.d = 0; m.state = "off"; }
-    // 과열은 위 구역 순찰 로봇이 왼쪽 위 외곽을 올라올 때 켠다 (불은 시간이 갈수록 커져서, 늦게 오면 불꽃이 안 보이는 먼 자리에서 멈춘다)
-    var up = Object.keys(ROBOTS).map(function(id){ return ROBOTS[id]; }).filter(function(r){ return r.task === "patrol" && r.role === "upper"; })[0];
-    if (dir.ch === 3 && flags.docked && T - flags.docked >= 2 && !WORLD.heat.on && up && up.segs[up.i].st === 0 && up.pose.x < 30 && up.pose.y > 60){ chapter(4); WORLD.heat.on = true; note("[연출] A1 랙 오른쪽 위 모서리에 과열 발생 (실외 시험 기준: 가스버너)", "stage"); }
+    // 불은 바깥 로봇이 아래쪽 외곽을 지나고 안쪽 로봇이 A3 둘레에 있을 때 켠다 → 바깥 로봇이 A1 왼쪽 면에서 먼저 잡는 경우가 많다 (불은 시간이 갈수록 커진다)
+    var pr = Object.keys(ROBOTS).map(function(id){ return ROBOTS[id]; }).filter(function(r){ return r.task === "patrol" && r.segs[r.i].d; });
+    var otr = pr.filter(function(r){ return r.role === "outer"; })[0], inr = pr.filter(function(r){ return r.role === "inner"; })[0];
+    if (dir.ch === 3 && flags.docked && T - flags.docked >= 2 && !WORLD.heat.on && otr && inr && otr.segs[otr.i].st === 2 && inr.segs[inr.i].st >= 3){ chapter(4); WORLD.heat.on = true; note("[연출] A1 랙 한가운데에 불 (가스버너)", "stage"); }
     if (WORLD.heat.on) WORLD.heat.H += 3 * DT;
     if (flags.fireT && !flags.evac && T - flags.fireT >= 1.5){ flags.evac = true; chapter(5); startFire(); }
     if (flags.evac && !dir.end){
@@ -1047,12 +1054,12 @@
   }
 
   /* ================= 화면 ================= */
-  var ROLE_NAME = {upper:"위 구역 담당", lower:"아래 구역 담당", standby:"대기 · 충전", check:"과열 교차 확인", guide:"대피 안내", relay:"교대 · 인수하러", dock:"도크 복귀"};
+  var ROLE_NAME = {outer:"바깥 순찰", inner:"안쪽 순찰", standby:"대기 · 충전", check:"화재 교차 확인", guide:"대피 안내", relay:"교대 · 인수하러", dock:"도크 복귀"};
   function statusLine(id){
     var r = ROBOTS[id], mode, detail = r.wait ? r.wait + " · " : "";
     if (r.task === "patrol"){ var sg = r.segs[r.i]; mode = r.wait ? "대기" : "전진"; detail += (sg.st + 1) + ". " + r.steps[sg.st]; }
     else if (r.task === "go"){ mode = r.arrived ? "도착" : r.wait ? "대기" : "이동"; detail += PURPOSE_LOG[r.purpose] + (r.display ? " · 표시 " + symText(r.display) : ""); }
-    else { mode = "대기"; detail += "도크 옆에서 충전"; }
+    else { mode = "대기"; detail += "도크에서 충전"; }
     return "<span><b>" + nameOf(id) + " · " + ROLE_NAME[r.role] + " · " + mode + "</b> 배터리 " + Math.round(r.bat) + "% · " + detail + "</span>";
   }
   function draw(){
@@ -1063,7 +1070,7 @@
     itemG.setAttribute("display", WORLD.item.on ? "inline" : "none"); itemLbl.textContent = SV.ev.item ? "바닥 물건 · 주의" : "바닥 물건";
     // 불꽃은 시뮬레이션 시각(T)으로 일렁인다 (정지하면 멈춤)
     var big = WORLD.heat.big;
-    heatLbl.textContent = big ? "화재" : "과열"; heatLbl.setAttribute("y", big ? -19 : -11);
+    heatLbl.textContent = big ? "화재" : "화재 의심"; heatLbl.setAttribute("y", big ? -19 : -11);
     burner.setAttribute("display", big ? "none" : "inline"); fireG.setAttribute("display", big ? "inline" : "none");
     heatGlow.setAttribute("r", ((big ? 18 : 9) * (1 + .08 * Math.sin(T * 5))).toFixed(2));
     cFlame.setAttribute("transform", "translate(-0.6 -0.8) scale(" + (.8 + .06 * Math.sin(T * 23)).toFixed(3) + " " + (.9 + .15 * Math.sin(T * 17)).toFixed(3) + ")");

@@ -16,5 +16,5 @@
 
 ## 위젯
 
-- `viewer.js`: 3D 장착 구성 위젯(`[data-widget="v3d"]`)의 마크업·부품 표·three.js 뷰어를 그리는 ES 모듈.
+- `viewer.js`: 3D 장착 구성 위젯(`[data-widget="v3d"]`)의 마크업·부품 표·three.js 뷰어를 그리는 보통 스크립트(`defer`). 파일을 바로 열어도 돌도록 three.js만 `import()`로 CDN에서 받는다.
 - `viewer.css`: 3D 뷰어 위젯(`.v3d*`) 스타일.

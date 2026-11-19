@@ -150,7 +150,7 @@ try {
   };
 
   // 판금은 바닥에서 잰 높이(mm)에 놓는다. 세 덮개 사이로 서보 배선과 제어 보드가 보인다.
-  const HIPS = [[74.2, 90.1], [-50.8, 90.1]], PORTS = [22, 8, -6];
+  const HIPS = [[74.2, 90.1], [-50.8, 90.1]], PORTS = [13, 0, -13];
   const servoBoxes = [], servoSeats = [];
   const servoSeat = (x, y, z, out, dir) => grp(x, y, z, (g) => {
     g.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(V().crossVectors(dir, out), dir, out));
@@ -163,10 +163,10 @@ try {
     }));
   });
   const cable = (points, r, m) => add(mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(p => V(...p))), 24, r, 6), m));
-  const foldedEdge = (x0, x1, y, z, drop) => {
+  const foldedEdge = (x0, x1, y, z, drop, zOut = 30) => {
     for (const s of [-1, 1]) {
-      const o = box(x1 - x0, 1.45, Math.hypot(drop, 30 - z), "body", (x0 + x1) / 2, y - drop / 2, s * (30 + z) / 2);
-      o.rotation.x = s * Math.atan2(drop, 30 - z);
+      const o = box(x1 - x0, 1.45, Math.hypot(drop, zOut - z), "body", (x0 + x1) / 2, y - drop / 2, s * (zOut + z) / 2);
+      o.rotation.x = s * Math.atan2(drop, zOut - z);
     }
   };
   const hex = (x, y, z, axis, s = 1) => {
@@ -210,12 +210,14 @@ try {
   box(19, 2, 14, "dark", 4, 115, -2);
   for (const s of [-1, 1]) {
     const z = 29.5 * s;
-    side(poly([[-31, 81], [32, 81], [39, 88], [39, 104], [30, 111], [26, 111], [26, 102], [-18, 102], [-18, 111], [-35, 111], [-35, 87]]),
-      Array.from({ length: 5 }, (_, i) => { const x = -16 + i * 8; return H.p(i % 2 ? [[x - 5, 89], [x + 5, 89], [x, 94.5]] : [[x - 5, 95], [x + 5, 95], [x, 89.5]]); }), z);
-    side(poly([[-81, 84], [-78, 81], [-32, 81], [-32, 89], [-28, 94], [-28, 107], [-34, 111], [-81, 111]]), [], z);
-    side(poly([[32, 81], [96, 81], [101, 85], [106, 110], [42, 110], [42, 102], [32, 92]]), [], z);
-    for (const x of [-75, -27, 28, 44, 95]) for (const y of [85, 96]) hex(x, y, s * 31, "z", s);
-    for (const x of [-30, 36]) hex(x, 106, s * 31.3, "z", s);
+    side(poly([[-31, 81], [28, 81], [28, 86], [39.5, 97.5], [39.5, 110.5], [20, 110.5], [20, 101.5], [-20, 101.5], [-20, 110.5], [-32, 110.5], [-32, 103], [-27.5, 96.5], [-31, 88]]),
+      Array.from({ length: 5 }, (_, i) => { const x = -16 + i * 8; return H.p(i % 2 ? [[x - 4.7, 87.5], [x + 4.7, 87.5], [x, 95.5]] : [[x - 4.7, 95.5], [x + 4.7, 95.5], [x, 87.5]]); }), z);
+    side(poly([[-81, 84], [-78, 81], [-31.6, 81], [-31.6, 88], [-28.1, 96.5], [-32.6, 103], [-32.6, 110.8], [-81, 110.8]]), [], z);
+    side(poly([[28.6, 81], [96, 81], [101, 85], [106, 110.2], [40.1, 110.2], [40.1, 97.5], [28.6, 86]]), [], z);
+    for (const y of [85, 96]) { hex(-75, y, s * 31, "z", s); hex(95, y, s * 31, "z", s); }
+    for (const x of [-25, 25.5]) hex(x, 99, s * 31, "z", s);
+    hex(-25, 89, s * 31, "z", s); hex(25, 90, s * 31, "z", s);
+    hex(-35.5, 99, s * 31, "z", s); hex(38.5, 92.5, s * 31, "z", s); hex(44, 102, s * 31, "z", s);
     for (const [hx, hy] of HIPS) {
       servoSeat(hx, hy, s * 32, V(0, 0, s), V(hx > 0 ? -1 : 1, 0, 0));
       for (const [i, m] of ["w3", "w2", "w1"].entries()) {
@@ -243,24 +245,27 @@ try {
     ...[-17, 17].map(z => H.c(100, z, 1.75))], 117.1, "body", 1.4);
   foldedEdge(44.5, 109.5, 117.1, 23, 7);
   for (const z of [-17, 17]) hex(100, 118.35, z, "y");
-  // 가운데 덮개: 모서리 모따기한 팔각 단면 끝(앞 끝 X 29, 뒤 끝 X -27), 혀나 돌출 없이 깔끔히 끝난다.
-  flat(poly([[-27, -20.5], [-24.5, -23], [26.5, -23], [29, -20.5], [29, 20.5], [26.5, 23], [-24.5, 23], [-27, 20.5]]), [
+  // 가운데 덮개: 앞 끝 X 29는 수직으로 깔끔히 끝나고, 뒤 끝(-X)은 X -33까지 혀가 돌출한다. 측면 탭은 X ±23.5에서 나사로 고정.
+  flat(poly([[-33, -21], [-31, -23], [26.5, -23], [29, -20.5], [29, 20.5], [26.5, 23], [-31, 23], [-33, 21]]), [
     ...[-12.5, -7.5, -2.5, 2.5, 7.5, 12.5].map(x => {
       const a = Math.acos((x + 1.65) / 14.5), b = Math.acos((x - 1.65) / 14.5);
       const slot = new THREE.Path();
       slot.absarc(0, 0, 14.5, a, b, false); slot.lineTo(x - 1.65, -14.5 * Math.sin(b));
       slot.absarc(0, 0, 14.5, -b, -a, false); slot.closePath(); return slot;
     }), ...[-22, 24].flatMap(x => [-8, 8].map(z => H.c(x, z, 1.75)))], 123, "body", 1.4);
-  foldedEdge(-24.5, 26.5, 123, 22.5, 6);
+  foldedEdge(-26.5, 26.5, 123, 22.5, 5.5, 31.2);
   for (const s of [-1, 1]) {
-    side(poly([[-24.5, 117], [26.5, 117], [26.5, 104], [24, 102], [21, 102], [21, 111], [-17, 111], [-17, 102], [-22.5, 102], [-24.5, 104]]), [], s * 30, "body", 1.4);
-    const label = add(markings(s === 1 ? "ON      OFF         CHARGE" : "1               2               3", 41, 3.2), 4, 99, s * 31.1);
+    side(poly([[-26.5, 117.5], [-26.5, 123], [-32.5, 123], [-32.5, 121.5]]), [], s * 22.0, "body", 1.4);
+    side(poly([[-26.5, 117.5], [26.5, 117.5], [26.5, 105], [24, 102.5], [20, 102.5], [20, 111.5], [-20, 111.5], [-20, 102.5], [-24, 102.5], [-26.5, 105]]), [], s * 31.2, "body", 1.4);
+    for (const x of [-23.5, 23.5]) hex(x, 107.5, s * 32.3, "z", s);
+    const label = add(markings(s === 1 ? "ON      OFF         CHARGE" : "1               2               3", 36, 2.8), 0, 103.0, s * 30.9);
     if (s < 0) label.rotation.y = PI;
   }
-  box(42, 9, 1.4, "pcb", 4, 106.5, 27.5);
-  box(12, 5, 5, "metal", -9, 106.5, 28); box(4.5, 4, 3, "dark", -10, 106, 31);
-  box(9, 8, 6, "dark", 19, 107, 29); cyl(2.45, 0.8, "metal", 19, 107, 32.2, "z");
-  cyl(1.9, 1, "dark", 19, 107, 32.3, "z"); cyl(0.55, 1.3, "gold", 19, 107, 32.4, "z");
+  box(40, 11, 1.4, "pcb", 0, 106, 27.5); box(40, 10, 1.0, "dark", 0, 106.5, 29.8);
+  box(12, 5, 5, "metal", -10, 107.5, 28); box(4.5, 4, 3, "dark", -11, 107, 31);
+  box(9, 8, 6, "dark", 14, 107.5, 29); cyl(2.45, 0.8, "metal", 14, 107.5, 32.2, "z");
+  cyl(1.9, 1, "dark", 14, 107.5, 32.3, "z"); cyl(0.55, 1.3, "gold", 14, 107.5, 32.4, "z");
+  box(40, 10.5, 1.2, "dark", 0, 106.5, -29.8);
   const sockets = [];
   for (const x of PORTS) {
     box(11, 6, 5, "white", x, 108.5, -29.5); box(9, 4, 0.6, "dark", x, 108.5, -32);
@@ -361,20 +366,23 @@ try {
   };
   for (const [hx, hy] of HIPS) for (const s of [-1, 1]) {
     grp(hx, hy, 0, () => {
-      // 어깨 ㄷ자 브래킷: 고관절 위(Y 22.5)와 바깥을 감싸는 별도 판. 바깥 볼은 베어링 중심 R 9 원호로 깔끔히 끝난다.
-      const lean = hx > 0 ? -4 : 4;
+      // 어깨 ㄷ자 브래킷: 고관절 축 기준 안쪽으로 ~25° 기울어진 비스듬한 윗판과 베어링 원판.
+      const d = hx > 0 ? -1 : 1;
       const cheek = new THREE.Shape();
-      cheek.absarc(0, 0, 9.0, PI, 0, false);
-      cheek.lineTo(lean + 8.5, 22.5); cheek.lineTo(lean - 8.5, 22.5); cheek.closePath();
+      cheek.absarc(0, 0, 9.2, PI, 0, false);
+      if (d < 0) { cheek.lineTo(-1.5, 18.5); cheek.lineTo(-17.5, 25.5); }
+      else { cheek.lineTo(17.5, 25.5); cheek.lineTo(1.5, 18.5); }
+      cheek.closePath();
       side(cheek, [H.c(0, 0, 4.3)], s * 60.5, "body", 1.5);
-      const saddle = flat(rr(lean, 0, 17, 30, 1.5), [H.r(lean, 0, 10, 20, 1.2)], 22.5, "body", 1.5);
-      saddle.position.z = s * 45.6;
-      side(poly([[lean - 8.5, 22.5], [lean + 8.5, 22.5], [lean + 8.5, 5], [lean - 6, 5]]), [], s * 30.8, "body", 1.5);
-      cyl(4.95, 1.6, "metal", 0, 0, s * 61.65, "z");
-      ring(4.25, 0.4, "metal", 0, 0, s * 62.45);
-      cyl(3.85, 1.0, "dark", 0, 0, s * 62.1, "z");
-      hex(0, 0, s * 62.75, "z", s);
-      hex(lean + 2, 9, s * 31.9, "z", s);
+      grp(d * 9.5, 22.0, s * 45.6, g => {
+        g.rotation.z = Math.atan2(d * 7.0, 16.0);
+        flat(rr(0, 0, 17.5, 30, 1.5), [H.r(0, 0, 10, 20, 1.2)], 0, "body", 1.5);
+      });
+      side(poly(d < 0 ? [[-17.5, 25.5], [-1.5, 18.5], [6.5, 5], [-9.5, 5]] : [[1.5, 18.5], [17.5, 25.5], [9.5, 5], [-6.5, 5]]), [], s * 30.8, "body", 1.5);
+      cyl(5.1, 1.4, "metal", 0, 0, s * 61.7, "z");
+      ring(4.25, 0.35, "white", 0, 0, s * 62.3);
+      cyl(4.0, 0.8, "dark", 0, 0, s * 62.2, "z");
+      hex(d * 2, 10, s * 31.9, "z", s);
       for (const a of LEG_RANGE) sweeps.push(grp(0, 0, 0, g => {
         g.rotation.z = rad(45 + a); thighSweep(s, -1, "sweep"); thighSweep(s, 1, "sweep");
       }));
@@ -393,7 +401,7 @@ try {
       cyl(8.2, 2.7, "metal", 0, 0, s * 32.2, "z");
       cyl(7.7, 0.8, "body", 0, 0, s * 34.65, "z");
       for (const [x, y] of [[0, 4.6], [4, -2.3], [-4, -2.3]]) hex(x, y, s * 35.4, "z", s);
-      for (const [edge, dirZ] of [[-1, -s], [1, s]]) hex(-20, -4, s * (46 + edge * 11.45), "z", dirZ);
+      for (const [edge, dirZ] of [[-1, -s], [1, s]]) hex(-26, -1.5, s * (46 + edge * 11.45), "z", dirZ);
       // 무릎 서보 장착판(Y 9.5) 바깥면에 서보(출력축 끝 Y 17.5)가 고정되어 귀와 몸체가 판 밖으로 드러난다.
       flat(rr(-10.5, 0, 36, 20.5, 1.5), [H.r(-10.75, 0, 23.6, 12.6, 1)], 9.5, "body", 1.5).position.z = s * 46;
       servoSeat(-5, 17.5, s * 46, V(0, 1, 0), V(-1, 0, 0));
@@ -404,9 +412,8 @@ try {
         const shinSide = () => poly([[-14, 3.5], [-12, 5], [1, 6], [9, 4.5], [33, 3.1], [39, 2.5], [39, -2.4], [16, -3.4], [4, -5.8], [-9, -5], [-14, -3]]);
         for (const edge of [-1, 1]) side(shinSide(), [H.c(-12, 0, 1.6)], edge * 2.6, "dark", 2.2);
         cyl(2.8, 7.5, "metal", -12, 0, 0, "z"); cyl(2.25, 12.5, "metal", 0, 0, 0, "z");
-        cyl(3, 1.3, "metal", 0, 0, s * 6.6, "z");
-        ring(2.05, 0.45, "metal", 0, 0, s * 7.25);
-        cyl(1.15, 0.25, "dark", 0, 0, s * 7.3, "z");
+        cyl(3.2, 1.4, "metal", 0, 0, s * 6.4, "z");
+        cyl(2.2, 0.8, "metal", -12, 0, s * 4.2, "z");
         // 고무 발은 앞코가 둥글고 목 쪽이 가늘어진 일체형 캡이다.
         const profile = [[0, 34], [4.1, 34], [4.8, 36], [5.1, 44], [6.2, 51], [6.6, 55], [5.7, 58], [3.8, 60], [0, 61]];
         const toe = new THREE.LatheGeometry(profile.map(([r, x]) => new THREE.Vector2(r, x)), 28);

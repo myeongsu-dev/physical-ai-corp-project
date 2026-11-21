@@ -43,6 +43,7 @@ MechDog 4대가 공장·창고 통로를 교대로 순찰하며 막힌 통로·�
 ```text
 physical-ai-corp-project/
 ├── index.html                  # 주차 선택 페이지 (웹 포털)
+├── serve.cmd                   # Windows에서 더블클릭: 로컬 서버를 켜고 index.html을 연다 (3D 뷰어는 웹 서버에서만 뜸)
 ├── assets/                     # 모든 문서가 같이 쓰는 스타일·스크립트 (목록은 assets/README.md)
 │   ├── doc.css · doc.js        # 문서 공통 컴포넌트 (표 · 배지 · 요점 상자 · 상단 바 등)
 │   ├── diagram.css · diagram.js # 그림 도형 재료, Mermaid 불러오기
@@ -50,7 +51,7 @@ physical-ai-corp-project/
 │   ├── components.html         # 컴포넌트 견본
 │   ├── diagrams.html           # 그림 형태별 견본
 │   ├── template.html           # 새 문서 틀
-│   ├── 3d/                     # 3D 장착 모델 위젯 (viewer.js) · 부품 GLB
+│   ├── 3d/                     # 3D 장착 모델 위젯 (viewer.js) · MechDog GLB(CAD에서 만듦) · 출력 파일(print/) · 공식 부품 GLB
 │   └── sim/                    # 미션맵 시뮬레이션 위젯 (missionmap.js)
 ├── week01/                     # 1주차 (11/09~11/13) 산출물
 │   ├── index.html              # 1주차 문서 목차

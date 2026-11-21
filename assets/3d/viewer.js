@@ -71,7 +71,7 @@ try {
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // ---- 재질: 색은 CSS 토큰에서 읽는다 (다크 모드 포함) ----
-  const TOK = { body: "--v3d-body", edge: "--v3d-body", dark: "--v3d-dark", rubber: "--v3d-rubber", metal: "--v3d-metal", pcb: "--v3d-pcb", white: "--v3d-white", pin: "--gray",
+  const TOK = { body: "--v3d-body", dark: "--v3d-dark", rubber: "--v3d-rubber", metal: "--v3d-metal", pcb: "--v3d-pcb", white: "--v3d-white", pin: "--gray",
     print: "--v3d-print", floor: "--v3d-floor", line: "--v3d-line", cpY: "--cp-y", cpB: "--cp-b", led: "--v3d-led", red: "--bad",
     ghost: "--muted", lead: "--muted", fovF: "--accent", fovC: "--info", beam: "--bad", ir: "--ok", sweep: "--info" };
   const std = (o) => new THREE.MeshStandardMaterial(o);
@@ -112,7 +112,6 @@ try {
   })();
   const M = {
     body: new THREE.MeshPhysicalMaterial({ metalness: 0.24, roughness: 0.35, envMapIntensity: 1.05, clearcoat: 0.36, clearcoatRoughness: 0.26, bumpMap: grainTex, bumpScale: 0.03 }),
-    edge: new THREE.MeshPhysicalMaterial({ metalness: 0.32, roughness: 0.33, envMapIntensity: 1.05, clearcoat: 0.24, clearcoatRoughness: 0.32 }),
     dark: new THREE.MeshPhysicalMaterial({ metalness: 0.14, roughness: 0.44, envMapIntensity: 0.85, clearcoat: 0.10, clearcoatRoughness: 0.48 }),
     rubber: new THREE.MeshPhysicalMaterial({ metalness: 0.04, roughness: 0.40, envMapIntensity: 0.92, clearcoat: 0.48, clearcoatRoughness: 0.25 }),
     metal: std({ metalness: 0.96, roughness: 0.18, envMapIntensity: 1.25 }), pcb: std({ roughness: 0.52 }), white: std({ roughness: 0.42 }), pin: std({ roughness: 0.58 }),
@@ -134,7 +133,7 @@ try {
     cooler: std({ color: 0x24282e, metalness: 0.78, roughness: 0.32 }),
     fovF: glass(), fovC: glass(), beam: glass(), ir: glass(), sweep: new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false }),
   };
-  const SOLID = ["body", "edge", "dark", "rubber", "metal", "pcb", "white", "pin", "screw", "cavity", "bearing", "grill", "ledBlue", "ledRed", "w1", "w2", "w3", "gold", "rpiPcb", "rpiBlue", "lens", "irPcb", "cooler"];
+  const SOLID = ["body", "dark", "rubber", "metal", "pcb", "white", "pin", "screw", "cavity", "bearing", "grill", "ledBlue", "ledRed", "w1", "w2", "w3", "gold", "rpiPcb", "rpiBlue", "lens", "irPcb", "cooler"];
   const EXT = new Set(); // 공식 3D 모델의 재질 (3D 출력물 강조 때 함께 흐리게)
   const theme = () => { for (const k in TOK) M[k].color.set(css(TOK[k])); };
 
@@ -589,7 +588,7 @@ try {
   new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(tick); }).observe(stage);
 
   // ---- 공식 3D 모델 (STEP → GLB, ../assets/3d/): 서보 HPS-0618SG · XIAO ESP32-S3 Sense · 라즈베리 파이 5. 못 읽으면 간략 모델을 그대로 둔다 ----
-  const models = (async () => {
+  (async () => {
     const [sv, xi, pi] = await Promise.allSettled(["mechdog-servo-hps0618sg.glb", "xiao-esp32s3-sense.glb", "raspberry-pi-5.glb"].map((f) => loader.loadAsync(asset(f))));
     const prep = (gl, own) => { // GLB는 m 단위. own: 파일의 색을 쓴다 (아니면 서보 검정)
       const o = gl.scene;
@@ -616,7 +615,6 @@ try {
     apply();
     if (seen && !raf) raf = requestAnimationFrame(tick);
   })().catch((e) => console.warn("공식 3D 모델을 불러오지 못해 간략 모델로 보여 준다", e));
-  if (location.hash === "#ortho") window.v3dDebug = { THREE, scene, renderer, robot, studio, camera, controls, setView, setModel, models }; // 참조 사진과 겹쳐 보는 정사영·다각도 캡처용 (주소 끝 #ortho)
   msg.remove();
 } catch (e) {
   msg.textContent = "3D 뷰어를 불러오지 못했다. 인터넷 연결과 WebGL 지원을 확인하고, 파일을 바로 열었다면 웹 서버(python -m http.server)로 연다.";

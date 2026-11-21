@@ -1,6 +1,6 @@
 /* 로봇 장착 구성 3D 뷰어 (11/12 기획안에서 가져옴) */
 .v3d{--panel:#fff;--line:#b8bec4;--bg:#f7f6f3;--accent:#c2410c;--info:#1d4ed8;--bad:#b91c1c;--ok:#15803d;--gray:#6b7280;--cp-y:#eab308;--cp-b:#2563eb;display:grid;gap:8px;margin:8px 0}
-.v3d{--v3d-floor:#ebe7dd;--v3d-body:#f2b705;--v3d-dark:#2a2d33;--v3d-rubber:#3a3d42;--v3d-metal:#c9cdd2;--v3d-pcb:#3f4a5c;--v3d-white:#f1efe9;--v3d-led:#3b82f6;--v3d-print:#0d9488;--v3d-line:#16a34a;
+.v3d{--v3d-floor:#ebe7dd;--v3d-body:#f2b012;--v3d-dark:#23262c;--v3d-rubber:#1c1f24;--v3d-metal:#d4d8de;--v3d-pcb:#3f4a5c;--v3d-white:#f1efe9;--v3d-led:#3b82f6;--v3d-print:#0d9488;--v3d-line:#16a34a;
   border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:12px;display:grid;gap:8px;margin-top:8px}
 .v3d > *{min-width:0}
 .v3d-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}

@@ -30,7 +30,7 @@ root.innerHTML = `
   <div class="tw"><table class="v3d-parts">
     <thead><tr><th>부품</th><th>대략 치수 (실측 전)</th><th>자리</th><th>구분</th></tr></thead>
     <tbody>
-      <tr><td>MechDog 본체</td><td>서 있을 때 214 × 126 × 138 mm, 꺼졌을 때 221 × 126 × 96 mm (사양서)</td><td>다리마다 몸통 옆 ㄷ자 어깨 브래킷(비스듬한 윗판 · 베어링이 달린 바깥 팔)은 고정이고, 그 안에서 허벅지 판 · 무릎 서보 · 혼 · 푸시로드 · 아랫다리만 엉덩이 축을 중심으로 돈다. 브래킷 윗면(바닥에서 약 117 mm)보다 위는 다리가 움직여도 빈 공간이라 Z ±62까지 짐을 얹을 수 있다 (브래킷 높이 · 바깥 끝 · 회전 범위는 사진 추정, 실측 뒤 수정)</td><td>보유</td></tr>
+      <tr><td>MechDog 본체</td><td>서 있을 때 214 × 126 × 138 mm, 꺼졌을 때 221 × 126 × 96 mm (사양서), 제어 보드 79 × 53 mm</td><td>다리마다 몸통 옆 ㄷ자 어깨 브래킷(비스듬한 윗판 · 베어링이 달린 바깥 팔)은 고정이고, 그 안에서 허벅지 판 · 무릎 서보 · 혼 · 푸시로드 · 아랫다리만 엉덩이 축을 중심으로 돈다. 브래킷 윗면(바닥에서 약 114.5 mm)보다 위는 다리가 움직여도 빈 공간이라 Z ±62까지 짐을 얹을 수 있다</td><td>보유</td></tr>
       <tr><td>초음파 센서</td><td>46 × 20 mm, 발신부 2개, 측정 각 15°</td><td>머리 앞면</td><td>보유</td></tr>
       <tr><td>Hiwonder 비전 모듈 (ESP32-S3 + GC2145)</td><td>59 × 43 × 17.5 mm</td><td>기존 브래킷째 턱 아래에 단다. 3D 모델에서 광축을 수평 기준 35° 내리면 몸 중심에서 약 14~30 cm 앞 바닥이 라인 처리 화면에 들어온다. 라인 모드는 160 × 140이고 화면 위 2/3를 처리한다.</td><td>보유 (머리 위에서 옮김)</td></tr>
       <tr><td>삼각 트러스 브래킷</td><td>판 약 54 × 64 mm (22.8° 경사), 앞뒤 체결 귀 4개</td><td>얼굴판 아래에 비전 모듈 경첩을 둔다. 앞쪽 체결 귀는 양쪽 머리 옆판의 위 나사 구멍에 맞춘다.</td><td>보유</td></tr>
@@ -38,10 +38,10 @@ root.innerHTML = `
       <tr><td>XIAO ESP32-S3 Sense (OV3660)</td><td>본체 21 × 17.8 mm + Sense 확장 보드, 렌즈까지 두께 14 mm (Seeed 3D 모델)</td><td>머리 브래킷에 세워 꽂음. 렌즈는 앞, USB-C는 위. USB-C to A 케이블을 안테나 선반 위로 넘겨 배터리 왼쪽 끝 위를 지나 Pi 5 왼쪽 USB 3.0 위 칸에 꽂아 전원과 영상을 함께 보낸다 (경로 약 25 cm, 케이블 30 cm 이상)</td><td>보유</td></tr>
       <tr><td>비접촉 온도 센서 GY-906 (MLX90614ESF-BCC)</td><td>보드 17 × 11 mm, 캔 Ø10.2 × 8.1 mm, 측정 시야 35° (Melexis 데이터시트 Figure 42 · Table 19)</td><td>머리 브래킷 오른쪽 홀더에 세워 꽂음. XIAO 렌즈와 같은 쪽을 보고 10° 숙인다. 캔 앞면이 XIAO 렌즈보다 뒤라 머리 카메라 화면에 들어오지 않는다. 윗변에 ㄱ자 핀헤더를 뒤에서 끼워 핀이 위로 서게 한다 (일자 핀을 뒤로 빼면 안테나 선반에 닿음). 듀폰 암-암 점퍼를 안테나 선반 위 → 배터리 · 받침판 오른쪽 위로 지나 Pi 5 GPIO(뒤 끝 오른쪽)에 연결: VIN → 1번(3.3V), SDA → 3번(GPIO2), SCL → 5번(GPIO3), GND → 9번 (경로 약 18 cm, 20 cm 점퍼. 모자라면 수-암 점퍼를 이어 늘린다)</td><td>구매 (4개) · 받은 모듈이 17 × 11 mm 보드인지 확인 (다르면 홀더 수정)</td></tr>
       <tr><td>2.4 GHz 플렉스 안테나</td><td>약 40 × 20 mm</td><td>머리 브래킷 뒤쪽 13 mm 상단 선반 포켓에 수납 (금속 윗판에서 13 mm 띄움)</td><td>보유</td></tr>
-      <tr><td>머리 브래킷</td><td>발판 47 × 48 × 3.2 mm · 앞 12 mm 플랜지 · 높이 25 mm (외벽 2.8~3.0 mm)</td><td>머리 윗판 뒤 엣지(X 42, Z ±16)를 폭 14 mm · 두께 3 mm+ 챔퍼 U자 걸쇠로 잡고 앞 M3 구멍 2곳(X 100, Z ±17)을 Ø3.4 mm 구멍이 뚫린 12 mm 플랜지로 볼트 고정. XIAO · GY-906 포켓 모두 앞·뒤 기둥이 이어진 닫힌 문형 레일(중간 배선 창 개방) + 보강 거셋·상단 스냅으로 파손을 막고, 안테나 선반은 전고 트러스 거셋과 하부 리브로 발판까지 직접 받침</td><td>3D 출력 · <a href="${asset("print/head_bracket.3mf")}" download>3MF</a> · <a href="${asset("print/head_bracket.stl")}" download>STL</a></td></tr>
+      <tr><td>머리 브래킷</td><td>발판 49 × 46 × 3.2 mm · 앞 12 mm 플랜지 · 높이 25 mm (외벽 2.8~3.0 mm)</td><td>머리 윗판 뒤 엣지(X 42, Z ±15.5)를 폭 12 mm · 두께 3 mm+ 챔퍼 U자 걸쇠로 잡고 앞 M3 구멍 2곳(X 96, Z ±17)을 Ø3.4 mm 구멍이 뚫린 플랜지로 볼트 고정. XIAO · GY-906 포켓 모두 앞·뒤 기둥이 이어진 닫힌 문형 레일(중간 배선 창 개방) + 보강 거셋·상단 스냅으로 파손을 막고, 안테나 선반은 전고 트러스 거셋과 하부 리브로 발판까지 직접 받침</td><td>3D 출력 · <a href="${asset("print/head_bracket.3mf")}" download>3MF</a> · <a href="${asset("print/head_bracket.stl")}" download>STL</a></td></tr>
       <tr><td>라즈베리 파이 5 + 쿨러</td><td>PCB 85 × 56 × 1.6 mm (고정 구멍 58 × 49 mm), 액티브 쿨러 포함 높이 약 15 mm (공식 규격)</td><td>뒤 윗판 위에 긴 쪽을 좌우로 눕혀(X -81.5~-25.5, Z -32.5~52.5) 꼬리 끝 밖으로 나가지 않는다. GPIO는 뒤 끝, USB-C 전원 · HDMI는 앞(배터리 쪽), USB · 이더넷은 왼쪽, microSD · 전원 버튼은 오른쪽이라 microSD를 캐리어에서 빼지 않고 바꿀 수 있다. 바닥에서 약 132 mm 높이로, 앞 끝이 데크 바닥판 위로 살짝 들어간다</td><td>개인 보유 (교부 1 + 김건주 동아리 3 · 사용 승인 확인)</td></tr>
-      <tr><td>Pi 5 가로 캐리어</td><td>트레이 56 × 80 × 3 mm · 기둥 6 × 8 × 12 mm 4개 · 아래 리브 4줄 · M2.5 × 5 황동 스탠드오프 4개</td><td>뒤 윗판의 실물 구멍에 기둥을 대고 M3 × 20 볼트 4개와 아래 너트로 조인다. 구멍은 사진 기준으로 뒤 나사 자리 X -71, Z ±17.5와 앞 원형 구멍 X -43, Z ±14.5에 있다. 트레이는 등뼈 덮개 위 124.6~127.6 mm 높이에서 오른쪽으로 넓어지며 아래 리브가 넓어진 부분을 받친다. Pi 5는 아래에서 M2.5 나사로 황동 스탠드오프에 조인다. 출력할 때는 트레이 윗면을 베드에 두고 기둥과 리브가 위를 향하게 놓는다.</td><td>3D 출력 · <a href="${asset("print/pi_carrier.3mf")}" download>3MF</a> · <a href="${asset("print/pi_carrier.stl")}" download>STL</a></td></tr>
-      <tr><td>LED · 배터리 데크 (출력 2개)</td><td>① 배터리 칸: 바닥판 45 × 86 × 3.1 mm와 앞뒤 체결부, 벽 두께 3 mm · 높이 27 mm, 나사 보스 7 × 7 mm 4개 ② LED 받침판: 57 × 66 × 3 mm + MP3 거치 턱</td><td>① 배터리 칸을 등 덮개 확장 구멍 4곳(M4)에 고정한다. 구멍 위치는 X -20, +30.5와 Z ±8.4(사진 비율로 추정, 실측 뒤 수정)이다. 뒤 두 곳은 위에서 M4 볼트로, 앞벽 아래 두 곳은 등 덮개 아래에서 볼트를 올려 바닥판의 M4 열압입 인서트에 조인다. 네 벽이 배터리를 둘러싸고, 오른쪽 끝 벽은 USB-C 두 단자 앞이 창이라 배터리를 꽂은 채 빈 단자로 충전한다. ② LED 받침판을 벽 위 보스 4곳에 M3 × 10 나사로 덮으면 배터리 윗면 EVA 폼(1 mm)을 눌러 흔들리지 않는다. 배터리를 뺄 때만 나사 4개를 푼다. 받침판은 뒤로 13 mm 나가 LED 뒤 스탠드오프를 받고, 그 아래로 Pi 앞 끝이 들어온다. 출력: ①은 바닥판, ②는 받침판을 베드에 두고 벽 · 턱이 위로 (둘 다 서포트 없음)</td><td>3D 출력 · 배터리 칸 <a href="${asset("print/battery_bay.3mf")}" download>3MF</a> · <a href="${asset("print/battery_bay.stl")}" download>STL</a>, 받침판 <a href="${asset("print/led_plate.3mf")}" download>3MF</a> · <a href="${asset("print/led_plate.stl")}" download>STL</a></td></tr>
+      <tr><td>Pi 5 가로 캐리어</td><td>트레이 56 × 80 × 3 mm · 기둥 6 × 8 × 12.8 mm 4개 · 아래 리브 4줄 · M2.5 × 5 황동 스탠드오프 4개</td><td>뒤 윗판의 실물 구멍에 기둥을 대고 M3 × 20 볼트 4개와 아래 너트로 조인다. 구멍은 탑뷰 교차 측정 기준으로 뒤 나사 자리 X -71.8, Z ±16.2와 앞 원형 구멍 X -43.0, Z ±14.0에 있다. 트레이는 등뼈 덮개 위 124.6~127.6 mm 높이에서 오른쪽으로 넓어지며 아래 리브가 넓어진 부분을 받친다(앞쪽 가로 리브 X -37로 등 덮개 뒤 플레어 날개와 1 mm 이격). Pi 5는 아래에서 M2.5 나사로 황동 스탠드오프에 조인다. 출력할 때는 트레이 윗면을 베드에 두고 기둥과 리브가 위를 향하게 놓는다.</td><td>3D 출력 · <a href="${asset("print/pi_carrier.3mf")}" download>3MF</a> · <a href="${asset("print/pi_carrier.stl")}" download>STL</a></td></tr>
+      <tr><td>LED · 배터리 데크 (출력 2개)</td><td>① 배터리 칸: 바닥판 45 × 86 × 4.2 mm와 앞뒤 체결부, 벽 두께 3 mm · 높이 27 mm, 나사 보스 7 × 7 mm 4개 ② LED 받침판: 57 × 66 × 3 mm + MP3 거치 턱</td><td>① 배터리 칸을 등 덮개 확장 구멍 4곳(M4 탭 리브넛)에 고정한다. 구멍 위치는 LEGO 8 mm 표준 피치(공식 렌더 L005 · L007 · 탑뷰 V01-0000 교차 검증)로 X -18.0, +30.0(간격 48.0 mm)과 Z ±8.0(간격 16.0 mm)이다. 네 벽이 배터리를 둘러싸고, 오른쪽 끝 벽은 USB-C 두 단자 앞이 창이라 배터리를 꽂은 채 빈 단자로 충전한다. ② LED 받침판을 벽 위 보스 4곳에 M3 × 10 나사로 덮으면 배터리 윗면 EVA 폼(1 mm)을 눌러 흔들리지 않는다. 배터리를 뺄 때만 나사 4개를 푼다. 받침판은 뒤로 13 mm 나가 LED 뒤 스탠드오프를 받고, 그 아래로 Pi 앞 끝이 들어온다. 출력: ①은 바닥판, ②는 받침판을 베드에 두고 벽 · 턱이 위로 (둘 다 서포트 없음)</td><td>3D 출력 · 배터리 칸 <a href="${asset("print/battery_bay.3mf")}" download>3MF</a> · <a href="${asset("print/battery_bay.stl")}" download>STL</a>, 받침판 <a href="${asset("print/led_plate.3mf")}" download>3MF</a> · <a href="${asset("print/led_plate.stl")}" download>STL</a></td></tr>
       <tr><td>Pi 5 전용 보조배터리</td><td>후보 UGREEN 미니 5000 mAh 2포트: 79 × 38 × 26 mm, 112 g, USB-C 5V 3A, 18 Wh (제조사 값). 4대 모두 같은 제품. 산 제품을 재면 3D 모델의 <code>BAT</code> 값만 바꾼다</td><td>배터리 칸에 긴 쪽을 좌우로 눕혀 몸 중심(엉덩이 축 가운데) 바로 위, 장착 부품 중 가장 낮은 자리에 둔다. 좌우로 ±40 mm라 몸 폭(±63 mm) 안에 들어온다. 네 벽과 위 받침판이 잡아 따로 묶지 않는다. 단자 쪽(오른쪽 끝)에서 USB-C to C 케이블을 한 번 감아 Pi 5 USB-C(오른쪽 앞)에 꽂고, 남은 USB-C로 꽂은 채 충전한다 (충전하면서 Pi에 전원이 나가는지는 실물 확인)</td><td>구매 예정 (4개 같은 제품) · 실측 필요</td></tr>
       <tr><td>LED 도트 매트릭스 (Hiwonder 8×16, TM1640)</td><td>보드 약 54 × 23 mm, 8×8 매트릭스 2개(각 20 × 20 mm), 4모서리 Ø4.8 mm 구멍 약 46 × 16 mm (실물 사진 대조)</td><td>LED · 배터리 데크 위층 받침판(바닥에서 약 159 mm)에 보드의 긴 쪽을 앞뒤로 놓는다. 보드 구멍에 맞춘 M3 12 mm 스탠드오프 4곳(X -22, +24와 Z ±8)에 나사와 평와셔로 고정한다. 아래 12 mm 공간으로 4핀 커넥터를 꽂아 배터리 왼쪽 끝 바깥으로 내려 포트 3(IO32 · IO33)에 잇는다.</td><td>보유</td></tr>
       <tr><td>I2C 케이블 (Molex 5264 호환 4P 양쪽 20 cm)</td><td>핀 간격 2.5 mm (포트 실측) · Hiwonder 센서 포트 규격 5264-4AW</td><td>비전 모듈 → 포트 1 (코드에서는 <code>IIC(2)</code>): 경로 약 19 cm로 여유가 1 cm 남짓이라 배 아래에 바짝 붙여 묶는다. MP3 → 포트 2: 데크 앞벽 왼쪽 아래로 경로 약 16 cm. LED → 포트 3: 경로 약 15 cm</td><td>구매 (I2C용 10개 + UART용으로 산 4개를 MP3에 씀)</td></tr>
@@ -91,27 +91,30 @@ try {
     t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(4, 4);
     return t;
   })();
-  const grillTex = (() => { // 초음파 발신부 내부 미세 철망 (256×256)
+  const grillTex = (() => { // 초음파 발신부 내부 미세 철망 + 동심 확산 링 (V04-0112 · T005 · T006)
     const c = document.createElement("canvas"), g = c.getContext("2d");
     c.width = c.height = 256;
-    g.fillStyle = "#101318"; g.fillRect(0, 0, 256, 256);
-    for (const [color, width] of [["#3f4650", 5.2], ["#8a929c", 1.8]]) {
+    g.fillStyle = "#0e1218"; g.fillRect(0, 0, 256, 256);
+    const innerGlow = g.createRadialGradient(128, 128, 22, 128, 128, 118);
+    innerGlow.addColorStop(0, "#1c2838"); innerGlow.addColorStop(0.55, "#2b3d54"); innerGlow.addColorStop(0.82, "#192230"); innerGlow.addColorStop(1, "#0a0d12");
+    g.fillStyle = innerGlow; g.fillRect(0, 0, 256, 256);
+    for (const [color, width] of [["#46505e", 4.4], ["#9ea8b6", 1.5]]) {
       g.strokeStyle = color; g.lineWidth = width;
       g.beginPath();
-      for (let x = -256; x < 512; x += 14) {
+      for (let x = -256; x < 512; x += 12) {
         g.moveTo(x, 0); g.lineTo(x + 256, 256); g.moveTo(x, 0); g.lineTo(x - 256, 256);
       }
       g.stroke();
     }
-    const radGrad = g.createRadialGradient(128, 128, 30, 128, 128, 128);
-    radGrad.addColorStop(0, "rgba(0,0,0,0)"); radGrad.addColorStop(0.75, "rgba(0,0,0,0.18)"); radGrad.addColorStop(1, "rgba(0,0,0,0.68)");
+    const radGrad = g.createRadialGradient(128, 128, 36, 128, 128, 128);
+    radGrad.addColorStop(0, "rgba(0,0,0,0)"); radGrad.addColorStop(0.76, "rgba(0,0,0,0.22)"); radGrad.addColorStop(1, "rgba(0,0,0,0.72)");
     g.fillStyle = radGrad; g.fillRect(0, 0, 256, 256);
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
   })();
   const M = {
-    body: new THREE.MeshPhysicalMaterial({ metalness: 0.24, roughness: 0.35, envMapIntensity: 1.05, clearcoat: 0.36, clearcoatRoughness: 0.26, bumpMap: grainTex, bumpScale: 0.03 }),
+    body: new THREE.MeshPhysicalMaterial({ metalness: 0.28, roughness: 0.30, envMapIntensity: 1.12, clearcoat: 0.45, clearcoatRoughness: 0.22, bumpMap: grainTex, bumpScale: 0.025 }),
     dark: new THREE.MeshPhysicalMaterial({ metalness: 0.14, roughness: 0.44, envMapIntensity: 0.85, clearcoat: 0.10, clearcoatRoughness: 0.48 }),
     rubber: new THREE.MeshPhysicalMaterial({ metalness: 0.04, roughness: 0.40, envMapIntensity: 0.92, clearcoat: 0.48, clearcoatRoughness: 0.25 }),
     metal: std({ metalness: 0.96, roughness: 0.18, envMapIntensity: 1.25 }), pcb: std({ roughness: 0.52 }), white: std({ roughness: 0.42 }), pin: std({ roughness: 0.58 }),
@@ -162,17 +165,20 @@ try {
   const byPrefix = (s) => Object.keys(N).filter((n) => n.startsWith(s) && !n.includes("__")).sort().map((n) => N[n]);
   const fromMatrix = (o, m) => { o.applyMatrix4(new THREE.Matrix4().fromArray(m)); return o; };
 
-  const servoLabelMat = (() => {
-    const c = document.createElement("canvas"); c.width = 192; c.height = 64;
+  const servoLabelMat = (() => { // 공식 HPS-0618SG 실물 스티커 (HPS-0618SG.pdf p.1 · T003)
+    const c = document.createElement("canvas"); c.width = 256; c.height = 96;
     const g = c.getContext("2d");
-    g.fillStyle = "#c8cdd4"; g.fillRect(0, 0, 192, 64);
-    g.fillStyle = "#20242a"; g.fillRect(4, 4, 184, 56);
-    g.fillStyle = "#e2e6ec"; g.font = "bold 20px Arial"; g.textAlign = "center";
-    g.fillText("HIWONDER", 96, 26);
-    g.fillStyle = "#a6aeb8"; g.font = "bold 15px Arial";
-    g.fillText("HPS-0618SG", 96, 48);
+    g.fillStyle = "#1a1d22"; g.fillRect(0, 0, 256, 96);
+    g.strokeStyle = "#9aa3ae"; g.lineWidth = 3; g.strokeRect(3, 3, 250, 90);
+    g.fillStyle = "#e8ecf2"; g.font = "bold 20px Arial"; g.textAlign = "center";
+    g.fillText("Hiwonder", 128, 28);
+    g.fillStyle = "#f2f4f8"; g.fillRect(18, 36, 220, 28);
+    g.fillStyle = "#15181d"; g.font = "bold 22px Arial";
+    g.fillText("HPS-0618SG", 128, 58);
+    g.fillStyle = "#b8c0ca"; g.font = "bold 14px Arial";
+    g.fillText("Coreless Servo", 128, 82);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    const mat = std({ map: t, metalness: 0.45, roughness: 0.35 }); EXT.add(mat);
+    const mat = std({ map: t, metalness: 0.32, roughness: 0.38 }); EXT.add(mat);
     return mat;
   })();
   const markings = (label, w, h, sticker = false, frame = false) => {
@@ -588,7 +594,7 @@ try {
   new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen && !raf) raf = requestAnimationFrame(tick); }).observe(stage);
 
   // ---- 공식 3D 모델 (STEP → GLB, ../assets/3d/): 서보 HPS-0618SG · XIAO ESP32-S3 Sense · 라즈베리 파이 5. 못 읽으면 간략 모델을 그대로 둔다 ----
-  (async () => {
+  const models = (async () => {
     const [sv, xi, pi] = await Promise.allSettled(["mechdog-servo-hps0618sg.glb", "xiao-esp32s3-sense.glb", "raspberry-pi-5.glb"].map((f) => loader.loadAsync(asset(f))));
     const prep = (gl, own) => { // GLB는 m 단위. own: 파일의 색을 쓴다 (아니면 서보 검정)
       const o = gl.scene;
@@ -615,6 +621,7 @@ try {
     apply();
     if (seen && !raf) raf = requestAnimationFrame(tick);
   })().catch((e) => console.warn("공식 3D 모델을 불러오지 못해 간략 모델로 보여 준다", e));
+  if (location.hash === "#ortho") window.v3dDebug = { THREE, scene, robot, studio, renderer, setModel, models };
   msg.remove();
 } catch (e) {
   msg.textContent = "3D 뷰어를 불러오지 못했다. 인터넷 연결과 WebGL 지원을 확인하고, 파일을 바로 열었다면 웹 서버(python -m http.server)로 연다.";

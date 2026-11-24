@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MechDog 구현</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/diagram.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_MechDog구현.html" aria-current="page">01<span class="lbl"> MechDog 구현</span></a><a href="02_Pi5구현.html">02<span class="lbl"> Pi 5 구현</span></a><a href="03_서버구현.html">03<span class="lbl"> 서버 구현</span></a><a href="04_대시보드구현.html">04<span class="lbl"> 대시보드 구현</span></a><a href="05_1차통합시연.html">05<span class="lbl"> 1차 통합 시연</span></a></span></nav>
+<div class="doc">
+
+<h1>MechDog 구현</h1>
+<p class="sub">담당 박명수 · 제어 보드 프로그램, 바닥 비전 모듈 펌웨어, Pi 5 연결의 지금 구현과 실기 확인 결과 · 2026. 11. 24 기준</p>
+
+<div class="def">MechDog 제어 보드가 걷기 · 선 따라가기 · 초음파 정지 · LED · 2초 감시를 맡고, Pi 5는 USB 시리얼로 <code>CMD|…|$</code> 명령을 보낸다. 바닥 비전 모듈에는 검은 테이프를 찾는 자체 펌웨어 <code>patrol_cam</code>을 굽는다.</div>
+
+<h2 id="sec1">1. 구성</h2>
+<figure class="fig" data-kind="blocks">
+  <svg viewBox="0 0 940 270" role="img" aria-label="라즈베리 파이 5와 MechDog 제어 보드가 USB 시리얼로 명령과 측정값을 주고받고, 제어 보드는 바닥 비전 모듈에서 I2C로 선 위치를 읽으며, 비전 모듈은 영상을 볼 때만 USB로 Pi 5에 영상을 보내는 구성도">
+    <rect class="box" x="20" y="50" width="210" height="140"/>
+    <rect class="band" x="20" y="50" width="210" height="28"/>
+    <text class="hd" x="125" y="69" text-anchor="middle">라즈베리 파이 5</text>
+    <text class="s" x="32" y="96">Python · edge/</text>
+    <text class="t" x="32" y="118">순찰 판단 · 명령 보내기</text>
+    <text class="t" x="32" y="140">0.8초마다 V (살아 있음)</text>
+    <text class="t" x="32" y="162">영상 보기 (view.py)</text>
+
+    <rect class="box" x="360" y="50" width="220" height="140"/>
+    <rect class="band" x="360" y="50" width="220" height="28"/>
+    <text class="hd" x="470" y="69" text-anchor="middle">MechDog 제어 보드</text>
+    <text class="s" x="372" y="96">ESP32 · MicroPython · main.py</text>
+    <text class="t" x="372" y="118">걷기 · 선 따라가기</text>
+    <text class="t" x="372" y="140">초음파 정지 · 2초 감시</text>
+    <text class="t" x="372" y="162">LED · 음성 · 배터리</text>
+
+    <rect class="box" x="710" y="50" width="210" height="140"/>
+    <rect class="band" x="710" y="50" width="210" height="28"/>
+    <text class="hd" x="815" y="69" text-anchor="middle">바닥 비전 모듈</text>
+    <text class="s" x="722" y="96">ESP32-S3 · GC2145 · patrol_cam</text>
+    <text class="t" x="722" y="118">검은 선 찾기 (항상)</text>
+    <text class="t" x="722" y="140">I2C 0x53 레지스터 응답</text>
+    <text class="t" x="722" y="162">영상 보내기 (켤 때만)</text>
+
+    <line class="ln wire flow bi c-blue" x1="232" y1="120" x2="358" y2="120"/>
+    <text class="s b halo c-blue" x="295" y="110" text-anchor="middle">USB 시리얼</text>
+    <text class="s halo c-blue" x="295" y="140" text-anchor="middle">115200</text>
+    <line class="ln wire flow c-blue" x1="708" y1="120" x2="582" y2="120"/>
+    <text class="s b halo c-blue" x="645" y="110" text-anchor="middle">I2C</text>
+    <text class="s halo c-blue" x="645" y="140" text-anchor="middle">선 위치</text>
+
+    <path class="ln wire dashed flow" d="M815 192 V236 H125 V194"/>
+    <text class="s b halo" x="470" y="228" text-anchor="middle">USB · 영상 (view.py를 켠 동안만, 460800)</text>
+  </svg>
+  <div class="legend">
+    <span><svg width="28" height="12" role="img" aria-label="파란 실선 화살표 범례"><line class="ln wire flow c-blue" x1="2" y1="6" x2="26" y2="6"/></svg> 순찰 중 늘 쓰는 연결</span>
+    <span><svg width="28" height="12" role="img" aria-label="점선 화살표 범례"><line class="ln wire dashed flow" x1="2" y1="6" x2="26" y2="6"/></svg> 시험할 때만 쓰는 연결</span>
+  </div>
+  <figcaption>그림 1. MechDog 한 대의 구현 구성</figcaption>
+</figure>
+
+<div class="tw"><table>
+  <tr><th>부분</th><th>코드 (팀 저장소)</th><th>하는 일</th></tr>
+  <tr><td class="k">보드 프로그램</td><td><code>firmware/dog/main.py</code></td><td>Pi 명령을 받아 몸을 움직이고, 측정값과 이벤트를 보냄</td></tr>
+  <tr><td class="k">비전 모듈 펌웨어</td><td><code>firmware/vision/patrol_cam/</code></td><td>바닥 영상에서 검은 띠를 찾아 보드가 읽는 레지스터에 넣음</td></tr>
+  <tr><td class="k">Pi 쪽 연결</td><td><code>edge/dog_link.py</code></td><td>포트 열기 · 명령 보내기 · 받은 줄 나누기 · 살아 있음 신호 · 끊기면 다시 열기</td></tr>
+  <tr><td class="k">통신 약속</td><td><code>docs/protocol.md</code> 1절 · <code>common/protocol.py</code></td><td>명령과 응답 형식</td></tr>
+</table></div>
+
+<h2 id="sec2">2. 보드 프로그램</h2>
+<p>보드는 Pi와 USB 시리얼(REPL과 같은 UART, 115200)로 한 줄에 메시지 하나씩 주고받습니다. 형식은 <code>CMD|명령|값…|$</code>이고, 성공하면 <code>CMD|명령|ok|$</code>, 실패하면 <code>CMD|!|명령|이유|$</code>로 답합니다.</p>
+<div class="tw"><table>
+  <tr><th>명령</th><th>형식</th><th>동작</th></tr>
+  <tr class="grp"><td colspan="3">움직이기 (모두 시간이 끝나면 스스로 멈추고 <code>E|…|done</code>을 보냄)</td></tr>
+  <tr><td class="k">M</td><td><code>M|보폭|각도|ms</code></td><td>정한 시간 동안 걷기. 보폭이 음수면 뒤로, 각도가 양수면 왼쪽으로</td></tr>
+  <tr><td class="k">F</td><td><code>F|보폭|각도|ms</code></td><td>선 따라가기 (3절)</td></tr>
+  <tr><td class="k">U</td><td><code>U|보폭|정지cm|재개cm|ms</code></td><td>초음파 정지 걷기. 정지 거리 안이 3번 연속이면 멈추고 <code>stop</code>, 재개 거리 밖이면 다시 걷고 <code>resume</code></td></tr>
+  <tr><td class="k">S · P · G</td><td><code>S</code> · <code>P</code> · <code>G|들기|딛기|높이</code></td><td>정지 · 기본 자세 · 걸음새 값</td></tr>
+  <tr class="grp"><td colspan="3">알리기</td></tr>
+  <tr><td class="k">L</td><td><code>L|arrow|left</code> · <code>L|num|88</code> · <code>L|clear</code></td><td>LED에 화살표(<code>&lt;</code> <code>&gt;</code> <code>^</code> <code>X</code>) · 숫자 · 글자</td></tr>
+  <tr><td class="k">A</td><td><code>A|번호|볼륨</code></td><td>MP3 모듈 음성 재생 (볼륨 0~30)</td></tr>
+  <tr class="grp"><td colspan="3">측정 · 정보</td></tr>
+  <tr><td class="k">T</td><td><code>T|간격ms|bat,sonar,line,…</code></td><td>고른 채널을 간격마다 <code>D</code> 줄로 보냄. 간격 0이면 끔. 마커 색(<code>color</code>)은 바뀔 때만 <code>E</code>로</td></tr>
+  <tr><td class="k">V · 6</td><td><code>V</code> · <code>6</code></td><td>버전 · 지원 명령 · 채널 목록 / 배터리 전압(mV)</td></tr>
+</table></div>
+
+<h3>안전 장치</h3>
+<ul>
+  <li><b>2초 감시</b>: Pi가 2초 넘게 아무것도 보내지 않으면 멈추고 LED에 <code>E</code>를 띄웁니다. Pi가 다시 보내면 <code>E</code>를 지우고 Pi가 마지막으로 띄운 화살표를 다시 그립니다. Pi는 0.8초마다 <code>V</code>를 보내 감시에 걸리지 않게 합니다.</li>
+  <li><b>최대 15초</b>: 이동 명령 한 번은 15초를 넘지 못합니다. 시간 없는 이동 명령은 받지 않습니다.</li>
+  <li><b>반복문 오류</b>: 라이브러리 오류가 나도 반복문은 살아 있고, 로봇을 멈춘 뒤 <code>!|loop|이유</code>로 알립니다.</li>
+  <li><b>없는 부품</b>: 비전 모듈 · LED · MP3 모듈이 없어도 프로그램은 뜹니다. 그 부품을 쓰는 명령만 오류로 답합니다.</li>
+</ul>
+<p class="note">반복문은 20ms마다 받은 글자 읽기 → 2초 감시 → 이동 처리를 하고, 측정값은 별도 스레드가 보냅니다. 두 스레드가 I2C 센서를 동시에 읽지 않게 잠급니다.</p>
+
+<h2 id="sec3">3. 선 따라가기</h2>
+<p>미션맵 선은 검은 테이프입니다. Hiwonder 공장 비전 펌웨어는 검정을 못 찾아서, 검정을 찾는 펌웨어 <code>patrol_cam</code>을 직접 만들었습니다. 보드 라이브러리의 <code>cam.line_follow(cam.BLACK)</code>가 그대로 읽도록 Hiwonder와 같은 I2C 형식(주소 <code>0x53</code>)으로 답합니다.</p>
+<figure class="fig" data-kind="flow">
+  <pre class="mermaid">flowchart LR
+    A[바닥 영상 320x240] --> B[160x120으로 줄임]
+    B --> C[위 · 가운데 · 아래 3구역]
+    C --> D[위 · 가운데 구역에서 가장 굵은 검정 띠]
+    D --> E[레지스터 0xA8 · 0xA9]
+    E --> F{보드: 선 x}
+    F -- 60 미만 --> G[왼쪽으로 꺾음]
+    F -- 100 초과 --> H[오른쪽으로 꺾음]
+    F -- 60~100 또는 못 찾음 --> I[직진]</pre>
+  <figcaption>그림 2. 선 찾기(비전 모듈)와 선 따라가기(보드)</figcaption>
+</figure>
+<ul>
+  <li><b>화면 방향</b>: 카메라가 모듈 안에 거꾸로 달려 있어서, 켤 때 위아래 · 좌우를 뒤집어 화면을 바로 세웁니다. 화면 위가 먼 쪽, 왼쪽이 로봇의 왼쪽입니다.</li>
+  <li><b>선 위치</b>: 선 중심 x(0~159, 가운데 80). 로봇에 가까운 가운데 구역을 먼저 쓰고, 없으면 위 구역, 둘 다 없으면 <code>-1</code>입니다. 카메라가 바닥에 가까워 테이프가 화면 폭의 절반 넘게 차지하고, 화면 끝에 걸린 띠도 선으로 씁니다.</li>
+  <li><b>검정 기준</b>: 밝기가 기준보다 어두우면 검정입니다. 처음 값은 160이고, <code>view.py --thr N</code>으로 바꾸면 모듈에 저장됩니다.</li>
+  <li><b>영상</b>: 선 찾기는 늘 돌고, 영상은 Pi에서 <code>view.py</code>를 켠 동안만 USB로 보냅니다. 브라우저에서 찾은 선(초록 상자)과 구역 경계를 함께 봅니다. Wi-Fi는 쓰지 않습니다.</li>
+</ul>
+<div class="callout warn"><strong>임시값:</strong> 검정 기준 160은 집 바닥과 조명에서 잰 값입니다(자동 노출이라 검은 테이프 약 120, 흰 바닥 약 250). 회색 바닥에서는 바닥 일부도 검정으로 잡으니 미션맵 바닥 · 테이프 · 조명에서 다시 재서 고칩니다.</div>
+
+<h2 id="sec4">4. Pi 5 연결</h2>
+<figure class="fig" data-kind="sequence">
+  <pre class="mermaid">sequenceDiagram
+    participant P as Pi 5
+    participant B as 제어 보드
+    participant V as 비전 모듈
+    P->>B: CMD|T|200|bat,sonar,line|$
+    B-->>P: CMD|T|ok|$
+    P->>B: CMD|F|50|25|3000|$
+    B-->>P: CMD|F|ok|$
+    loop 20ms마다
+      B->>V: 선 위치 읽기 (I2C)
+      B->>B: 꺾을 방향 정해 걷기
+    end
+    B-->>P: CMD|D|t|배터리|초음파|선x|$ (200ms마다)
+    P->>B: CMD|V|$ (0.8초마다, 살아 있음)
+    B-->>P: CMD|E|t|done|1|$ (3초 뒤 정지)</pre>
+  <figcaption>그림 3. 선 따라가기 3초 명령의 주고받기</figcaption>
+</figure>
+<ul>
+  <li><b>포트 열 때 재시작 막기</b>: 보드의 USB 칩(CH340)은 DTR · RTS가 바뀌면 보드를 재시작하고, 그러면 서보 힘이 빠져 로봇이 주저앉습니다. Windows는 열기 전에 DTR · RTS를 끄고, Linux는 커널이 켠 그대로 둡니다(열고 나서 하나씩 끄면 그 사이에 재시작됨).</li>
+  <li><b>포트 이름</b>: 기기마다 달라서 <code>.env</code>의 <code>DOG_PORT</code> · <code>VISION_PORT</code>에 적고, <code>python -m edge.hwcheck ports</code>로 찾습니다. 보드와 비전 모듈이 같은 CH340 칩이라 Pi에서는 꽂은 USB 자리로 정해지는 <code>/dev/serial/by-path/…</code> 이름을 씁니다.</li>
+  <li><b>끊김</b>: 읽기나 보내기가 실패하면 포트를 닫고 2초마다 다시 엽니다.</li>
+</ul>
+
+<h2 id="sec5">5. 올리기와 시험 도구</h2>
+<div class="tw"><table>
+  <tr><th>할 일</th><th>명령</th><th>비고</th></tr>
+  <tr><td class="k">보드 프로그램 올리기</td><td><code>python firmware/dog/upload.py</code></td><td>재시작 없이 <code>main.py</code>를 바꾸고 그 자리에서 다시 실행. 끝에 <code>V</code> 응답을 확인. 이전 파일은 <code>main_prev.py</code>로 남음</td></tr>
+  <tr><td class="k">처음 올리기</td><td><code>mpremote</code> (README 절차)</td><td>공장 앱이 돌고 있을 때만. 로봇을 눕힌 채 하고, 공장 <code>main.py</code>는 <code>main_off.py</code>로 남김</td></tr>
+  <tr><td class="k">비전 모듈 굽기</td><td><code>python firmware/vision/flash.py</code></td><td>저장소에 빌드해 둔 <code>patrol_cam.bin</code>을 구움. 빌드 도구 필요 없음. <code>DOG_PORT</code>와 같은 포트면 굽지 않음</td></tr>
+  <tr><td class="k">비전 모듈 빌드</td><td><code>python firmware/vision/build.py</code></td><td><code>patrol_cam.ino</code>를 고친 사람만. <code>arduino-cli</code> + ESP32 보드 패키지 3.x</td></tr>
+  <tr><td class="k">바닥 영상 보기</td><td><code>python firmware/vision/view.py [--thr N]</code></td><td>Pi에서 켜고 PC 브라우저로 <code>http://&lt;Pi 주소&gt;:8090</code></td></tr>
+  <tr><td class="k">보드 확인</td><td><code>python -m edge.hwcheck dog</code></td><td>걷지 않는 시험. 버전 · 배터리 · 초음파</td></tr>
+  <tr><td class="k">셀프 체크</td><td><code>python firmware/dog/sim_check.py</code></td><td>가짜 Hiwonder 모듈로 PC에서 명령 처리 · 자동 정지 · 2초 감시 확인. CI도 돌림</td></tr>
+</table></div>
+
+<h2 id="sec6">6. 실기 확인 <span class="meta">11. 24, 로봇 1대</span></h2>
+<div class="tw"><table>
+  <tr><th>항목</th><th>결과</th><th>상태</th></tr>
+  <tr><td class="k">Pi에서 보드 응답</td><td><code>V|dog-1</code> 응답, 포트를 열어도 자세가 풀리지 않음</td><td><span class="tag ok">완료</span></td></tr>
+  <tr><td class="k">측정값</td><td>배터리 7.9~8.3V(약 90%), 초음파 57~75cm</td><td><span class="tag ok">완료</span></td></tr>
+  <tr><td class="k">직진 3초</td><td><code>M|50|0|3000</code> → 3.1초 뒤 <code>done</code>으로 스스로 정지</td><td><span class="tag ok">완료</span></td></tr>
+  <tr><td class="k">선 따라 걷기</td><td>서버 순찰 명령으로 곧은 테이프를 따라 걸음. 테이프가 화면 끝으로 밀려도 꺾어서 가운데로 다시 데려옴 (<a href="05_1차통합시연.html">1차 통합 시연</a>)</td><td><span class="tag ok">완료</span></td></tr>
+  <tr><td class="k">급한 굽이</td><td>고정 ±25로는 덜 꺾여 급하게 휘는 구간에서 선을 벗어남</td><td><span class="tag chk">확인 중</span></td></tr>
+  <tr><td class="k">바닥 영상</td><td>Pi USB로 영상을 받아 같은 Wi-Fi의 PC 브라우저에서 봄</td><td><span class="tag ok">완료</span></td></tr>
+  <tr><td class="k">서 있을 때 떨림</td><td>서보 명령값은 그대로인데 몸이 8~12Hz로 약 ±0.5° 흔들림. 기구 · 서보 공진으로 봄</td><td><span class="tag chk">확인 중</span></td></tr>
+</table></div>
+
+<h2 id="sec7">7. 남은 일</h2>
+<div class="tw"><table>
+  <tr><th>할 일</th><th>내용</th></tr>
+  <tr><td class="k">꺾는 양</td><td>고정 ±각도 대신 선이 가운데서 먼 만큼 더 꺾기</td></tr>
+  <tr><td class="k">선을 놓쳤을 때</td><td>지금은 직진. 마지막에 본 쪽으로 꺾어 다시 찾거나, 보드가 멈추고 Pi에 알림</td></tr>
+  <tr><td class="k">2초 감시 알림</td><td>감시로 멈출 때 Pi가 다시 붙으면 알 수 있게 이벤트로 보냄</td></tr>
+  <tr><td class="k">검정 기준</td><td>미션맵에서 다시 재서 처음 값에 반영</td></tr>
+  <tr><td class="k">실기 확인 전 가정</td><td>MP3 모듈 이름 · 주소(포트 2, <code>0x7B</code>), LED 화살표 방향이 로봇 기준과 맞는지</td></tr>
+  <tr><td class="k">떨림</td><td>서보 나사 유격, 더한 무게, 서는 높이 확인</td></tr>
+</table></div>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+<script src="../assets/diagram.js" defer></script>
+</body>
+</html>

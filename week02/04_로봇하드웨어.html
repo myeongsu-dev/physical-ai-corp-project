@@ -22,20 +22,20 @@
   <tr class="grp"><td colspan="3">제어 보드에 잇는 MechDog 기본 장치</td></tr>
   <tr><td class="k">바닥 카메라 (기본 비전 모듈)</td><td>턱 아래에 장착. 광축을 수평 기준 35° 내리면 몸 중심에서 약 14~30 cm 앞 바닥이 라인 처리 화면에 들어옴 (3D 모델 추정)</td><td>보드 포트 1 (코드에서는 <code>IIC(2)</code>). 경로가 약 19cm라 20cm 케이블을 배 아래에 바짝 붙여 묶음</td></tr>
   <tr><td class="k">초음파 센서</td><td>머리 앞 (기본 위치)</td><td>보드 I2C 1번</td></tr>
-  <tr><td class="k">LED 도트 매트릭스 (8×16)</td><td>등뼈 덮개 위 데크의 위층에 스탠드오프로 달아 화면이 위를 봄</td><td>보드 포트 3</td></tr>
+  <tr><td class="k">LED 도트 매트릭스 (8×16)</td><td>배터리 칸 앞 탭의 받침판에 키트 M4 나일론 기둥(15 mm)으로 고정해 화면이 위를 봄</td><td>보드 포트 3</td></tr>
   <tr><td class="k">스피커 (MP3 모듈)</td><td>LED 받침판 앞 끝에 세워 스피커가 앞을 봄</td><td>보드 포트 2 (I2C <code>0x7B</code>)</td></tr>
   <tr class="grp"><td colspan="3">라즈베리 파이 5와 Pi에 잇는 장치</td></tr>
-  <tr><td class="k">라즈베리 파이 5</td><td>뒤 윗판의 3D 출력 캐리어에 가로로 눕혀 꼬리 밖으로 나가지 않음. 쿨러는 케이스 없이 바로 끼우고, microSD는 캐리어에서 빼지 않고 바꿈</td><td>보드 USB ↔ Pi USB-A</td></tr>
+  <tr><td class="k">라즈베리 파이 5</td><td>Active Cooler를 단 Pi를 공식 적백 케이스(케이스 팬은 떼어 냄)에 넣어 배터리 칸 뚜껑 위에 앞뒤 방향으로 얹고 스트랩 두 줄로 칸까지 함께 묶음</td><td>보드 USB ↔ Pi USB-A</td></tr>
   <tr><td class="k">머리 카메라 (XIAO ESP32-S3 Sense)</td><td>머리 위 3D 출력 브래킷에서 정면을 봄</td><td>Pi 5 USB (USB-C to A, 경로 약 25cm)</td></tr>
-  <tr><td class="k">온도 센서 (GY-906)</td><td>머리 브래킷. 핀은 ㄱ자 핀헤더로 위로 세워 안테나 선반에 닿지 않게</td><td>Pi 5 I2C (GPIO 2·3), 듀폰 점퍼로 1·3·5·9번 핀 (경로 약 18cm)</td></tr>
-  <tr><td class="k">보조배터리 (Pi 5 전용)</td><td>LED · 배터리 데크 아래층의 배터리 칸</td><td>USB-C → Pi 5</td></tr>
+  <tr><td class="k">온도 센서 (GY-906)</td><td>머리 브래킷 오른쪽에서 정면을 향하고 핀헤더는 위로 배선</td><td>Pi 5 I2C (GPIO 2·3), 듀폰 점퍼로 1·3·5·9번 핀 (경로 약 18cm)</td></tr>
+  <tr><td class="k">보조배터리 (Pi 5 전용)</td><td>등판에 조인 출력 칸에 스마텍 STPB-MB100을 위에서 넣고 Pi 뚜껑으로 덮음</td><td>USB-C → Pi 5</td></tr>
 </table></div>
 <p class="note">부품이 맡은 일과 통신은 <a href="01_시스템_아키텍처.html">시스템 아키텍처</a>, 구매 현황은 <a href="02_재료_목록.html">재료 목록</a>.</p>
 
 <h2>2. 무게 배치</h2>
 <ul>
-  <li><b>배터리</b>: 가장 무거운 보조배터리를 몸 중심 바로 위, 장착 부품 중 가장 낮은 자리에 둬 방향을 틀 때 넘어지지 않게 한다. 네 벽과 위 받침판이 배터리를 잡아 따로 묶지 않고, 오른쪽 끝 창으로 꽂은 채 충전한다.</li>
-  <li><b>Pi 5</b>: 데크 뒤쪽 뒤 윗판에 가로로 눕혀 꼬리 끝 밖으로 나가지 않게 한다.</li>
+  <li><b>배터리</b>: 165 g 배터리를 등판 바로 위 칸에 눕힌다. 무게는 칸 바닥을 거쳐 압축으로 금속 등판에 내려가고, 칸의 네 벽이 옆으로 밀리는 것을 막는다.</li>
+  <li><b>Pi 5</b>: 배터리 칸 뚜껑 위에 얹는다. 스트랩 두 줄이 Pi · 뚜껑 · 칸을 함께 눌러서 출력물에는 굽힘보다 압축이 걸린다. 케이스 윗면은 바닥에서 약 200 mm다.</li>
   <li><b>머리</b>: 머리 카메라와 온도 센서가 앞에, 스피커는 그보다 뒤 · 위에 있어 시야를 가리지 않는다.</li>
 </ul>
 
@@ -47,6 +47,6 @@
 </div>
 <script src="../assets/doc.js" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script src="../assets/3d/viewer.js" defer></script>
+<script src="../assets/3d/viewer.js?v=20261123-cables" defer></script>
 </body>
 </html>

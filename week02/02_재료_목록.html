@@ -31,9 +31,9 @@
   <strong>수령 때 확인할 것</strong>
   <p>11/19 기준 온도 센서(배송 중)와 테이프를 뺀 품목이 모두 도착했고, 11/20 동아리방으로 옮깁니다.</p>
   <ol>
-    <li><strong>보조배터리 실측:</strong> LED 데크 아래층에 들어가야 하므로 폭 68mm 이하인지 재고, 길이 · 폭 · 두께로 데크 크기를 확정합니다.</li>
+    <li><strong>보조배터리 실측:</strong> 스마텍 배터리의 단자와 보호캡 돌출량을 재고, 장착 후 케이블을 꽂고 뺄 수 있는지 확인합니다.</li>
     <li><strong>포트 커넥터 확인:</strong> MechDog 포트는 Hiwonder 센서 포트 규격(<code>5264-4AW</code>)과 실측 피치 2.5mm에 따라 Molex 5264 계열로 보고 <code>NW3-5264-04</code>를 신청했습니다. 원래 케이블 하우징에 딸깍 걸리는 걸쇠가 있는지 보고(있으면 5264), 걸쇠 없이 끼워 맞추는 형태면 XH 계열이니 예비 XH 케이블을 씁니다.</li>
-    <li><strong>온도 센서 핀헤더:</strong> 받은 센서에 핀헤더가 일자로 납땜돼 있으면 ㄱ자 핀헤더로 바꿔야 안테나 선반에 닿지 않습니다. 보드 크기가 17 × 11mm와 다르면 머리 브래킷 홀더를 고칩니다.</li>
+    <li><strong>온도 센서 핀헤더:</strong> 받은 센서에 핀헤더가 일자로 납땜돼 있으면 ㄱ자 핀헤더로 바꿔야 안테나 선반에 닿지 않습니다. 머리 브래킷 홈은 17 × 11.5 mm 기준이며 길이 16~17.5 mm · 두께 1.0~1.7 mm 보드를 탄성 팔로 수용합니다.</li>
     <li><strong>3D 출력 견적:</strong> 머리 브래킷, Pi 5 캐리어, LED · 배터리 데크 4대분 출력 비용을 확인합니다.</li>
     <li><strong>폼보드 장수:</strong> 맵(<span class="nw">4.1m × 2.95m</span>)은 판을 5 × 5로 깔면 약 25장이 들고, 남는 판은 구조물과 여분으로 씁니다.</li>
   </ol>
@@ -94,7 +94,7 @@
   <tr><th>품목</th><th>용도</th><th>수량</th><th>참고 단가</th><th>금액</th><th>구분</th></tr>
   <tr><td class="k">마커 테이프 파랑</td><td>갈림길 오른쪽 갈래 (CP1 · CP3 · CP4) · 남은 예산(26,076원)으로 살 수 있는지 협회에 확인</td><td class="num">1롤</td><td class="num">—</td><td class="num">—</td><td><span class="tag chk">확인 중</span></td></tr>
   <tr><td class="k">라즈베리 파이 5</td><td>로봇마다 1대 · 교부 1대 + 동아리 대여 3대, 11/20 분배</td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag hold">보유분 사용</span></td></tr>
-  <tr><td class="k">보조배터리</td><td>Pi 5 전원 (USB-C 5V 3A 이상, 5000mAh 이상, 연습 때 1~2시간) · 4대 모두 같은 제품을 배터리 칸(네 벽 + 위 받침판)에 넣어 고정, 꽂은 채 충전 · 11/20 지금 가진 보조배터리로 AI 추론까지 시험한 뒤 구매 여부 결정<span class="subnote">후보 UGREEN 미니 5000mAh 2포트 79 × 38 × 26mm · Anker Nano A1653 77 × 37 × 25mm</span></td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag chk">구매 검토</span></td></tr>
+  <tr><td class="k">보조배터리</td><td>스마텍 STPB-MB100, 10000 mAh · 84 × 32.2 × 46 mm · 165 g. 몸통 중앙에 가로로 눕혀 고정하고 USB-C 케이블로 Pi에 전원을 공급합니다.</td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag chk">구매 검토</span></td></tr>
   <tr><td class="k">USB-C to C 케이블</td><td>보조배터리 → Pi 5 전원 (짧은 케이블, 남는 길이는 묶음)</td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag hold">보유분 사용</span></td></tr>
   <tr><td class="k">USB-C to A 케이블</td><td>XIAO → Pi 5 전원 · 영상 (경로 약 25cm, 30cm 이상)</td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag hold">보유분 사용</span></td></tr>
   <tr><td class="k">USB 케이블 (MechDog 보드용)</td><td>MechDog 보드 → Pi 5 USB-A (명령 · 보드 프로그램 올리기) · 보드 쪽 단자 모양 실물 확인</td><td class="num">4개</td><td class="num">—</td><td class="num">—</td><td><span class="tag hold">보유분 사용</span></td></tr>
@@ -108,8 +108,8 @@
 <div class="tw"><table class="cards">
   <tr><th>품목</th><th>내용</th><th>수량</th><th>재료</th><th>비용</th><th>구분</th></tr>
   <tr><td class="k">머리 브래킷</td><td>머리 위에 정면 카메라(XIAO) · 온도 센서 · 안테나를 얹는 거치대</td><td class="num">4개</td><td class="num">3D 출력</td><td class="num">견적 확인</td><td><span class="tag ok">직접 제작</span></td></tr>
-  <tr><td class="k">Pi 5 가로 캐리어</td><td>뒤 윗판에 Pi 5를 가로로 눕혀 고정 (M3 볼트 4개, M2.5 황동 스탠드오프) · 서포트 없이 출력</td><td class="num">4개</td><td class="num">3D 출력</td><td class="num">견적 확인</td><td><span class="tag ok">직접 제작</span></td></tr>
-  <tr><td class="k">LED · 배터리 데크</td><td>출력 2개: 배터리 칸(등 덮개 확장 구멍에 M4 볼트 4개, 앞 2곳은 M4 열압입 인서트) + LED 받침판(벽 위에 M3 나사 4개, 앞 끝에 스피커 거치 턱) · 서포트 없이 출력</td><td class="num">4개</td><td class="num">3D 출력</td><td class="num">배터리 실측 뒤 확정</td><td><span class="tag ok">직접 제작</span></td></tr>
+  <tr><td class="k">Pi 5 뚜껑</td><td>배터리 칸 벽 위에 얹는 뚜껑. 공식 케이스와 팬을 장착한 Pi를 올리고 스트랩 두 줄로 칸까지 함께 묶는다</td><td class="num">4개</td><td class="num">3D 출력</td><td class="num">견적 확인</td><td><span class="tag ok">직접 제작</span></td></tr>
+  <tr><td class="k">LED · 배터리 데크</td><td>등판 M4 네 곳에 접시머리 나사로 조이는 배터리 칸과 그 앞 탭에 다는 LED·스피커 받침을 각각 출력 (PETG 권장)</td><td class="num">4개</td><td class="num">3D 출력</td><td class="num">배터리 실측 뒤 확정</td><td><span class="tag ok">직접 제작</span></td></tr>
   <tr><td class="k">맵 구조물 · 표지</td><td>보관 랙 3곳(<code>80×60cm</code>), 작업 공간 2곳(<code>140×40cm</code>), 통로 막힘 박스, 바닥 공구, 비상구 표지</td><td class="num">1세트</td><td class="num">하드보드지 · 폼보드 자투리 · 박스</td><td class="num">—</td><td><span class="tag ok">직접 제작</span></td></tr>
 </table></div>
 <p class="note">미션맵 구조물 만드는 법은 <a href="../week01/03_미션맵.html">미션맵</a> 6절.</p>

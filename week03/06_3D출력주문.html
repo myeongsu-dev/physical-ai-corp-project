@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D 출력 주문</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/3d/viewer.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_MechDog구현.html">01<span class="lbl"> MechDog 구현</span></a><a href="02_Pi5구현.html">02<span class="lbl"> Pi 5 구현</span></a><a href="03_서버구현.html">03<span class="lbl"> 서버 구현</span></a><a href="04_대시보드구현.html">04<span class="lbl"> 대시보드 구현</span></a><a href="05_1차통합시연.html">05<span class="lbl"> 1차 통합 시연</span></a><a href="06_3D출력주문.html" aria-current="page">06<span class="lbl"> 3D 출력 주문</span></a></span></nav>
+<div class="doc">
+
+<h1>3D 출력 주문</h1>
+<p class="sub">MechDog 장착 출력물 4종 · 출력 업체 전달용 · 2026. 11. 26</p>
+
+<div class="def">출력물 4종을 4대분(16개), 시험 조각 1개와 함께 PETG로 출력한다. 파일에 놓인 자세 그대로, 서포트 없이, 치수 보정 없이 출력한다.</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="kl">출력 수량</div><div class="kv">17개</div><div class="kd">4종 × 4개 + 시험 조각 1개</div></div>
+  <div class="kpi"><div class="kl">재료</div><div class="kv">PETG</div><div class="kd">없으면 ASA · PLA는 쓰지 않음</div></div>
+  <div class="kpi"><div class="kl">솔리드 부피</div><div class="kv">462 cm³</div><div class="kd">1대분 113.3 cm³ × 4 + 시험 조각 9.0 cm³</div></div>
+  <div class="kpi"><div class="kl">파일</div><div class="kv">STL · 3MF · STEP</div><div class="kd">단위 mm · 배율 100 %</div></div>
+</div>
+
+<h2 id="sec1">1. 파일 <span class="meta">출력할 자세 그대로 · Z 위 · 바닥면 Z 0</span></h2>
+<div class="tw"><table>
+  <tr><th>부품</th><th>크기 X × Y × Z (mm)</th><th class="num">부피 (cm³)</th><th class="num">수량</th><th>파일</th></tr>
+  <tr><td class="k">배터리 칸<span class="subnote">battery_bay</span></td><td>109.5 × 86.4 × 36.8</td><td class="num">62.7</td><td class="num">4</td><td><a href="../assets/3d/print/battery_bay.stl" download>STL</a> · <a href="../assets/3d/print/battery_bay.3mf" download>3MF</a> · <a href="../assets/3d/print/battery_bay.step" download>STEP</a></td></tr>
+  <tr><td class="k">Pi 뚜껑<span class="subnote">pi_carrier · 윗면이 베드</span></td><td>98.0 × 70.0 × 9.0</td><td class="num">31.8</td><td class="num">4</td><td><a href="../assets/3d/print/pi_carrier.stl" download>STL</a> · <a href="../assets/3d/print/pi_carrier.3mf" download>3MF</a> · <a href="../assets/3d/print/pi_carrier.step" download>STEP</a></td></tr>
+  <tr><td class="k">LED · 스피커 받침<span class="subnote">led_plate</span></td><td>34.5 × 94.6 × 40.0</td><td class="num">10.7</td><td class="num">4</td><td><a href="../assets/3d/print/led_plate.stl" download>STL</a> · <a href="../assets/3d/print/led_plate.3mf" download>3MF</a> · <a href="../assets/3d/print/led_plate.step" download>STEP</a></td></tr>
+  <tr><td class="k">머리 센서 받침<span class="subnote">head_bracket</span></td><td>27.0 × 52.0 × 27.0</td><td class="num">8.1</td><td class="num">4</td><td><a href="../assets/3d/print/head_bracket.stl" download>STL</a> · <a href="../assets/3d/print/head_bracket.3mf" download>3MF</a> · <a href="../assets/3d/print/head_bracket.step" download>STEP</a></td></tr>
+  <tr><td class="k">시험 조각<span class="subnote">fit_coupon · 끼워맞춤 확인용</span></td><td>58.0 × 43.3 × 12.0</td><td class="num">9.0</td><td class="num">1</td><td><a href="../assets/3d/print/fit_coupon.stl" download>STL</a> · <a href="../assets/3d/print/fit_coupon.3mf" download>3MF</a> · <a href="../assets/3d/print/fit_coupon.step" download>STEP</a></td></tr>
+  <tr class="total"><td class="k">합계</td><td></td><td class="num">462.2</td><td class="num">17</td><td></td></tr>
+</table></div>
+<p class="note">STL은 출력용, 3MF는 같은 자세의 슬라이서용, STEP은 같은 형상의 솔리드(검토용)다. 모두 닫힌 단일 솔리드이고 CAD 코드 한 곳에서 함께 만든다.</p>
+
+<h2 id="sec2">2. 출력 조건</h2>
+<div class="specs">
+  <div><strong>방식</strong><span>FDM · 0.4 mm 노즐</span></div>
+  <div><strong>재료</strong><span>PETG (없으면 ASA). PLA는 충격에 잘 깨져 쓰지 않는다</span></div>
+  <div><strong>층 높이</strong><span>0.2 mm 이하</span></div>
+  <div><strong>벽 · 채움</strong><span>벽(외곽선) 4줄, 채움 40 % 이상</span></div>
+  <div><strong>자세</strong><span>파일 자세 그대로. 굽힘이 적층면 안에 놓이도록 정한 자세라 돌리지 않는다</span></div>
+  <div><strong>서포트</strong><span>없음. 모든 부품이 평평한 면을 베드에 둔다</span></div>
+  <div><strong>치수 보정</strong><span>구멍 · 홈 보정과 배율 보정을 하지 않는다. 여유는 설계에 넣었다</span></div>
+  <div><strong>색상</strong><span>검정 (없으면 기본 불투명색)</span></div>
+</div>
+<p class="note">각 부품의 첫 0.5 mm는 0.5 mm 안쪽으로 줄여 첫 층 퍼짐을 흡수하게 그렸다. 시험 조각은 본 부품과 같은 재료 · 설정으로 함께 출력한다.</p>
+
+<h2 id="sec3">3. 끼워맞춤 치수 <span class="meta">받은 뒤 시험 조각으로 확인</span></h2>
+<div class="tw"><table>
+  <tr><th>자리</th><th>설계 치수</th><th>끼우는 부품</th></tr>
+  <tr><td class="k">M4 관통 구멍</td><td>지름 4.5 mm</td><td>M4 볼트 (배터리 칸 바닥 4곳 · 앞 탭 2곳, 받침 여러 곳)</td></tr>
+  <tr><td class="k">M4 너트 육각 홈</td><td>대변 7.4 mm</td><td>키트 M4 육각 너트 (대변 7.0 mm), 손가락으로 눌러 끼움</td></tr>
+  <tr><td class="k">머리 받침 M2 구멍</td><td>Z 방향 장공 2.7 × 3.5 mm</td><td>M2 × 8 나사</td></tr>
+  <tr><td class="k">스트랩 슬롯</td><td>폭 3.5 mm</td><td>폭 10 mm 벨크로 (두께 2.35 mm)</td></tr>
+  <tr><td class="k">GY-906 홈</td><td>안쪽 폭 12.3 mm</td><td>온도 센서 보드 (폭 11.5 mm), 탄성 팔이 뒤에서 누름</td></tr>
+</table></div>
+<p class="note">시험 조각에는 위 구멍 · 홈과 벽 토막, 떼어 쓰는 테두리 조각(0.3 · 0.4 · 0.5 mm)이 모여 있다. 실제 나사 · 너트 · 센서를 끼워 보고 다음 출력에 반영한다.</p>
+
+<h2 id="sec4">4. 장착 위치</h2>
+<p>‘프로젝트 장착안’을 고르고 ‘3D 출력물 강조’를 켜면 출력물 네 개가 본체 어디에 붙는지 보인다. 배터리 칸은 등판 M4 네 곳에, LED · 스피커 받침은 칸 앞 탭에, Pi 뚜껑은 칸 벽 위에, 머리 센서 받침은 머리 윗판 앞 나사 두 곳에 단다. 3D 표시는 인터넷 연결이 필요하다.</p>
+<div id="v3d" data-widget="v3d"></div>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script src="../assets/3d/viewer.js?v=20261126-print" defer></script>
+</body>
+</html>

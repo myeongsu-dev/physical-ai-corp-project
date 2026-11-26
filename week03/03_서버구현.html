@@ -12,7 +12,7 @@
 <div class="doc">
 
 <h1>서버 구현</h1>
-<p class="sub">담당 채웅 · 노트북에서 도는 관제 서버 <code>server/</code> · 2026. 11. 24 기준</p>
+<p class="sub">담당 채웅 · 노트북에서 도는 관제 서버 <code>server/</code> · 2026. 11. 26 기준</p>
 
 <div class="def">관제 서버는 MechDog 여러 대를 엮는 판단을 맡는다. 로봇 상태를 모아 순찰 역할(A · B)을 주고, 이벤트를 판단 · 기록하고, 로봇에 명령을 보내고, 대시보드에 실시간 데이터와 사진을 준다. 로봇 한 대 안의 판단은 각 Pi가 한다.</div>
 
@@ -75,11 +75,12 @@
   <tr><td class="k">충전 교대</td><td><code>dispatch.py</code>. 배터리 20% 미만(임시)이면 대기 로봇에 구간을 넘김</td></tr>
   <tr><td class="k">출동 로봇</td><td>경로 거리 기준으로 고르기. 지금은 <code>events.py</code>에서 임시로 고름</td></tr>
   <tr><td class="k">상태 전환</td><td><code>fleet.py</code>: 대기 · 순찰 · 막힘 정지 · 과열 확인 · 출동 · 대피 안내 · 복귀</td></tr>
-  <tr><td class="k">대시보드 요청</td><td>지난 경보 목록(<code>GET /events</code>)과 해제 시각, 관리자 화면 잠금</td></tr>
+  <tr><td class="k">대시보드 요청</td><td>지난 경보 목록(<code>GET /events</code>), 관리자 화면 잠금</td></tr>
+  <tr><td class="k">서버가 정할 값</td><td>서버가 통제할 항목(파라미터)과 스펙을 정리하고 다른 파트와 경계를 정함 (11. 24 멘토링)</td></tr>
   <tr class="grp"><td colspan="2">다른 파트와 정할 것</td></tr>
   <tr><td class="k">팀 전체</td><td>A · B가 도크 길이나 갈림길에서 동시에 만날 때 누가 먼저 갈지</td></tr>
   <tr><td class="k">Pi 5</td><td>진행 방향(N · E · S · W)을 state에 실을지, 갈림길 판단을 서버와 Pi 중 어디서 할지</td></tr>
-  <tr><td class="k">대시보드</td><td>화면에 필요한 데이터</td></tr>
+  <tr><td class="k">대시보드</td><td>대피 mode 메시지에 화재 위치(<code>"fire": {"segment": [5, 6], "zones": ["A1", "B1"]}</code>)와 갈림길 화살표(<code>"guides": [{"marker", "dir", "exit", "path"}]</code>)를 실을지. 대시보드가 낸 제안 모양</td></tr>
 </table></div>
 
 </div>

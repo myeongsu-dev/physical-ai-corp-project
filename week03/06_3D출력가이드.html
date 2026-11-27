@@ -6,6 +6,7 @@
 <title>3D 출력 · 조립 가이드</title>
 <link rel="stylesheet" href="../assets/doc.css">
 <link rel="stylesheet" href="../assets/3d/assembly.css">
+<link rel="stylesheet" href="../assets/3d/viewer.css">
 </head>
 <body>
 <nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_MechDog구현.html">01<span class="lbl"> MechDog 구현</span></a><a href="02_Pi5구현.html">02<span class="lbl"> Pi 5 구현</span></a><a href="03_서버구현.html">03<span class="lbl"> 서버 구현</span></a><a href="04_대시보드구현.html">04<span class="lbl"> 대시보드 구현</span></a><a href="05_1차통합시연.html">05<span class="lbl"> 1차 통합 시연</span></a><a href="06_3D출력가이드.html" aria-current="page">06<span class="lbl"> 3D 출력 가이드</span></a></span></nav>
@@ -36,10 +37,14 @@
 </div>
 
 <h2 id="sec3">3. 조립 3D 가이드 <span class="meta">단계 클릭 · 재생/분해 · 부품 호버 시 규격 표시</span></h2>
-<p class="note">드래그로 회전, 휠로 확대/축소합니다. 단계를 누르면 해당 단계까지 조립되며, 나사·기둥·출력물에 마우스를 올리면 규격과 체결 위치가 뜹니다.</p>
+<p class="note">왼쪽 끌기로 회전, <b>가운데(휠)·오른쪽 끌기로 이동</b>, 휠로 확대/축소합니다. 단계를 누르면 해당 단계까지 조립되며, 나사·기둥·출력물에 마우스를 올리면 규격과 체결 위치가 뜹니다.</p>
 <div id="a3d" data-widget="a3d"></div>
 
-<h2 id="sec4">4. 체결 부품 및 조립 주의사항</h2>
+<h2 id="sec4">4. 실제 장착 3D 모델 <span class="meta">전체 장착 · 카메라 시야 · 다리 간섭 확인</span></h2>
+<p class="note">‘프로젝트 장착안’을 고르면 Pi 5 · 배터리 · 센서 · 배선까지 모두 장착된 실제 모습을 확인할 수 있습니다. 왼쪽 끌기로 회전, <b>가운데(휠)·오른쪽 끌기로 이동</b>, 클릭 후 휠로 확대합니다.</p>
+<div id="v3d" data-widget="v3d"></div>
+
+<h2 id="sec5">5. 체결 부품 및 조립 주의사항</h2>
 <div class="tw"><table>
   <tr><th>구분</th><th>부품 (대당 수량)</th><th>체결 위치 · 팁</th></tr>
   <tr><td class="k">별도 구매</td><td>M4 × 10 접시머리 렌치볼트 (6)<br>M2 × 8 십자 둥근머리 (2)<br>10 mm 양면 벨크로 (약 350 mm × 2줄)</td><td>M4×10: 배터리 칸 바닥 4곳(등판 리브넛) + 앞 탭 2곳<br>M2×8: 머리 윗판 앞 순정 M2×6 교체(아래 플랜지 암나사 직결)<br>벨크로: Pi · 뚜껑 · 칸 바닥 슬롯을 한 번에 묶음</td></tr>
@@ -54,6 +59,7 @@
 </div>
 <script src="../assets/doc.js" defer></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script type="module" src="../assets/3d/assembly.js?v=20261127"></script>
+<script type="module" src="../assets/3d/assembly.js?v=20261127-pan"></script>
+<script src="../assets/3d/viewer.js?v=20261127-head" defer></script>
 </body>
 </html>

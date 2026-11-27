@@ -121,6 +121,10 @@ if (rootEl) {
   const camera = new THREE.PerspectiveCamera(35, 1, 1, 5000);
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
+  controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.PAN };
+  renderer.domElement.addEventListener("mousedown", (e) => {
+    if (e.button === 1) e.preventDefault();
+  });
 
   const sun = new THREE.DirectionalLight(0xffffff, 1.2);
   sun.position.set(200, 400, 300);

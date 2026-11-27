@@ -5,48 +5,111 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>로봇 하드웨어</title>
 <link rel="stylesheet" href="../assets/doc.css">
-<link rel="stylesheet" href="../assets/3d/viewer.css">
 </head>
 <body>
 <nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_시스템_아키텍처.html">01<span class="lbl"> 시스템 아키텍처</span></a><a href="02_재료_목록.html">02<span class="lbl"> 재료 목록</span></a><a href="03_개발계획.html">03<span class="lbl"> 개발 계획</span></a><a href="04_로봇하드웨어.html" aria-current="page">04<span class="lbl"> 로봇 하드웨어</span></a><a href="05_AI모델.html">05<span class="lbl"> AI 모델</span></a><a href="06_기술검증.html">06<span class="lbl"> 기술 검증</span></a><a href="07_시연시나리오.html">07<span class="lbl"> 시연 시나리오</span></a></span></nav>
 <div class="doc">
 
-<h1>로봇 하드웨어</h1>
-<p class="sub">MechDog 한 대에 다는 부품의 자리와 배선, 3D 장착 모델. 4대 모두 같은 구성</p>
+<h1>로봇 하드웨어 분석</h1>
+<p class="sub">MechDog 기본 플랫폼과 프로젝트 추가 하드웨어의 사양 · 역할 · 전원 · 통신 구성 (4대 동일)</p>
 
-<div class="def">MechDog 기본 장치는 제어 보드에, 더한 머리 카메라와 온도 센서는 라즈베리 파이 5에 잇고, Pi 5와 보드는 USB 케이블 하나로 잇는다. 납땜은 하지 않는다.</div>
+<div class="def">보행과 저수준 안전(초음파 정지 · 선 따라가기 · LED · 음성)은 <b>MechDog ESP32 보드</b>가 맡고, 엣지 AI 추론(안전모 · 불꽃)과 관제 통신은 <b>Raspberry Pi 5</b>가 맡습니다. 두 장치는 USB 시리얼 하나로 연결하고, 전원은 서보용 7.4V LiPo와 Pi 전용 보조배터리로 완전히 분리합니다.</div>
 
-<h2>1. 장착 부품</h2>
+<h2 id="sec1">1. MechDog 기본 하드웨어 <span class="meta">Hiwonder MechDog Pro 공식 사양서 기준</span></h2>
 <div class="tw"><table>
-  <tr><th>부품</th><th>자리</th><th>연결</th></tr>
-  <tr class="grp"><td colspan="3">제어 보드에 잇는 MechDog 기본 장치</td></tr>
-  <tr><td class="k">바닥 카메라 (기본 비전 모듈)</td><td>턱 아래에 장착. 광축을 수평 기준 35° 내리면 몸 중심에서 약 14~30 cm 앞 바닥이 라인 처리 화면에 들어옴 (3D 모델 추정)</td><td>보드 포트 1 (코드에서는 <code>IIC(2)</code>). 경로가 약 19cm라 20cm 케이블을 배 아래에 바짝 붙여 묶음</td></tr>
-  <tr><td class="k">초음파 센서</td><td>머리 앞 (기본 위치)</td><td>보드 I2C 1번</td></tr>
-  <tr><td class="k">LED 도트 매트릭스 (8×16)</td><td>배터리 칸 앞 탭의 받침판에 키트 M4 나일론 기둥(15 mm)으로 고정해 화면이 위를 봄</td><td>보드 포트 3</td></tr>
-  <tr><td class="k">스피커 (MP3 모듈)</td><td>LED 받침판 앞 끝에 세워 스피커가 앞을 봄</td><td>보드 포트 2 (I2C <code>0x7B</code>)</td></tr>
-  <tr class="grp"><td colspan="3">라즈베리 파이 5와 Pi에 잇는 장치</td></tr>
-  <tr><td class="k">라즈베리 파이 5</td><td>Active Cooler를 단 Pi를 공식 적백 케이스(케이스 팬은 떼어 냄)에 넣어 배터리 칸 뚜껑 위에 앞뒤 방향으로 얹고 스트랩 두 줄로 칸까지 함께 묶음</td><td>보드 USB ↔ Pi USB-A</td></tr>
-  <tr><td class="k">머리 카메라 (XIAO ESP32-S3 Sense)</td><td>머리 위 3D 출력 브래킷에서 정면을 봄</td><td>Pi 5 USB (USB-C to A, 경로 약 25cm)</td></tr>
-  <tr><td class="k">온도 센서 (GY-906)</td><td>머리 브래킷 오른쪽에서 정면을 향하고 핀헤더는 위로 배선</td><td>Pi 5 I2C (GPIO 2·3), 듀폰 점퍼로 1·3·5·9번 핀 (경로 약 18cm)</td></tr>
-  <tr><td class="k">보조배터리 (Pi 5 전용)</td><td>등판에 조인 출력 칸에 스마텍 STPB-MB100을 위에서 넣고 Pi 뚜껑으로 덮음</td><td>USB-C → Pi 5</td></tr>
+  <tr><th>구성품</th><th>주요 사양</th><th>프로젝트 내 역할 · 특이사항</th></tr>
+  <tr>
+    <td class="k">본체 · 기구</td>
+    <td>경질 알루미늄 합금 · 8 DOF (4족 × 2축)<br>기립 214 × 126 × 138 mm · 접힘 221 × 126 × 96 mm<br>기본 중량 약 560 g (Pro 확장 포함 약 706 g)</td>
+    <td>등 덮개 M4 리브넛 4곳(48 × 16 mm)과 머리 윗판 앞 M2 나사 2곳(간격 34.5 mm)을 3D 출력물 체결 기준으로 활용</td>
+  </tr>
+  <tr>
+    <td class="k">다리 서보<span class="subnote">HPS-0618SG × 8</span></td>
+    <td>고속 코어리스 디지털 서보 · 스테인리스 스틸 기어<br>6~8.4 V · ≤0.06 sec/60° · 토크 6~8 kg·cm (8.4 V)<br>PWM 500~2500 µs (0~180°) · 32 × 12 × 26 mm · 14.5 g</td>
+    <td>역기구학 보행 구동. 구속 전류 최대 2.5 A/개이므로 Pi 전원과 반드시 분리해야 전압 강하로 인한 Pi 재부팅을 막을 수 있음</td>
+  </tr>
+  <tr>
+    <td class="k">ESP32 제어 보드</td>
+    <td>ESP32-S 듀얼코어 · 79 × 53 mm · 입력 6~8.4 V<br>3축 가속도계+자이로(IMU) · 부저 · 커스텀 버튼<br>PWM 10ch · I2C 4ch(외부 포트 3 + 초음파) · Micro-USB(CH340)</td>
+    <td>MicroPython <code>main.py</code> 구동. Pi와 USB 시리얼(115200 bps)로 <code>CMD|…|$</code> 통신. CH340 DTR/RTS 토글 시 리셋되므로 포트 열 때 주의</td>
+  </tr>
+  <tr>
+    <td class="k">본체 배터리</td>
+    <td>7.4 V 1500 mAh 5C 리튬 폴리머 (LiPo)</td>
+    <td>제어 보드 + 서보 8개 + I2C 기본 모듈(비전 · 초음파 · LED · MP3) 전용 전원</td>
+  </tr>
+  <tr class="grp"><td colspan="3">MechDog 기본 제공 확장 모듈 (Molex 5264 4핀 · 2.5 mm 피치)</td></tr>
+  <tr>
+    <td class="k">비전 모듈<span class="subnote">ESP32-S3-CAM</span></td>
+    <td>ESP32-S3 + 2MP 카메라(GC2145, 라인 처리 320×240)<br>SRAM 512 KB + PSRAM 16 MB + Flash 16 MB · 4.75~5.25 V<br>59 × 43 × 17.5 mm · I2C(<code>0x53</code>) · USB Type-C</td>
+    <td>턱 아래에 순정 트러스 브래킷째 뒤집어 장착(하향 35°). 공장 펌웨어는 검정 선 인식과 I2C·영상 동시 전송이 안 되어 자체 펌웨어 <code>patrol_cam</code>을 구워 포트 1(<code>IIC(2)</code>)에 연결</td>
+  </tr>
+  <tr>
+    <td class="k">발광 초음파 센서</td>
+    <td>머리 전면 기본 장착 · 측정 각 15° · RGB LED 내장<br>보드 I2C 1번 연결</td>
+    <td>전방 장애물 거리 측정 및 근접 시 보드 단독 긴급 정지/재개 수행</td>
+  </tr>
+  <tr>
+    <td class="k">LED 도트 매트릭스<span class="subnote">8 × 16 적색</span></td>
+    <td>56 × 24 mm · TM1640 드라이버 · 4핀(5V/GND/DIN/CLK)<br>포트 3 연결</td>
+    <td>배터리 칸 앞 탭 위 받침판(15 mm 나일론 기둥)에 상향 장착. 대피 방향 화살표(<code>&lt; &gt; ^ X</code>) · 상태 코드(<code>E</code>) 표시</td>
+  </tr>
+  <tr>
+    <td class="k">MP3 음성 모듈<span class="subnote">V1.1</span></td>
+    <td>48 × 24 mm · Ø21.3 스피커 내장 · I2C(<code>0x7B</code>) · 포트 2<br>MP3/WAV/WMA 디코딩 · TF 최대 32 GB(FAT16/32, <code>MP3/</code> 폴더) · 볼륨 30단계</td>
+    <td>LED 받침판 앞 세로 탭에 전방 향하게 장착. 화재 경보 및 대피 음성 안내 재생</td>
+  </tr>
 </table></div>
-<p class="note">부품이 맡은 일과 통신은 <a href="01_시스템_아키텍처.html">시스템 아키텍처</a>, 구매 현황은 <a href="02_재료_목록.html">재료 목록</a>.</p>
 
-<h2>2. 무게 배치</h2>
+<h2 id="sec2">2. 프로젝트 추가 하드웨어 <span class="meta">공식 데이터시트 · 판매처 규격 기준</span></h2>
+<div class="tw"><table>
+  <tr><th>구성품</th><th>주요 사양</th><th>선정 이유 · 프로젝트 내 역할</th></tr>
+  <tr>
+    <td class="k">Raspberry Pi 5<span class="subnote">Active Cooler + 공식 케이스</span></td>
+    <td>Active Cooler(SC1148) + 공식 적백 케이스(SC1159)<br>외형 98.5 × 70.3 × 33.0 mm (케이스 내장 팬 제거 후 쿨러 장착)<br>USB 3.0 × 2 · USB 2.0 × 2 · USB-C 전원 · 40핀 GPIO</td>
+    <td>온디바이스 AI 추론(안전모 미착용 · 불꽃 탐지), 온도 센서 교차 판단, 관제 서버 Wi-Fi 통신, MechDog 보드 명령 송신</td>
+  </tr>
+  <tr>
+    <td class="k">XIAO ESP32S3 Sense<span class="subnote">전면 카메라 (Seeed Studio)</span></td>
+    <td>ESP32-S3R8 듀얼코어 LX7 (240 MHz)<br>SRAM 512 KB · OPI PSRAM 8 MB · Flash 8 MB<br>착탈식 OV3660 3MP 카메라(최대 2048×1536) · 디지털 마이크 · microSD(32 GB)<br>21 × 17.8 × 15 mm (확장 보드 포함) · USB-C 5 V</td>
+    <td>초소형·초경량이라 머리 위에 부담 없이 장착 가능. 640×480 JPEG를 <b>USB 유선</b>으로 Pi 5에 전송(Wi-Fi 미사용 · 안테나 제거)해 4대 동시 운용 시 무선 간섭 방지</td>
+  </tr>
+  <tr>
+    <td class="k">GY-906 온도 센서<span class="subnote">MLX90614ESF-BCC · VCTEC</span></td>
+    <td>Melexis 비접촉 적외선(IR) 온도 센서 · <b>시야각(FOV) 35°</b>(<code>BCC</code> 열구배 보상)<br>대상 온도 −70 ~ +380 °C · 주변 −40 ~ +85 °C<br>정밀도 ±0.5 °C (0~50 °C) · 분해능 0.02 °C<br>3~5 V 입력(내장 LDO) · I2C/SMBus 기본 주소 <code>0x5A</code> · 17.0 × 11.5 mm</td>
+    <td>카메라 불꽃 오탐을 줄이기 위한 <b>화재 과열 교차 검증</b>. 35° 좁은 시야(BCC)로 전방 열원을 정밀 측정하며, Pi 5 I2C(GPIO 2·3, 핀 1·3·5·9)에 직접 연결</td>
+  </tr>
+  <tr>
+    <td class="k">Pi 전용 보조배터리<span class="subnote">스마텍 STPB-MB100</span></td>
+    <td>84.0 × 32.2 × 46.0 mm · 165 g<br>USB-C 입출력 포트 + 측면 일체형 C타입 단자 + 디지털 잔량 LED</td>
+    <td>Pi 5와 XIAO 전원을 로봇 서보 배터리와 완전히 분리해, 보행 중 피크 전류에도 Pi가 안정적으로 동작하도록 함</td>
+  </tr>
+</table></div>
+<p class="note">구매 수량 · 단가 · 수령 현황은 <a href="02_재료_목록.html">재료 목록</a>, 통신 프로토콜과 소프트웨어 구조는 <a href="01_시스템_아키텍처.html">시스템 아키텍처</a> 참고.</p>
+
+<h2 id="sec3">3. 전원 · 통신 연결 요약</h2>
+<div class="tw"><table>
+  <tr><th>계통 / 경로</th><th>연결 장치</th><th>인터페이스 · 비고</th></tr>
+  <tr class="grp"><td colspan="3">전원 2계통 분리</td></tr>
+  <tr><td class="k">구동 · 보드 전원</td><td>7.4 V LiPo → MechDog 보드 → 서보 8개 · 비전 · 초음파 · LED · MP3</td><td>서보 부하 변동이 Pi 5에 전달되지 않도록 완전 분리</td></tr>
+  <tr><td class="k">컴퓨팅 · 센서 전원</td><td>STPB-MB100 → Pi 5 (USB-C) → XIAO (USB-A) · GY-906 (3.3 V 핀)</td><td>배터리 칸에 넣은 채 뒤 USB-C 구멍으로 충전 가능</td></tr>
+  <tr class="grp"><td colspan="3">데이터 통신</td></tr>
+  <tr><td class="k">Pi 5 ↔ MechDog 보드</td><td>USB-A (2.0) ↔ 보드 Micro-USB</td><td>UART 시리얼 115200 bps · <code>/dev/serial/by-path/</code> 고정</td></tr>
+  <tr><td class="k">Pi 5 ↔ XIAO 카메라</td><td>USB-A (3.0) ↔ XIAO USB-C (경로 약 25 cm)</td><td>USB 시리얼 JPEG 스트리밍 (Wi-Fi 미사용)</td></tr>
+  <tr><td class="k">Pi 5 ↔ GY-906</td><td>GPIO 1(3.3V) · 9(GND) · 5(SCL) · 3(SDA)</td><td>I2C <code>0x5A</code> · 듀폰 점퍼 약 18 cm (ㄱ자 핀헤더 상향)</td></tr>
+  <tr><td class="k">MechDog 보드 ↔ 기본 모듈</td><td>포트 1(비전 <code>0x53</code>) · 포트 2(MP3 <code>0x7B</code>) · 포트 3(LED) · 초음파</td><td>키트 4핀 20 cm 케이블 (배선 길이 200 mm 이내 유지)</td></tr>
+</table></div>
+
+<h2 id="sec4">4. 장착 위치 및 무게 배치</h2>
 <ul>
-  <li><b>배터리</b>: 165 g 배터리를 등판 바로 위 칸에 눕힌다. 무게는 칸 바닥을 거쳐 압축으로 금속 등판에 내려가고, 칸의 네 벽이 옆으로 밀리는 것을 막는다.</li>
-  <li><b>Pi 5</b>: 배터리 칸 뚜껑 위에 얹는다. 스트랩 두 줄이 Pi · 뚜껑 · 칸을 함께 눌러서 출력물에는 굽힘보다 압축이 걸린다. 케이스 윗면은 바닥에서 약 200 mm다.</li>
-  <li><b>머리</b>: 머리 카메라와 온도 센서가 앞에, 스피커는 그보다 뒤 · 위에 있어 시야를 가리지 않는다.</li>
+  <li><b>배터리 (165 g, 중앙 하단)</b>: 가장 무거운 보조배터리를 등판 바로 위 <code>battery_bay</code>에 눕혀 무게중심을 낮추고, 하중이 압축으로 금속 등판 M4 4곳에 바로 내려가게 설계했습니다.</li>
+  <li><b>Raspberry Pi 5 (중앙 2단)</b>: 배터리 칸 위에 <code>pi_carrier</code> 뚜껑을 얹고 10 mm 양면 벨크로 2줄로 Pi · 뚜껑 · 칸을 함께 눌러 묶습니다.</li>
+  <li><b>LED · MP3 (전방 데크)</b>: 배터리 칸 앞 탭에 <code>led_plate</code>를 달아 LED는 위를, MP3 스피커는 정면을 보게 배치했습니다.</li>
+  <li><b>XIAO · GY-906 (머리 위 전방)</b>: 머리 윗판 앞 M2 나사 2곳에 <code>head_bracket</code>을 고정하고, 두 센서를 위에서 끼웁니다. 뒤쪽 <code>led_plate</code>·MP3와 5.4~6.0 mm 여유를 두어 간섭을 피했습니다.</li>
 </ul>
-
-<h2>3. 3D 장착 모델</h2>
-<p class="note">제조사 도면과 팀 사진을 바탕으로 프레임, 다리, 두 자세에서 턱 아래에 고정된 비전 모듈을 재현했다. 사양서의 기본형 기립 외형은 214 × 126 × 138 mm다. 뷰어에 표시되는 비전 모듈 각도와 앞발 사이 간격은 모델 추정값이다.</p>
-<p>‘프로젝트 장착안’을 선택하면 Pi 5, 배터리 데크와 추가 센서가 보인다. 카메라와 다리 각도를 바꾸면 시야와 간섭 추정값을 확인할 수 있다. 3D 표시는 인터넷 연결이 필요하며, 서보·XIAO·Pi 5는 공식 STEP에서 변환한 모델을 불러온다. HTML 파일을 직접 열면 이 세 부품은 간략 모델로 표시된다.</p>
-  <div id="v3d" data-widget="v3d"></div>
+<p class="note">3D 출력 파일 다운로드, 출력 조건, 단계별 조립 3D는 <a href="../week03/06_3D출력가이드.html">3D 출력 · 조립 가이드</a>에서 확인할 수 있습니다.</p>
 
 </div>
 <script src="../assets/doc.js" defer></script>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
-<script src="../assets/3d/viewer.js?v=20261123-cables" defer></script>
 </body>
 </html>

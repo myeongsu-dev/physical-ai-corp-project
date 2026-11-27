@@ -37,7 +37,7 @@ root.innerHTML = `
       <tr><td>MechDog 본체</td><td>서 있을 때 214 × 126 × 138 mm, 꺼졌을 때 221 × 126 × 96 mm (사양서), 제어 보드 79 × 53 mm</td><td>다리마다 몸통 옆 ㄷ자 어깨 브래킷(비스듬한 윗판 · 베어링이 달린 바깥 팔)은 고정이고, 그 안에서 허벅지 판 · 무릎 서보 · 혼 · 푸시로드 · 아랫다리만 엉덩이 축을 중심으로 돈다. 브래킷 윗면(바닥에서 약 114.5 mm)보다 위는 다리가 움직여도 빈 공간이라 Z ±62까지 짐을 얹을 수 있다</td><td>보유</td></tr>
       <tr><td>초음파 센서</td><td>46 × 20 mm, 발신부 2개, 측정 각 15°</td><td>머리 앞면</td><td>보유</td></tr>
       <tr><td>하향 비전 모듈</td><td>순정 모듈과 경첩</td><td>턱 아래에서 바닥을 본다.</td><td>본체 부품</td></tr>
-      <tr><td>전면 카메라 · 온도센서</td><td>XIAO ESP32-S3 Sense · GY-906</td><td>머리 윗판 앞 나사 두 곳에 받침을 고정한다. 보드는 위에서 끼우고 안테나는 받침 뒷면에 붙인다.</td><td><a href="${asset("print/head_bracket.3mf")}" download>3MF</a> · <a href="${asset("print/head_bracket.stl")}" download>STL</a></td></tr>
+      <tr><td>전면 카메라 · 온도센서</td><td>XIAO ESP32-S3 Sense · GY-906</td><td>머리 윗판 앞 나사 두 곳에 받침을 고정하고, 보드는 위에서 끼운다.</td><td><a href="${asset("print/head_bracket.3mf")}" download>3MF</a> · <a href="${asset("print/head_bracket.stl")}" download>STL</a></td></tr>
       <tr><td>스마텍 STPB-MB100</td><td>84 × 32.2 × 46 mm · 165 g</td><td>등판 M4 네 곳에 접시머리 나사로 조인 칸에 위에서 넣는다. USB-C는 뒤 벽 구멍으로 나오고, 칸에 둔 채로 충전한다.</td><td><a href="${asset("print/battery_bay.3mf")}" download>3MF</a> · <a href="${asset("print/battery_bay.stl")}" download>STL</a></td></tr>
       <tr><td>Pi 5 · Active Cooler · 공식 적백 케이스</td><td>케이스 98.5 × 70.3 × 33 mm</td><td>뚜껑을 칸 벽 위에 얹고 케이스의 긴 변을 앞뒤로 올린다. 스트랩 두 줄이 Pi · 뚜껑 · 칸을 함께 눌러 묶는다.</td><td><a href="${asset("print/pi_carrier.3mf")}" download>3MF</a> · <a href="${asset("print/pi_carrier.stl")}" download>STL</a></td></tr>
       <tr><td>LED · 소리 모듈</td><td>LED 체결 간격 46 × 16 mm · MP3 체결 간격 16 mm</td><td>배터리 칸 앞 탭의 M3 두 곳에 평와셔 · 너트로 고정한다. LED는 12 mm 스페이서 위에, 스피커는 6 mm 스페이서를 끼워 세로 턱에 고정한다.</td><td><a href="${asset("print/led_plate.3mf")}" download>3MF</a> · <a href="${asset("print/led_plate.stl")}" download>STL</a></td></tr>
@@ -230,7 +230,7 @@ try {
   const uEye = anchor("uEye"), fEye = anchor("fEye"), irEye = anchor("irEye"), bEye = anchor("bEye");
 
   const { project, ghost, stockCamera, stockBracket, stockModule, headScrews, rearScrews } = N;
-  const { xiao, xiaoBoard, rpi, rpiBoard, brk, irMod, deck, led, mp3, piMount, pBank, projectBracket, bCam, ant, xBoard, xCam, xLens, irBoard } = N;
+  const { xiao, xiaoBoard, rpi, rpiBoard, brk, irMod, deck, led, mp3, piMount, pBank, projectBracket, bCam, xBoard, xCam, xLens, irBoard } = N;
   const sockets = byPrefix("socket_"), servoSeats = byPrefix("seat_"), servoBoxes = byPrefix("servobox_");
   const exitPoint = o => robot.worldToLocal(o.getWorldPosition(V()));
   const feet = byPrefix("foot_"), shins = byPrefix("shinbody_"), sweeps = byPrefix("sweep_");
@@ -280,7 +280,7 @@ try {
   const IR_GPIO = [1, 9, 5, 3]; // 온도 센서 VIN · GND · SCL · SDA → 1번 3.3V · 9번 GND · 5번 SCL(GPIO3) · 3번 SDA(GPIO2)
   P = project;
   const tubeMesh = (m) => add(mesh(new THREE.BufferGeometry(), m));
-  const cables = [0, 1, 2, 3].map(() => tubeMesh("dark")), coax = tubeMesh("dark");
+  const cables = [0, 1, 2, 3].map(() => tubeMesh("dark"));
   const irWires = ["w2", "dark", "w1", "w3"].map((m) => tubeMesh(m)); // 온도 센서 → 듀폰 암-암 점퍼
   const ledWires = [0, 1, 2, 3].map(() => tubeMesh("dark")); // LED 매트릭스 → 포트 3
   const piWire = tubeMesh("dark"); // Pi 5 USB-C to USB-C 전원 케이블
@@ -340,7 +340,7 @@ try {
   let kitWireLogged = false;
   const wire = (assembled = false) => {
     robot.updateMatrixWorld(true);
-    const xi = on(xiao), bk = on(brk), antenna = on(ant), ir = on(irMod);
+    const xi = on(xiao), ir = on(irMod);
     const le = on(led), rp = on(rpi), pb = on(pBank), mp = on(mp3);
     tube(piWire, [pb(14.5, 3.9, BAT[0] / 2 + 20.8), pb(14.5, 3.9, BAT[0] / 2 + 27), V(-74, 152, 4), V(-64, 162, -30), V(-56, 166, -50), V(-10, 172, -51), rp(1, 1.8, -53), ...piPowerTail.map(exitPoint)], 1.45); // 보조배터리 뒤 USB-C → 칸 뒤를 돌아 → 스트랩 바깥으로 → Pi 5 USB-C
     const ledLens = ledWires.map((c, i) => {
@@ -366,7 +366,6 @@ try {
         console.log("키트 4핀 배선 길이(mm):", kitLens.map(([label, lens]) => `${label} ${Math.max(...lens).toFixed(1)}`).join(" · "));
       }
     }
-    tube(coax, [xi(3.2, -8.75, 4.73), xi(7.3, -7.8, 5.0), bk(93, 131, 6.5), bk(90.5, 141.8, 6.5), bk(82.5, 143.0, 2.3), bk(75, 137, 0), antenna(0, 6.8, -1)], 0.55); // U.FL → 받침 뒷벽 위 → 안테나
     tube(usbWire, [xi(2.85, 36.8, 0), xi(2.85, 41, 0), V(70, 175, -5), V(55, 168, -30), V(44, 170, -50), V(0, 175, -50), V(-40, 178, -50), V(-62, 184, -40),
       rp(-62, 14, -32), ...piXiaoTail.map(exitPoint)], 1.6); // XIAO 위 USB-C → 스트랩 바깥 왼쪽 → Pi 뒤 USB 3.0 위 칸
     tube(dogWire, [...dogUsbTail.map(exitPoint), V(-66, 121, -34), V(-78, 167, -22),
@@ -505,7 +504,7 @@ try {
     const toSonar = uEye.matrixWorld.clone().invert(), toLens = bEye.matrixWorld.clone().invert();
     const hitsBeam = p => inBeam(p.applyMatrix4(toSonar));
     const hit = [bCam, projectBracket].some(o => someVertex(o, hitsBeam)) ||
-      [xBoard, xCam, xLens, ant, irBoard].some(b => corners(b).some(hitsBeam));
+      [xBoard, xCam, xLens, irBoard].some(b => corners(b).some(hitsBeam));
     const footInView = FRONT_FEET.some(f => someVertex(f, p => sees(p.applyMatrix4(toLens))));
     const footGap = Math.min(clearanceToFeet(projectBracket), clearanceToFeet(bCam));
     const io = irEye.getWorldPosition(V()), pitch = Math.asin(V(1, 0, 0).transformDirection(irEye.matrixWorld).y);

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D 출력 · 조립 가이드</title>
+<link rel="stylesheet" href="../assets/doc.css">
+<link rel="stylesheet" href="../assets/3d/assembly.css">
+</head>
+<body>
+<nav class="topnav" aria-label="문서 이동"><a href="index.html">← 목차</a><span><a href="01_MechDog구현.html">01<span class="lbl"> MechDog 구현</span></a><a href="02_Pi5구현.html">02<span class="lbl"> Pi 5 구현</span></a><a href="03_서버구현.html">03<span class="lbl"> 서버 구현</span></a><a href="04_대시보드구현.html">04<span class="lbl"> 대시보드 구현</span></a><a href="05_1차통합시연.html">05<span class="lbl"> 1차 통합 시연</span></a><a href="06_3D출력가이드.html" aria-current="page">06<span class="lbl"> 3D 출력 가이드</span></a></span></nav>
+<div class="doc">
+
+<h1>3D 출력 · 조립 가이드</h1>
+<p class="sub">MechDog 장착 출력물 4종 파일, 핵심 출력 설정, 단계별 조립 3D · 2026. 11. 27</p>
+
+<div class="def">MechDog 1대에 들어가는 3D 출력물 4종을 <b>PETG</b>로 출력하고 조립하는 가이드입니다. 모든 파일에 FDM 여유가 이미 반영되어 있으므로 <b>파일 자세 그대로 · 서포트 없이 · 치수 보정 끄고(100%)</b> 출력합니다.</div>
+
+<h2 id="sec1">1. 출력 파일 다운로드 <span class="meta">Z 위 · 바닥면 Z=0 · 대당 110.7 cm³</span></h2>
+<p><b>4종 한 번에 받기:</b> <a href="../assets/3d/print/mechdog_print_stl.zip" download><b>STL 묶음 (.zip)</b></a> · <a href="../assets/3d/print/mechdog_print_3mf.zip" download><b>3MF 묶음 (.zip)</b></a> · <a href="../assets/3d/print/mechdog_print_step.zip" download><b>STEP 묶음 (.zip)</b></a></p>
+<div class="tw"><table>
+  <tr><th>부품</th><th>크기 X × Y × Z (mm)</th><th class="num">부피 (cm³)</th><th>출력 자세 · 비고</th><th>파일</th></tr>
+  <tr><td class="k">배터리 칸<span class="subnote">battery_bay</span></td><td>109.5 × 86.4 × 36.8</td><td class="num">62.7</td><td>바닥판이 베드 · 등판 M4 4곳 체결</td><td><a href="../assets/3d/print/battery_bay.stl" download>STL</a> · <a href="../assets/3d/print/battery_bay.3mf" download>3MF</a> · <a href="../assets/3d/print/battery_bay.step" download>STEP</a></td></tr>
+  <tr><td class="k">Pi 뚜껑<span class="subnote">pi_carrier</span></td><td>98.0 × 70.0 × 9.0</td><td class="num">31.8</td><td><b>윗면이 베드</b>(180° 뒤집힌 파일 그대로)</td><td><a href="../assets/3d/print/pi_carrier.stl" download>STL</a> · <a href="../assets/3d/print/pi_carrier.3mf" download>3MF</a> · <a href="../assets/3d/print/pi_carrier.step" download>STEP</a></td></tr>
+  <tr><td class="k">LED · 스피커 받침<span class="subnote">led_plate</span></td><td>34.5 × 94.6 × 40.0</td><td class="num">10.7</td><td>받침판이 베드 · MP3 세로 탭이 위</td><td><a href="../assets/3d/print/led_plate.stl" download>STL</a> · <a href="../assets/3d/print/led_plate.3mf" download>3MF</a> · <a href="../assets/3d/print/led_plate.step" download>STEP</a></td></tr>
+  <tr><td class="k">머리 센서 받침<span class="subnote">head_bracket</span></td><td>22.0 × 52.0 × 27.0</td><td class="num">5.5</td><td>발판이 베드 · XIAO · GY-906(탄성 팔)</td><td><a href="../assets/3d/print/head_bracket.stl" download>STL</a> · <a href="../assets/3d/print/head_bracket.3mf" download>3MF</a> · <a href="../assets/3d/print/head_bracket.step" download>STEP</a></td></tr>
+</table></div>
+<p class="note">처음 뽑는 프린터에서 구멍·너트·GY-906 끼움만 먼저 확인하려면 시험 조각(<code>fit_coupon</code>, 9.0 cm³: <a href="../assets/3d/print/fit_coupon.stl" download>STL</a> · <a href="../assets/3d/print/fit_coupon.3mf" download>3MF</a> · <a href="../assets/3d/print/fit_coupon.step" download>STEP</a>)을 함께 출력합니다.</p>
+
+<h2 id="sec2">2. 핵심 출력 설정</h2>
+<div class="specs">
+  <div><strong>재료</strong><span><b>PETG</b> (대체 ASA). PLA는 GY-906 탄성 팔(두께 1.25 mm) 파손 및 충격에 약해 쓰지 않음</span></div>
+  <div><strong>노즐 · 층 · 강도</strong><span>0.4 mm 노즐 · 층 높이 0.2 mm 이하 · 벽(외곽선) 4줄 · 채움 40% 이상</span></div>
+  <div><strong>자세 · 서포트</strong><span>파일 자세 그대로 출력, <b>서포트 없음</b> (특히 <code>pi_carrier</code>를 슬라이서에서 뒤집지 말 것)</span></div>
+  <div><strong>치수 보정</strong><span><b>구멍 보정 · XY 보정 · 배율 보정 끄기(100%)</b> — 여유(XIAO 0.25 mm/쪽 · 뚜껑 0.4 mm · 배터리 0.5 mm)가 이미 모델에 포함됨</span></div>
+</div>
+
+<h2 id="sec3">3. 조립 3D 가이드 <span class="meta">단계 클릭 · 재생/분해 · 부품 호버 시 규격 표시</span></h2>
+<p class="note">드래그로 회전, 휠로 확대/축소합니다. 단계를 누르면 해당 단계까지 조립되며, 나사·기둥·출력물에 마우스를 올리면 규격과 체결 위치가 뜹니다.</p>
+<div id="a3d" data-widget="a3d"></div>
+
+<h2 id="sec4">4. 체결 부품 및 조립 주의사항</h2>
+<div class="tw"><table>
+  <tr><th>구분</th><th>부품 (대당 수량)</th><th>체결 위치 · 팁</th></tr>
+  <tr><td class="k">별도 구매</td><td>M4 × 10 접시머리 렌치볼트 (6)<br>M2 × 8 십자 둥근머리 (2)<br>10 mm 양면 벨크로 (약 350 mm × 2줄)</td><td>M4×10: 배터리 칸 바닥 4곳(등판 리브넛) + 앞 탭 2곳<br>M2×8: 머리 윗판 앞 순정 M2×6 교체(아래 플랜지 암나사 직결)<br>벨크로: Pi · 뚜껑 · 칸 바닥 슬롯을 한 번에 묶음</td></tr>
+  <tr><td class="k">MechDog 키트</td><td>M4 나일론 기둥 암-암 15 mm (4)<br>M4 나일론 기둥 수-암 10+6 mm (2)<br>M4 × 6 십자 둥근머리 (10) · M4 너트 (4)</td><td>LED는 받침판에 먼저 조립한 뒤 배터리 칸 앞 탭에 얹음<br>MP3 탭 뒤 너트는 손이나 롱노즈로 잡고 앞에서 기둥을 돌려 체결</td></tr>
+</table></div>
+<ul>
+  <li><b>GY-906 온도센서</b>: <b>금속 센서 캔이 아래, ㄱ자 핀헤더가 위(+Y)</b>로 향하게 밀어 넣습니다. 바로 뒤에 MP3 스피커(간격 11.4 mm)가 있어 일자 핀헤더는 뒤로 닿습니다.</li>
+  <li><b>탄성 팔 첫 층</b>: <code>head_bracket</code>의 GY-906 탄성 팔이 첫 층 퍼짐으로 바닥판에 살짝 붙어 있으면 커터칼로 톡 떼어낸 뒤 센서를 끼웁니다.</li>
+  <li><b>하드웨어 상세 사양</b>: 각 모듈의 스펙과 전원·통신 연결은 <a href="../week02/04_로봇하드웨어.html">로봇 하드웨어 분석</a>을 참고합니다.</li>
+</ul>
+
+</div>
+<script src="../assets/doc.js" defer></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="../assets/3d/assembly.js?v=20261127"></script>
+</body>
+</html>
